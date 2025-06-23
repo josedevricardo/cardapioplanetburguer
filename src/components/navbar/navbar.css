@@ -1,0 +1,577 @@
+/* -------- Navbar geral -------- */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 24px;
+  background-color: white;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 100;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.navbar.sticky {
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* -------- Logo com texto -------- */
+.logo-link {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+}
+
+.logo-text-container {
+  gap: 10px;
+}
+
+.logotipo {
+  width: 48px;
+  height: auto;
+}
+
+.logo-text {
+  font-size: 20px;
+  font-weight: 600;
+  color: #e53935;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.logo-text strong {
+  color: #333;
+}
+
+.logo-link:hover .logo-text {
+  transform: scale(1.05);
+}
+
+/* -------- Menu Desktop com Tooltip -------- */
+.desktop-menu {
+  display: flex;
+  gap: 20px;
+  list-style: none;
+}
+
+.menu-link {
+  position: relative;
+  padding: 8px 14px;
+  font-weight: 500;
+  font-size: 16px;
+  color: #333;
+  text-decoration: none;
+  transition: transform 0.2s ease, color 0.3s ease;
+ 
+  
+}
+
+.menu-link:hover {
+  color: green;
+  transform: scale(1.08);
+}
+
+.menu-link::after {
+  content: "Vamos pedir agora";
+  position: absolute;
+  bottom: -28px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.9);
+  background-color: #e53935;
+  color: #fff;
+  padding: 4px 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 99;
+}
+
+.menu-link:hover::after {
+  opacity: 1;
+}
+
+/* -------- Botão Sacola Moderno -------- */
+.right-buttons {
+  display: flex;
+  align-items: center;
+  margin-left: 12px;
+}
+
+.sacola-button {
+   background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  color: green;
+  margin-left: -11rem;
+  margin-top: 3rem;
+  padding: 6px 12px;
+  cursor: pointer;
+  transition: 0.3s;
+  border-radius: 8px;
+ 
+}
+
+.sacola-button:hover {
+  background-color: #e53935;
+  color: #fff;
+}
+
+.sacola-icon {
+  font-size: 20px;
+  margin-right: 6px;
+}
+
+.sacola-text {
+  font-weight: bold;
+  font-size: 14px;
+}
+
+
+/* GIF discreto abaixo da navbar */
+.gif-background {
+  position: absolute;
+  top: 70px; /* altura da navbar */
+  left: 0;
+  right: 0;
+  height: 220px;
+  background-image: url("../../assets/planetburguer.gif");
+  background-repeat: no-repeat;
+  background-position: center top;
+  background-size: contain;
+  opacity: 0.12;
+  z-index: 0;
+  pointer-events: none;
+}
+
+
+/* -------- Mobile Menu -------- */
+.hamburger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 24px;
+  width: 30px;
+}
+
+.hamburger .line {
+  background-color: #333;
+  height: 3px;
+  width: 100%;
+  border-radius: 2px;
+  transition: 0.3s;
+}
+
+.hamburger.open .line:nth-child(1) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.hamburger.open .line:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger.open .line:nth-child(3) {
+  transform: rotate(-45deg) translate(6px, -6px);
+}
+
+.mobile-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.mobile-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 240px;
+  height: 100%;
+  background-color: white;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  padding: 2rem 1rem;
+  z-index: 150;
+  transition: transform 0.3s ease-in-out;
+}
+
+.mobile-menu {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.mobile-menu li {
+  margin-bottom: 20px;
+}
+
+.mobile-menu a {
+  text-decoration: none;
+  font-size: 18px;
+  color: #333;
+  font-weight: 500;
+}
+
+.mobile-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  z-index: 100;
+}
+
+/* -------- Loader -------- */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  animation: fadeOut 2s forwards;
+}
+
+.loading-logo {
+  width: 80px;
+  margin-bottom: 1rem;
+  animation: spin 2s linear infinite;
+}
+
+.burger-icon {
+  font-size: 24px;
+  margin-bottom: 0.5rem;
+}
+
+.loading-content p {
+  font-size: 18px;
+  color: #e53935;
+}
+
+/* -------- Espaço da navbar fixa -------- */
+.navbar-space {
+  height: 70px;
+}
+
+
+/* -------- Animações -------- */
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  99% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+.banner-gif {
+  width: 100%;
+  background-image: url("../../assets/planetburguer.gif");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  padding: 60px 20px;
+  margin-top: -10px;
+  opacity: 0.15;
+  position: relative;
+  z-index: 1;
+  text-align: center;
+}
+
+.titulo-gif {
+  position: relative;
+  z-index: 2;
+  color: #333;
+  font-size: 1.8rem;
+  font-weight: bold;
+  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
+}
+
+
+/* -------- Responsivo -------- */
+
+
+
+@media (max-width: 768px) {
+  .desktop-menu {
+    display: none;
+  }
+
+  .right-buttons {
+    margin-left: auto;
+  }
+}
+
+/* Para telas menores, manter visível e ajustar altura */
+@media (max-width: 710px) {
+  .gif-background {
+    height: 160px; /* menor altura para caber no mobile */
+    opacity: 0.10; /* um pouco mais sutil */
+    top: 95px; /* ajuste da navbar mobile se for menor */
+  }
+}
+
+/* Mobile Styles */
+@media (max-width: 768px) {
+  .desktop-menu {
+    display: none;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .mobile-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Fundo laranja do menu mobile */
+  .mobile-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 250px;
+    height: 100%;
+    background-color: #ff6600; /* Fundo laranja */
+    padding: 20px;
+    z-index: 1100;
+    animation: slideIn 0.3s ease-out;
+    box-shadow: none;
+  }
+
+  /* Menu mobile: lista vertical */
+  .mobile-menu {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem; /* Espaço menor */
+  }
+
+  .mobile-menu li {
+    width: 100%;
+  }
+
+  /* Botões móveis menores, integrados ao fundo */
+  .mobile-menu a {
+    display: block;
+    width: 100%;
+    padding: 8px 16px; /* Menor padding */
+    font-size: 0.9rem; /* Botões menores */
+    font-weight: 700;
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    background-color: rgba(255 255 255 / 0.15); /* Fundo semi-transparente */
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    user-select: none;
+    cursor: pointer;
+    box-shadow: none;
+  }
+
+  /* Hover e foco */
+  .mobile-menu a:hover,
+  .mobile-menu a:focus {
+    background-color: rgba(255 255 255 / 0.35);
+    color: #b34700;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(179 71 0 / 0.4);
+  }
+
+  /* Feedback ao tocar */
+  .mobile-menu a:active {
+    transform: translateY(0);
+    background-color: rgba(255 255 255 / 0.5);
+    color: #993d00;
+    box-shadow: none;
+  }
+
+  .mobile-overlay {
+    position: fixed;
+    top: 0;
+    left: 250px;
+    right: 0;
+    bottom: 0;
+    background: transparent;
+    z-index: 1000;
+  }
+}
+
+/* Animação menu lateral */
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Gira o logo */
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Pulsa o texto */
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+}
+
+/* Animação de fundo gradiente */
+@keyframes gradientBackground {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #f9f9f9;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  animation: fadeIn 0.1s ease-in-out;
+}
+
+.loading-logo {
+  width: 120px;
+  height: auto;
+  margin-bottom: 20px;
+  animation: spin 3s linear infinite;
+}
+
+.loading-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.burger-icon {
+  font-size: 3rem;
+  animation: bounce 1s infinite;
+  margin-bottom: 10px;
+}
+
+.loading-content p {
+  font-size: 1.4rem;
+  color: #333;
+  font-weight: bold;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
+/* Aplica o GIF como background APENAS no mobile */
+@media (max-width: 756px) {
+  .navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    background-image: url("../../assets/planetburguer.gif");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.97;
+    z-index: 1000;
+    transition: background 0.3s ease;
+  }
+
+  .logo-text { display: none;
+  }
+
+  .navbar::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: url("../../assets/planetburguer.gif");
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.15;
+    z-index: -1;
+    pointer-events: none;
+  }
+}
+
+

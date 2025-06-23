@@ -1,0 +1,212 @@
+/* Estilização geral do carrinho permanece igual */
+.cart-btn-close {
+  width: 32px;
+  height: 32px;
+  cursor: pointer;
+  margin: 10px;
+}
+
+.formulario-cliente input {
+  width: 100%;
+  padding: 8px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  transition: 0.3s ease;
+}
+
+.formulario-cliente input:focus {
+  border-color: #0070f3;
+  outline: none;
+}
+
+.lista-produtos {
+  max-height: 180px;
+  overflow-y: auto;
+  margin-bottom: 10px;
+}
+
+.frete-msg {
+  color: #d97706;
+  font-weight: 500;
+  text-align: center;
+  margin-top: 8px;
+}
+
+.footer-cart-valor {
+  display: flex;
+  justify-content: space-between;
+  font-size: 18px;
+  font-weight: bold;
+  padding: 10px;
+  background-color: #f9fafb;
+  border-radius: 8px;
+  margin: 10px;
+}
+
+.btn-checkout {
+  background-color: #22c55e;
+  color: white;
+  padding: 12px;
+  width: 90%;
+  margin: 0 auto 15px;
+  display: block;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.btn-checkout:hover {
+  background-color: #16a34a;
+}
+
+.btn-checkout:disabled {
+  background-color: #9ca3af;
+  cursor: not-allowed;
+}
+
+/* MENSAGENS */
+.error-message,
+.success-message {
+  text-align: center;
+  margin: 10px auto;
+  padding: 10px;
+  border-radius: 8px;
+  width: 90%;
+  font-weight: bold;
+}
+
+.error-message {
+  background-color: #fee2e2;
+  color: #b91c1c;
+}
+
+.success-message {
+  background-color: #dcfce7;
+  color: #15803d;
+}
+
+/* MODAL MODERNA */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  backdrop-filter: blur(3px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal-box {
+  background-color: white;
+  padding: 30px;
+  border-radius: 20px;
+  width: 90%;
+  max-width: 400px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  text-align: center;
+}
+
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.cancel-btn,
+.confirm-btn {
+  flex: 1;
+  padding: 10px 0;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.3s ease;
+}
+
+.cancel-btn {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.cancel-btn:hover {
+  background-color: #e5e7eb;
+}
+
+.confirm-btn {
+  background-color: #22c55e;
+  color: white;
+}
+
+.confirm-btn:hover {
+  background-color: #16a34a;
+}
+
+.confirm-btn:disabled {
+  background-color: #16a34a;
+  opacity: 0.8;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  animation: spin 1s linear infinite;
+}
+
+.spinner .path {
+  stroke: white;
+  stroke-linecap: round;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Efeito de movimento sutil */
+.cart-motion-wrapper {
+  padding: 10px;
+  height: 100%;
+  overflow-y: auto;
+  scroll-behavior: smooth;
+  transition: transform 0.2s ease;
+}
+
+/* Animação de carregamento do botão "Confirmar" */
+.spinner {
+  animation: spin 1s linear infinite;
+  width: 20px;
+  height: 20px;
+  margin-right: 8px;
+  vertical-align: middle;
+}
+
+.spinner .path {
+  stroke: white;
+  stroke-linecap: round;
+}
+
+@keyframes spin {
+  100% {
+    transform: rotate(360deg);
+  }
+}

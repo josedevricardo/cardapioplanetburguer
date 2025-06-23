@@ -1,0 +1,411 @@
+.produto-slider-container {
+  max-width: 1200px;
+  margin: 20px auto;
+  margin-top: 12rem;
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+}
+
+/* Filtro de categorias */
+.filtro-categorias {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  justify-content: center;
+  margin-bottom: 15px;
+}
+
+.filtro-categorias button {
+  padding: 8px 16px;
+  border: none;
+  background: #ddd;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.filtro-categorias button.ativo,
+.filtro-categorias button:hover {
+  background-color: #ff6600;
+  color: #fff;
+}
+
+/* Título da categoria */
+.titulo-categoria {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 600;
+  font-size: 1.3rem;
+}
+
+/* Floating menu (mobile) */
+.floating-categorias-wrapper {
+  display: none;
+  position: relative;
+  margin-bottom: 20px;
+}
+.botao-flutuante {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  z-index: 9999;
+  background-color: #ff3c00;
+  color: white;
+  padding: 12px 18px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  border: none;
+  transition: transform 0.3s ease;
+}
+
+.botao-flutuante:hover {
+  transform: scale(1.05);
+}
+
+.floating-menu {
+  position: fixed;
+  bottom: 70px;
+  left: 20px;
+  background: #fff;
+  border-radius: 10px;
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  padding: 8px;
+  z-index: 9998;
+  display: flex;
+  flex-direction: column;
+  width: 205px;
+  max-height: 375px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+}
+
+.floating-item {
+  background-color: #f6f6f6;
+  border: none;
+  margin: 4px 0;
+  margin-top: 12px;
+  padding: 8px 12px;
+  font-size: 14px;
+  border-radius: 6px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.floating-item:hover {
+  background-color: #eee;
+}
+
+.floating-item.ativo {
+  background-color: #ff3c00;
+  color: #fff;
+  font-weight: bold;
+}
+
+
+.mensagem-pedido {
+  position: fixed;
+  bottom: 130px;
+  left: 20px;
+  background: #ffffffee;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #000;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  animation: fadeinout 2s ease-in-out;
+  z-index: 9999;
+}
+
+
+.floating-item {
+  background: none;
+  border: none;
+  padding: 8px 12px;
+  text-align: left;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.floating-item.ativo {
+  font-weight: bold;
+  color: #ff3c00;
+}
+
+.mensagem-pedido {
+  position: fixed;
+  bottom: 130px;
+  left: 20px;
+  background: #ffffffdd;
+  padding: 10px 16px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #000;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  animation: fadeinout 3s ease-in-out infinite;
+  z-index: 9999;
+}
+
+
+.floating-menu {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  width: 100%;
+  box-shadow: 0 0 8px rgba(0,0,0,0.15);
+  z-index: 10;
+}
+
+.floating-menu button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  background: none;
+  border: none;
+  text-align: left;
+  cursor: pointer;
+  border-bottom: 1px solid #eee;
+}
+
+.floating-menu button:last-child {
+  border-bottom: none;
+}
+
+.floating-menu button.ativo {
+  background-color: #ff6600;
+  color: white;
+}
+
+/* Produto slider grid */
+.produto-slider {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 22px;
+  user-select: none;
+}
+
+/* Produto item */
+.produto-item {
+  position: relative;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.1);
+  padding: 15px 12px 20px; /* espaçamento interno */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  transition: box-shadow 0.3s ease;
+  min-height: 320px;
+}
+
+.produto-item {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.produto-item:hover {
+  transform: translateY(-6px) scale(1.03);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+
+/* Imagem do produto */
+.produto-imagem {
+  position: static;  /* ou simplesmente remova position */
+  width: 100%;
+  height: auto;
+  border-radius: 12px 12px 0 0;
+  box-shadow: none;
+  object-fit: cover;
+  margin-bottom: 10px;
+  margin-left: auto;
+  margin-right: 0;
+  display: block;
+}
+
+
+/* Título centralizado */
+.produto-item h3 {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin: 6px 0 6px;
+  line-height: 1.3;
+  color: #222;
+}
+
+/* Descrição centralizada e menor */
+.text-descricao {
+  font-size: 0.85rem;
+  color: #555;
+  margin: 0 10px 12px;
+  min-height: 40px;
+}
+
+/* Preço centralizado, fonte maior e destaque */
+.prod-vitrine-preco {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #e63946;
+  margin-bottom: 15px;
+}
+
+/* Botão adicionar */
+.botao-adicionar {
+  background-color: #ff6600;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 10px 16px;
+  width: 90%;
+  max-width: 220px;
+  transition: background-color 0.3s ease;
+  margin-top: auto; /* empurra botão para baixo */
+}
+
+.botao-adicionar:hover {
+  background-color: #e65500;
+}
+
+/* Mostrar mais */
+.mostrar-mais-container {
+  text-align: center;
+  margin-top: 20px;
+}
+
+.mostrar-mais-container button {
+  background-color: #ff6600;
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.mostrar-mais-container button:hover {
+  background-color: #e65500;
+}
+
+/* Mensagem fixa */
+.message-fixed {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #28a745;
+  color: white;
+  padding: 10px 18px;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 10000;
+  animation: fadeInOutScale 3s ease-in-out forwards;
+
+  display: inline-flex;       /* Use inline-flex para alinhar melhor o conteúdo */
+  align-items: center;        /* Centraliza verticalmente o texto */
+  justify-content: center;    /* Centraliza horizontalmente o texto */
+
+  max-width: 90vw;            /* Limita a largura máxima */
+  max-height: 1rem;           /* Limita altura para evitar esticar verticalmente */
+  white-space: nowrap;        /* Impede quebra de linha */
+  overflow: hidden;
+  text-overflow: ellipsis;    /* Mostra "..." se o texto for muito longo */
+  line-height: 1.2;
+}
+
+
+
+@keyframes fadeInOutScale {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+  10% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  90% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
+
+/* ----------- Ajustes mobile ----------- */
+@media (max-width: 768px) {
+  .produto-slider {
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  }
+
+  .produto-item {
+    min-height: auto;
+    padding: 12px 10px 16px;
+  }
+
+  .produto-imagem {
+    height: auto;
+    border-radius: 12px 12px 0 0;
+    margin-bottom: 10px;
+    box-shadow: none;
+  }
+
+  .produto-item h3 {
+    font-size: 1.1rem;
+  }
+
+  .text-descricao {
+    font-size: 0.8rem;
+    min-height: auto;
+  }
+
+  .prod-vitrine-preco {
+    font-size: 1rem;
+  }
+
+  .botao-adicionar {
+    width: 100%;
+    max-width: none;
+    padding: 12px 0;
+  }
+
+  .floating-categorias-wrapper {
+    display: block;
+    margin-bottom: 20px;
+  }
+
+  .filtro-categorias {
+    display: none;
+  }
+}
+
+@keyframes fadeinout {
+  0% { opacity: 0; transform: translateY(0); }
+  10% { opacity: 1; transform: translateY(-5px); }
+  90% { opacity: 1; transform: translateY(-5px); }
+  100% { opacity: 0; transform: translateY(0); }
+}
+
+@media (min-width: 768px) {
+  .botao-flutuante,
+  .floating-menu,
+  .mensagem-pedido {
+    display: none;
+  }
+}

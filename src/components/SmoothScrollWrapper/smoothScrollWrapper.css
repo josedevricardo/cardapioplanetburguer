@@ -1,0 +1,6 @@
+.smooth-scroll-wrapper {
+    overflow-y: scroll;
+    scroll-behavior: smooth; /* Adiciona o efeito de rolagem suave */
+    height: 100vh; /* Ajuste a altura conforme necessário */
+  }
+  
