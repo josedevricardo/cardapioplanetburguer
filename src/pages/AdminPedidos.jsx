@@ -9,6 +9,20 @@ import { useNavigate } from "react-router-dom";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import "./stiloPedido.css";
+import logo from "../assets/mascote.png";
+
+
+function formatarDataLocal(dataString) {
+  const dataOriginal = new Date(dataString);
+  const dataBrasil = new Date(dataOriginal.getTime() - 3 * 60 * 60 * 1000);
+  return dataBrasil.toLocaleString("pt-BR");
+}
+
+
+const TEMPO_EXPIRACAO_MS = 22 * 60 * 60 * 1000;
+const AVISO_ANTIGO_MS = 20 * 60 * 60 * 1000;
+
+
 
 export default function AdminPedidos() {
   const navigate = useNavigate();
@@ -38,10 +52,7 @@ export default function AdminPedidos() {
   }, [pedidos]);
 
   const formatarTextoPedido = useCallback((pedido) => {
-    const dataOriginal = new Date(pedido.data);
-    const dataBrasil = new Date(dataOriginal.getTime() - 3 * 60 * 60 * 1000);
-    const dataFormatada = dataBrasil.toLocaleString("pt-BR");
-
+    const dataFormatada = formatarDataLocal(pedido.data);
     return `===========================\nPEDIDO #${pedido.id}\n===========================\nCliente: ${pedido.nome} - ${pedido.telefone}\nEndereço: Rua ${pedido.rua}, Nº ${pedido.numero}, Bairro ${pedido.bairro}\nPagamento: ${pedido.pagamento}\nInfo: ${pedido.informacoes_adicionais || "Nenhuma"}\n\nItens:\n${pedido.itens.map((i) => `- ${i.qtd}x ${i.produto}`).join("\n")}\n\nTotal: R$ ${pedido.total}\nData: ${dataFormatada}\nStatus: ${pedido.status || "pendente"}\n===========================`;
   }, []);
 
@@ -75,9 +86,8 @@ export default function AdminPedidos() {
         })
         .then((data) => {
           const agora = Date.now();
-          const dezHoras = 10 * 60 * 60 * 1000;
           const pedidosFiltradosTempo = data
-            .filter((p) => agora - new Date(p.data).getTime() <= dezHoras)
+            .filter((p) => agora - new Date(p.data).getTime() <= TEMPO_EXPIRACAO_MS)
             .map((p) => ({
               ...p,
               status: pedidosEntregues.has(p.id) ? "entregue" : "pendente",
@@ -150,7 +160,7 @@ export default function AdminPedidos() {
     navigate("/login-admin");
   };
 
-  // Função exportar PDF com valor total
+
   const exportarPDF = () => {
     const doc = new jsPDF();
     const tableColumn = [
@@ -174,7 +184,7 @@ export default function AdminPedidos() {
       p.informacoes_adicionais || "",
       p.itens.map((i) => `${i.qtd}x ${i.produto}`).join(", "),
       p.total,
-      new Date(new Date(p.data).getTime() - 3 * 60 * 60 * 1000).toLocaleString("pt-BR"),
+      formatarDataLocal(p.data),
       p.status,
     ]);
 
@@ -198,11 +208,14 @@ export default function AdminPedidos() {
 
   return (
     <div className="stiloPedido">
-      <nav className="navbar2">
-        <h1>Painel Admin - Pedidos</h1>
-        <button className="logoutBtn" onClick={handleLogout}>Logout</button>
-      </nav>
-
+        <nav className="navbar2">
+    <span className="tituloPainel">Painel Pedidos Delivery</span>
+    <div className="navRight">
+      <button className="logoutBtn2" onClick={handleLogout}>Sair</button>
+      <img src={logo} alt="Logo" className="logoPequeno" />
+    </div>
+  </nav>
+      
       <div className="container">
         <select
           className="selectFiltro"
@@ -226,29 +239,33 @@ export default function AdminPedidos() {
         </div>
 
         <div className="pedidosGrid">
-          {pedidosFiltrados.map((pedido) => (
-            <div key={pedido.id} className="pedidoCard">
-              <p><strong>{pedido.nome}</strong> - {pedido.telefone}</p>
-              <p>{pedido.rua}, Nº {pedido.numero}, {pedido.bairro}</p>
-              <p>Pagamento: {pedido.pagamento}</p>
-              <p>Info: {pedido.informacoes_adicionais || "Nenhuma"}</p>
-              <ul>
-                {pedido.itens.map((item, i) => (
-                  <li key={i}>{item.qtd}x {item.produto}</li>
-                ))}
-              </ul>
-              <p>Total: R$ {pedido.total}</p>
-              <p>{new Date(new Date(pedido.data).getTime() - 3 * 60 * 60 * 1000).toLocaleString("pt-BR")}</p>
-              <p className={`status-${pedido.status}`}>Status: {pedido.status}</p>
-              <div className="actions">
-                <button className="btn" onClick={() => imprimirPedido(pedido)}>🖨️ Imprimir</button>
-                <button className="btn" onClick={() => salvarComoTxt(pedido)}>💾 .TXT</button>
-                {pedido.status === "pendente" && (
-                  <button className="btnEntregue" onClick={() => marcarComoEntregue(pedido.id)}>✅ Entregue</button>
-                )}
+          {pedidosFiltrados.map((pedido) => {
+            const dataPedido = new Date(pedido.data);
+            const antigo = Date.now() - dataPedido.getTime() > AVISO_ANTIGO_MS;
+            return (
+              <div key={pedido.id} className="pedidoCard">
+                <p><strong>{pedido.nome}</strong> - {pedido.telefone}</p>
+                <p>{pedido.rua}, Nº {pedido.numero}, {pedido.bairro}</p>
+                <p>Pagamento: {pedido.pagamento}</p>
+                <p>Info: {pedido.informacoes_adicionais || "Nenhuma"}</p>
+                <ul>
+                  {pedido.itens.map((item, i) => (
+                    <li key={i}>{item.qtd}x {item.produto}</li>
+                  ))}
+                </ul>
+                <p>Total: R$ {pedido.total}</p>
+                <p>{formatarDataLocal(pedido.data)} {antigo && <span className="avisoAntigo">⚠️ Pedido antigo</span>}</p>
+                <p className={`status-${pedido.status}`}>Status: {pedido.status}</p>
+                <div className="actions">
+                  <button className="btn" onClick={() => imprimirPedido(pedido)}>🖨️ Imprimir</button>
+                  <button className="btn" onClick={() => salvarComoTxt(pedido)}>💾 .TXT</button>
+                  {pedido.status === "pendente" && (
+                    <button className="btnEntregue" onClick={() => marcarComoEntregue(pedido.id)}>✅ Entregue</button>
+                  )}
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <div ref={printAreaRef} id="print-area" className="printArea" />
