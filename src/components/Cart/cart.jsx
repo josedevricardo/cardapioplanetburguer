@@ -53,66 +53,94 @@ function Cart() {
     }
   }
 
-  function enviarPedido() {
+  async function enviarPedido() {
     setIsSending(true);
     setShowModal(false);
     setErrorMessage("");
     setSuccessMessage("");
 
     const numeroPedido = `#${Math.floor(10000 + Math.random() * 90000)}`;
-    const numeroWhatsApp = "5531984676843";
     const pagamento = pagamentoRef.current.value || "Não informado";
     const informacoesAdicionais = informacoesAdicionaisRef.current.value || "Nenhuma";
 
-    const listaProdutos = cartItems.map(item =>
-      `- ${item.qtd}x ${item.nome} ${item.descricao ? `(Obs: ${item.descricao})` : ''} — R$ ${item.preco}`
-    ).join("\n");
-
     const totalComFrete = (parseFloat(totalCart) + frete).toFixed(2);
 
-    const mensagem = `Olá, gostaria de finalizar meu pedido.\n\n`
-      + `📌 *Número do Pedido:* ${numeroPedido}\n`
-      + `👤 *Nome:* ${nome}\n`
-      + `📞 *Telefone:* ${telefone}\n`
-      + `📍 *Endereço:* Rua ${rua}, Nº ${numero}, Bairro ${bairro}\n`
-      + `💳 *Forma de Pagamento:* ${pagamento}\n\n`
-      + `🛒 *Meu pedido:*\n${listaProdutos}\n\n`
-      + `💰 *Total com frete:* R$ ${totalComFrete.replace(".", ",")}\n`
-      + `📝 *Informações Adicionais:* ${informacoesAdicionais}`;
+    // Monta os itens no formato esperado
+    const itensFormatados = cartItems.map(item => ({
+      produto: item.nome,
+      qtd: item.qtd,
+      descricao: item.descricao || ""
+    }));
 
-    const novoPedido = {
-      id: Date.now(),
-      numero: numeroPedido,
+    // Dados que serão enviados para a função serverless
+    const pedidoParaSalvar = {
       nome,
       telefone,
-      endereco: `Rua ${rua}, Nº ${numero}, Bairro ${bairro}`,
+      rua,
+      numero,
+      bairro,
       pagamento,
-      itens: listaProdutos,
-      total: totalComFrete.replace(".", ","),
-      status: "Pendente",
-      infoAdicionais: informacoesAdicionais,
+      informacoesAdicionais,
+      itens: itensFormatados,
+      total: totalComFrete
     };
 
-    const pedidosExistentes = JSON.parse(localStorage.getItem("pedidos")) || [];
-    pedidosExistentes.push(novoPedido);
-    localStorage.setItem("pedidos", JSON.stringify(pedidosExistentes));
+    try {
+      const resposta = await fetch("/.netlify/functions/salvarPedido", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(pedidoParaSalvar),
+      });
 
-    setSuccessMessage("Pedido enviado com sucesso! Obrigado. ❤️");
+      const dadosResposta = await resposta.json();
 
-    setNome("");
-    setTelefone("");
-    setRua("");
-    setNumero("");
-    setBairro("");
-    pagamentoRef.current.value = "";
-    informacoesAdicionaisRef.current.value = "";
-    clearCart();
+      if (resposta.ok) {
+        setSuccessMessage("✅ Pedido enviado e salvo com sucesso!");
+        console.log(dadosResposta);
 
-    const whatsappUrl = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
-    setTimeout(() => {
+        // Limpa formulário e carrinho
+        setNome("");
+        setTelefone("");
+        setRua("");
+        setNumero("");
+        setBairro("");
+        pagamentoRef.current.value = "";
+        informacoesAdicionaisRef.current.value = "";
+        clearCart();
+
+        // Abre WhatsApp com mensagem formatada
+        const listaProdutos = cartItems.map(item =>
+          `- ${item.qtd}x ${item.nome} ${item.descricao ? `(Obs: ${item.descricao})` : ''}`
+        ).join("\n");
+
+        const mensagem = `Olá, gostaria de finalizar meu pedido.\n\n` +
+          `📌 Número do Pedido: ${numeroPedido}\n` +
+          `👤 Nome: ${nome}\n` +
+          `📞 Telefone: ${telefone}\n` +
+          `📍 Endereço: Rua ${rua}, Nº ${numero}, Bairro ${bairro}\n` +
+          `💳 Forma de Pagamento: ${pagamento}\n\n` +
+          `🛒 Meu pedido:\n${listaProdutos}\n\n` +
+          `💰 Total com frete: R$ ${totalComFrete.replace(".", ",")}\n` +
+          `📝 Informações Adicionais: ${informacoesAdicionais}`;
+
+        const numeroWhatsApp = "5531984676843";
+        const whatsappUrl = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
+
+        setTimeout(() => {
+          window.open(whatsappUrl, "_blank");
+          setIsSending(false);
+        }, 1200);
+
+      } else {
+        setErrorMessage("❌ Erro ao salvar pedido!");
+        console.error(dadosResposta);
+        setIsSending(false);
+      }
+    } catch (erro) {
+      setErrorMessage("Erro na conexão com o servidor");
+      console.error("Erro:", erro);
       setIsSending(false);
-      window.open(whatsappUrl, "_blank");
-    }, 1200);
+    }
   }
 
   return (

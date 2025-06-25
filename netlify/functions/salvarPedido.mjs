@@ -15,8 +15,8 @@ export async function handler(event) {
   try {
     const dados = JSON.parse(event.body);
 
-    // Garante que a tabela existe
-    await sql(`
+    // Cria a tabela se não existir
+    await sql.query(`
       CREATE TABLE IF NOT EXISTS pedidos (
         id SERIAL PRIMARY KEY,
         nome TEXT,
@@ -25,20 +25,18 @@ export async function handler(event) {
         numero TEXT,
         bairro TEXT,
         pagamento TEXT,
-        informacoes TEXT,
+        informacoes_adicionais TEXT,
         itens JSONB,
-        total TEXT,
+        total NUMERIC(10,2),
         data TIMESTAMP DEFAULT NOW()
       )
     `);
 
-    // Salva o pedido
-    await sql(
-      `
-      INSERT INTO pedidos (
-        nome, telefone, rua, numero, bairro, pagamento, informacoes, itens, total
-      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
-      `,
+    // Insere o pedido
+    await sql.query(
+      `INSERT INTO pedidos (
+        nome, telefone, rua, numero, bairro, pagamento, informacoes_adicionais, itens, total
+      ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)`,
       [
         dados.nome || "",
         dados.telefone || "",
@@ -48,7 +46,7 @@ export async function handler(event) {
         dados.pagamento || "",
         dados.informacoesAdicionais || "",
         JSON.stringify(dados.itens || []),
-        dados.total || "0.00"
+        parseFloat(dados.total) || 0.0,
       ]
     );
 

@@ -10,6 +10,10 @@ import Bebidas from './pages/bebidas/Bebidas.jsx';
 import Sucos from './pages/sucos/Sucos.jsx';
 import Acrescimo from './pages/acrescimo/Acrescimo.jsx';
 import Acai from './pages/acai/Acai.jsx';
+import AdminPedidos from "./pages/AdminPedidos.jsx";
+import LoginAdmin from "./pages/LoginAdmin.jsx";
+import TesteQzTray from "./pages/TesteQzTray.jsx"; // ✅ Corrigido aqui
+import { Protegido } from "./components/Protegido.jsx";
 
 function Rotas() {
   return (
@@ -24,8 +28,20 @@ function Rotas() {
       <Route path="/Sucos" element={<Sucos />} />
       <Route path="/Acrescimo" element={<Acrescimo />} />
       <Route path="/Acai" element={<Acai />} />
+      <Route path="/login-admin" element={<LoginAdmin />} />
+      <Route path="/teste-qz" element={<TesteQzTray />} /> {/* ✅ Corrigido aqui */}
 
-      {/* Página não encontrada */}
+      {/* Rota protegida */}
+      <Route
+        path="/admin"
+        element={
+          <Protegido>
+            <AdminPedidos />
+          </Protegido>
+        }
+      />
+
+      {/* Página 404 */}
       <Route
         path="*"
         element={

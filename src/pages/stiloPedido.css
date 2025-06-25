@@ -1,0 +1,190 @@
+ .container {
+  max-width: 1200px;
+  margin: 20px auto;
+  margin-top: 12rem;
+  padding: 20px;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  background: #fff;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  
+}
+
+.navbar2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 999; /* garante que fique sobre outros elementos */
+  background: #1e1e2f;
+  color: white;
+  padding: 16px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+ .logoutBtn {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #4caf50;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+
+}
+
+ .main {
+  padding: 20px;
+}
+
+.selectFiltro {
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  border: 1px solid #ccc;
+  background-color: #f7f7f9;
+  color: #333;
+  font-size: 16px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+}
+
+/* Efeito ao focar (quando clica no select) */
+.selectFiltro:focus {
+  border-color: #7b4eff;
+  box-shadow: 0 0 0 3px rgba(123, 78, 255, 0.2);
+  background-color: #fff;
+}
+
+
+.notification-btn {
+  position: relative;
+  background-color: #ff4b4b;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.notification-btn:hover {
+  background-color: #e0e0ff;
+  transform: scale(1.05);
+}
+
+
+.notification-btn i {
+  font-size: 20px;
+  color: #4a4a4a;
+}
+
+
+
+ .estatisticas {
+  margin-bottom: 20px;
+  font-size: 16px;
+}
+
+.botoesExportar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.btn {
+  background: #1976d2;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+ .btn:hover {
+  background: #115293;
+}
+
+ .btnEntregue {
+  background: #4caf50;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+ .pedidosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 20px;
+}
+
+.pedidoCard {
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Efeito ao passar o mouse */
+.pedidoCard:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
+}
+
+
+.pedidoInfo {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.status-pendente {
+  color: #ff9800;
+  font-weight: bold;
+}
+.stilo .status-entregue {
+  color: #4caf50;
+  font-weight: bold;
+}
+
+ .printArea {
+  display: none;
+  white-space: pre-wrap;
+  font-family: monospace;
+  font-size: 14px;
+}
+
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  #print-area {
+    display: block !important;
+    visibility: visible !important;
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    padding: 20px;
+  }
+}
