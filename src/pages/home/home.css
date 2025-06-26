@@ -66,7 +66,7 @@ h1 {
   text-align: center;
 }
 
-/* Corrige seletor inválido: removido "dark:text-zinc-100" que não pertence ao CSS padrão */
+
 .direitos {
   display: flex;
   flex-direction: column;

@@ -37,11 +37,11 @@ function Home() {
 
       <main
         className="min-h-screen px-4 md:px-10 pb-20 bg-white dark:bg-zinc-900"
-        style={{ paddingTop: "80px" }}
+        style={{ paddingTop: "60px" }}
       >
         <div
           className="w-full flex flex-col items-center justify-center px-4"
-          style={{ paddingTop: "30px" }}
+          style={{ paddingTop: "8px" }}
         >
           <motion.h1
             initial={{ opacity: 0, y: -20 }}
@@ -59,6 +59,7 @@ function Home() {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="text-center text-zinc-600 dark:text-zinc-300 text-sm md:text-lg mt-2"
             style={{ display: "block" }}
+            
           >
             O sabor de outro planeta te espera!
           </motion.p>
