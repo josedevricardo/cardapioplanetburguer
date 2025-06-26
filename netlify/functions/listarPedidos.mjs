@@ -6,13 +6,25 @@ const sql = neon(process.env.DATABASE_URL);
 
 export async function handler() {
   try {
-    // Executa query e obtém resultado
-    const pedidos = await sql`SELECT * FROM pedidos ORDER BY data DESC`;
+    const pedidos = await sql`
+      SELECT *,
+        to_char(
+          (data AT TIME ZONE 'UTC' AT TIME ZONE 'America/Sao_Paulo'),
+          'YYYY-MM-DD"T"HH24:MI:SS'
+        ) || '-03:00' AS data_brasil
+      FROM pedidos
+      ORDER BY data DESC
+    `;
 
-    // Retorna diretamente o resultado (array)
+    const pedidosCorrigidos = pedidos.map(p => ({
+      ...p,
+      data: p.data_brasil, // substitui o campo data pelo formato ISO com offset
+      data_brasil: undefined,
+    }));
+
     return {
       statusCode: 200,
-      body: JSON.stringify(pedidos), 
+      body: JSON.stringify(pedidosCorrigidos),
     };
   } catch (err) {
     console.error("Erro ao buscar pedidos:", err);

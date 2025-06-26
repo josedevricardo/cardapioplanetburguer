@@ -11,18 +11,14 @@ import autoTable from "jspdf-autotable";
 import "./stiloPedido.css";
 import logo from "../assets/mascote.png";
 
-
-function formatarDataLocal(dataString) {
-  const dataOriginal = new Date(dataString);
-  const dataBrasil = new Date(dataOriginal.getTime() - 3 * 60 * 60 * 1000);
-  return dataBrasil.toLocaleString("pt-BR");
+function formatarDataLocal(data) {
+  const dataObj = new Date(data); // data já vem no formato ISO com offset, evita Invalid Date
+  return dataObj.toLocaleString("pt-BR", { timeZone: "America/Sao_Paulo" });
 }
 
-
+// tem de duração de pedidos no servidor antes de expirar tera uma messaggem avisando
 const TEMPO_EXPIRACAO_MS = 22 * 60 * 60 * 1000;
 const AVISO_ANTIGO_MS = 20 * 60 * 60 * 1000;
-
-
 
 export default function AdminPedidos() {
   const navigate = useNavigate();
@@ -127,15 +123,29 @@ export default function AdminPedidos() {
     return () => clearInterval(intervalo);
   }, [carregando, imprimirPedido, pedidosEntregues]);
 
-  const marcarComoEntregue = (id) => {
+  const marcarComoEntregue = async (id) => {
+  try {
+    const res = await fetch('/.netlify/functions/atualizarStatusPedido', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id, status: 'entregue' }),
+    });
+
+    if (!res.ok) throw new Error('Falha ao atualizar status');
+
     const atualizados = new Set(pedidosEntregues);
     atualizados.add(id);
     setPedidosEntregues(atualizados);
-    localStorage.setItem("pedidosEntregues", JSON.stringify([...atualizados]));
+    localStorage.setItem('pedidosEntregues', JSON.stringify([...atualizados]));
+
     setPedidos((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, status: "entregue" } : p))
+      prev.map((p) => (p.id === id ? { ...p, status: 'entregue' } : p))
     );
-  };
+  } catch (error) {
+    alert('Erro ao atualizar status: ' + error.message);
+  }
+};
+
 
   const salvarComoTxt = (pedido) => {
     const texto = formatarTextoPedido(pedido);
