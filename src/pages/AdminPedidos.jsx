@@ -131,8 +131,10 @@ export default function AdminPedidos() {
       body: JSON.stringify({ id, status: 'entregue' }),
     });
 
-    if (!res.ok) throw new Error('Falha ao atualizar status');
+    const resultado = await res.json();
+    if (!res.ok) throw new Error(resultado.error || resultado.message || 'Erro desconhecido');
 
+    // Atualiza o status no frontend/localStorage
     const atualizados = new Set(pedidosEntregues);
     atualizados.add(id);
     setPedidosEntregues(atualizados);

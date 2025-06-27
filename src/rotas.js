@@ -29,7 +29,7 @@ function Rotas() {
       <Route path="/Acrescimo" element={<Acrescimo />} />
       <Route path="/Acai" element={<Acai />} />
       <Route path="/login-admin" element={<LoginAdmin />} />
-      <Route path="/teste-qz" element={<TesteQzTray />} /> {/* ✅ Corrigido aqui */}
+      <Route path="/teste-qz" element={<TesteQzTray />} /> {/* Corrigido aqui */}
 
       {/* Rota protegida */}
       <Route
