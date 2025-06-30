@@ -27,3 +27,5 @@ yarn-error.log*
 
 # não subir 
 .env.production
+
+.env
