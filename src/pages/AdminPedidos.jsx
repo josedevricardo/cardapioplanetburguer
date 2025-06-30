@@ -8,6 +8,9 @@ import { saveAs } from "file-saver";
 import { AnimatePresence, motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import "./stiloPedido.css";
+import { signOut } from "firebase/auth";
+import { auth } from "../firebaseConfig";
+import "./AdminPedidosFooter.css";
 
 const AVISO_ANTIGO_MS = 1000 * 60 * 60 * 10; // 10 horas
 
@@ -115,7 +118,7 @@ export default function AdminPedidos() {
     janela.document.close();
     janela.focus();
     janela.print();
-    //janela.close(); // Se quiser fechar a janela após impressão, descomente
+    //janela.close();
   }
 
   const marcarComoEntregue = async (id) => {
@@ -280,8 +283,15 @@ export default function AdminPedidos() {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("adminLogado");
-    navigate("/login-admin");
+    signOut(auth)
+      .then(() => {
+        localStorage.removeItem("adminLogado");
+        navigate("/login-admin", { replace: true });
+      })
+      .catch((error) => {
+        console.error("Erro ao fazer logout:", error);
+        alert("Erro ao sair: " + error.message);
+      });
   };
 
   if (carregando) return <p>Carregando...</p>;
@@ -290,7 +300,10 @@ export default function AdminPedidos() {
   return (
     <div className="stiloPedido">
       <nav className="navbar2">
-        <span className="tituloPainel">Painel Pedidos Delivery</span>
+        <div className="logoTitulo">
+          <div className="logo-pequeno" />
+          <span className="tituloPainel">Painel Pedidos Delivery</span>
+        </div>
         <div className="navRight">
           <button className="logoutBtn2" onClick={handleLogout}>
             Sair
@@ -518,6 +531,21 @@ export default function AdminPedidos() {
           )}
         </AnimatePresence>
       </div>
+
+      {/* Rodapé */}
+      <footer className="footer text-center">
+        <p>
+          <a
+            className="direitos"
+            href="https://portfoliojosericardo.netlify.app/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            @Desenvolvidor Ricardo
+          </a>{" "}
+          <strong>Planet´s Burguer</strong> R. das Bromélias, 280 Residencial Vitória
+        </p>
+      </footer>
     </div>
   );
 }

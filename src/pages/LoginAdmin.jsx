@@ -1,8 +1,10 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../firebaseConfig";
+import "./LoginAdmin.css"
 
-const usuarioCorreto = "admin";
-const senhaCorreta = "1234";
+
 
 export default function LoginAdmin() {
   const [usuario, setUsuario] = useState("");
@@ -11,89 +13,45 @@ export default function LoginAdmin() {
   const [sucesso, setSucesso] = useState(false);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    if (erro) {
-      const timer = setTimeout(() => setErro(""), 3000);
-      return () => clearTimeout(timer);
-    }
-  }, [erro]);
-
-  function handleSubmit(e) {
+  async function handleSubmit(e) {
     e.preventDefault();
-
-    // Sanitização básica
-    const user = usuario.trim();
-    const pass = senha.trim();
-
-    if (user === usuarioCorreto && pass === senhaCorreta) {
-  localStorage.setItem("adminLogado", "true");
-  // NOVO: salva o mesmo token que o backend espera
-  localStorage.setItem("token", "DATABASE_URL='postgresql://neondb_owner:npg_Tbtrzg97okps@ep-odd-scene-a8k1gwn8-pooler.eastus2.azure.neon.tech/neondb?sslmode=require&channel_binding=require'");
-
-  setSucesso(true);
-  setTimeout(() => navigate("/admin"), 1000);
-}
-
+    try {
+      await signInWithEmailAndPassword(auth, usuario.trim(), senha.trim());
+      localStorage.setItem("adminLogado", "true");
+      setSucesso(true);
+      setErro("");
+      setTimeout(() => navigate("/admin"), 1000);
+    } catch (error) {
+      setErro("Usuário ou senha incorretos.");
+      setSucesso(false);
+    }
   }
 
   return (
-    <div
-      style2={{
-        padding: "2rem",
-        maxWidth: 360,
-        margin: "auto",
-        fontFamily: "Arial",
-        textAlign: "center",
-        border: "1px solid #ddd",
-        marginTop: "10vh",
-        borderRadius: 10,
-        boxShadow: "0 0 10px rgba(0,0,0,0.1)"
-      }}
-    >
-      <h2>Login Administrador</h2>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Usuário"
-          value={usuario}
-          onChange={(e) => setUsuario(e.target.value)}
-          style={{
-            width: "100%",
-            marginBottom: 10,
-            padding: 10,
-            fontSize: 16
-          }}
-          autoFocus
-        />
-        <input
-          type="password"
-          placeholder="Senha"
-          value={senha}
-          onChange={(e) => setSenha(e.target.value)}
-          style={{
-            width: "100%",
-            marginBottom: 10,
-            padding: 10,
-            fontSize: 16
-          }}
-        />
-        {erro && <p style={{ color: "red", marginBottom: 10 }}>{erro}</p>}
-        {sucesso && <p style={{ color: "green", marginBottom: 10 }}>✅ Logado!</p>}
-        <button
-          type="submit"
-          style={{
-            padding: "10px 16px",
-            backgroundColor: "#333",
-            color: "#fff",
-            fontSize: 16,
-            border: "none",
-            borderRadius: 5,
-            cursor: "pointer"
-          }}
-        >
-          Entrar
-        </button>
-      </form>
+    <div className="login-container">
+      <div className="login-card">
+        <h2>Login Administrador</h2>
+        <form onSubmit={handleSubmit}>
+          <input
+            type="email"
+            placeholder="Email"
+            value={usuario}
+            onChange={(e) => setUsuario(e.target.value)}
+            autoFocus
+            required
+          />
+          <input
+            type="password"
+            placeholder="Senha"
+            value={senha}
+            onChange={(e) => setSenha(e.target.value)}
+            required
+          />
+          {erro && <p className="error-message">{erro}</p>}
+          {sucesso && <p className="success-message">✅ Logado com sucesso!</p>}
+          <button type="submit">Entrar</button>
+        </form>
+      </div>
     </div>
   );
 }

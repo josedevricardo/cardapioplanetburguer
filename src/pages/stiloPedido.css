@@ -4,7 +4,7 @@
 .container {
   max-width: 1200px;
   margin: 20px auto;
-  margin-top: 7rem;
+  margin-top: 9rem;
   padding: 20px;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   background: #fff;
@@ -28,11 +28,6 @@
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.logoPequeno {
-  width: 36px;
-  height: auto;
 }
 
 
@@ -60,6 +55,24 @@
 .logoutBtn2:hover {
   background-color: #e60000;
 }
+
+.logoTitulo {
+  display: flex;
+  flex-direction: column; /* Coluna: um abaixo do outro */
+  align-items: flex-start; /* Alinhar à esquerda (ou center, se preferir) */
+  gap: 4px;
+}
+
+.logo-pequeno {
+ height: 30px;
+  width: 30px;
+  object-fit: contain;
+  background-image: url("../assets/mascote.png");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
 
 .tituloPainel {
   font-size: 1rem;

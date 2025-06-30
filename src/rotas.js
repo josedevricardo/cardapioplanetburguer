@@ -11,12 +11,10 @@ import Sucos from "./pages/sucos/Sucos.jsx";
 import Acrescimo from "./pages/acrescimo/Acrescimo.jsx";
 import Acai from "./pages/acai/Acai.jsx";
 
-
-import AdminPedidos from "./pages/AdminPedidos";
-
-import LoginAdmin from "./pages/LoginAdmin";
-import { Protegido } from "./components/Protegido";
-
+// Import das páginas admin
+import AdminPedidos from "./pages/AdminPedidos.jsx";
+import LoginAdmin from "./pages/LoginAdmin.jsx";
+import PrivateRoute from "./PrivateRoute.jsx"; // ajuste o caminho aqui para o correto
 
 function Rotas() {
   return (
@@ -32,18 +30,16 @@ function Rotas() {
       <Route path="/acrescimo" element={<Acrescimo />} />
       <Route path="/acai" element={<Acai />} />
       <Route path="/login-admin" element={<LoginAdmin />} />
-     
 
       {/* Rotas protegidas admin */}
       <Route
         path="/admin"
         element={
-          <Protegido>
+          <PrivateRoute>
             <AdminPedidos />
-          </Protegido>
+          </PrivateRoute>
         }
       />
-   
 
       {/* Página 404 */}
       <Route

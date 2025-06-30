@@ -1,37 +1,44 @@
-.sidebar {
-  width: 200px;
-  background-color: #ffffff;
-  border-right: 1px solid #e2e2e2;
+/* Barra superior do menu admin */
+.menu-admin-bar {
+  background-color: #1f2937; /* bg-gray-800 */
+  color: #fff;
   padding: 1rem;
-  height: 100vh;
-  position: fixed;
-  top: 0;
-  left: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
-.sidebar-title {
-  font-size: 1.25rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
-  text-align: center;
-}
-
-.sidebar-menu {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.sidebar-link {
+/* Logo e título */
+.menu-admin-logo {
   display: flex;
   align-items: center;
-  padding: 10px;
-  color: #333;
-  text-decoration: none;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.logo-pequeno {
+  height: 20px;
+  width: 20px;
+  object-fit: contain;
+}
+
+/* Título ao lado do logo */
+.menu-admin-title {
+  font-size: 1.125rem; /* text-lg */
+  font-weight: 600;
+}
+
+/* Botão Sair */
+.menu-admin-sair {
+  background-color: #dc2626; /* bg-red-600 */
+  padding: 6px 12px;
+  border-radius: 6px;
+  color: white;
+  border: none;
+  cursor: pointer;
   transition: background 0.2s;
 }
 
-.sidebar-link:hover {
-  background-color: #f3f3f3;
-  border-radius: 6px;
+.menu-admin-sair:hover {
+  background-color: #b91c1c; /* hover:bg-red-700 */
 }

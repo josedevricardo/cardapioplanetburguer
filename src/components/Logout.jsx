@@ -1,14 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { signOut } from "firebase/auth";
+import { auth } from "./firebaseConfig";
 import { useNavigate } from "react-router-dom";
 
-export function Logout() {
+export default function LogoutAdmin() {
   const navigate = useNavigate();
 
-  React.useEffect(() => {
-    localStorage.removeItem("adminLogado");
-    localStorage.removeItem("token");
-    navigate("/login-admin");
+  useEffect(() => {
+    signOut(auth).then(() => {
+      localStorage.removeItem("adminLogado");
+      navigate("/login-admin");
+    });
   }, [navigate]);
 
-  return null;
+  return <p>Saindo...</p>;
 }

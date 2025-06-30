@@ -1,0 +1,83 @@
+/* Container centralizado com fundo suave */
+.login-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  padding: 1rem;
+}
+
+/* Card branco com sombra e cantos arredondados */
+.login-card {
+  background: #fff;
+  padding: 2.5rem 3rem;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+}
+
+/* Título */
+.login-card h2 {
+  margin-bottom: 1.8rem;
+  color: #333;
+  font-weight: 700;
+  font-size: 1.8rem;
+}
+
+/* Inputs estilos */
+.login-card input[type="email"],
+.login-card input[type="password"] {
+  width: 100%;
+  padding: 12px 15px;
+  margin-bottom: 1.2rem;
+  border: 1.8px solid #ddd;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: border-color 0.3s ease;
+}
+
+/* Foco nos inputs */
+.login-card input[type="email"]:focus,
+.login-card input[type="password"]:focus {
+  border-color: #667eea;
+  outline: none;
+  box-shadow: 0 0 8px rgba(102, 126, 234, 0.5);
+}
+
+/* Botão */
+.login-card button {
+  width: 100%;
+  padding: 12px 0;
+  background-color: #667eea;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Hover no botão */
+.login-card button:hover {
+  background-color: #5a67d8;
+}
+
+/* Mensagens de erro e sucesso */
+.error-message {
+  color: #e53e3e;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.success-message {
+  color: #38a169;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+}
