@@ -80,9 +80,10 @@ function Cart() {
       numero,
       bairro,
       pagamento,
-      informacoesAdicionais,
+      informacoes_adicionais: informacoesAdicionais, // nome correto
       itens: itensFormatados,
-      total: totalComFrete
+      total: totalComFrete,
+      numeroPedido, // garante consistência do número do pedido
     };
 
     try {
@@ -108,7 +109,7 @@ function Cart() {
         informacoesAdicionaisRef.current.value = "";
         clearCart();
 
-        // Abre WhatsApp com mensagem formatada
+        // Abre WhatsApp com mensagem formatada, usando o valor correto
         const listaProdutos = cartItems.map(item =>
           `- ${item.qtd}x ${item.nome} ${item.descricao ? `(Obs: ${item.descricao})` : ''}`
         ).join("\n");
@@ -121,7 +122,7 @@ function Cart() {
           `💳 Forma de Pagamento: ${pagamento}\n\n` +
           `🛒 Meu pedido:\n${listaProdutos}\n\n` +
           `💰 Total com frete: R$ ${totalComFrete.replace(".", ",")}\n` +
-          `📝 Informações Adicionais: ${informacoesAdicionais}`;
+          `📝 Informações adicionais: ${informacoesAdicionais}`;
 
         const numeroWhatsApp = "5531984676843";
         const whatsappUrl = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
@@ -197,7 +198,9 @@ function Cart() {
           {errorMessage && <div className="error-message">❌ {errorMessage}</div>}
           {successMessage && <div className="success-message">✅ {successMessage}</div>}
 
-          <button onClick={abrirModal} className="btn-checkout">Finalizar Pedido</button>
+          <button onClick={abrirModal} className="btn-checkout" disabled={isSending}>
+            {isSending ? "Enviando..." : "Finalizar Pedido"}
+          </button>
         </motion.div>
       </Dock>
 

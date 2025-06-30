@@ -14,14 +14,20 @@
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.6.7",
+    "cor": "^0.0.0",
+    "cors": "^2.8.5",
     "decimal.js": "^10.4.3",
-    "dotenv": "^16.5.0",
+    "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "file-saver": "^2.0.5",
-    "framer-motion": "^12.18.1",
+    "firebase": "^11.9.1",
+    "firebase-admin": "^13.4.0",
+    "framer-motion": "^12.19.2",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
     "lucide-react": "^0.514.0",
+    "pg": "^8.16.3",
+    "qrcode": "^1.5.4",
     "qz-tray": "^2.2.5",
     "react": "^18.3.1",
     "react-dock": "^0.6.0",
@@ -64,6 +70,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "netlify-cli": "^22.2.1",
     "tailwindcss": "^4.1.10"
   }
 }

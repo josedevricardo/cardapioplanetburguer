@@ -26,17 +26,19 @@ export default function LoginAdmin() {
     const pass = senha.trim();
 
     if (user === usuarioCorreto && pass === senhaCorreta) {
-      localStorage.setItem("adminLogado", "true");
-      setSucesso(true);
-      setTimeout(() => navigate("/admin"), 1000);
-    } else {
-      setErro("Usuário ou senha incorretos");
-    }
+  localStorage.setItem("adminLogado", "true");
+  // NOVO: salva o mesmo token que o backend espera
+  localStorage.setItem("token", "DATABASE_URL='postgresql://neondb_owner:npg_Tbtrzg97okps@ep-odd-scene-a8k1gwn8-pooler.eastus2.azure.neon.tech/neondb?sslmode=require&channel_binding=require'");
+
+  setSucesso(true);
+  setTimeout(() => navigate("/admin"), 1000);
+}
+
   }
 
   return (
     <div
-      style={{
+      style2={{
         padding: "2rem",
         maxWidth: 360,
         margin: "auto",

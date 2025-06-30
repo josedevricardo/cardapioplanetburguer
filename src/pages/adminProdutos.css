@@ -1,0 +1,275 @@
+.painel-produtos {
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.logout-btn {
+  background-color: crimson;
+  color: white;
+  padding: 8px 16px;
+  float: right;
+  margin-top: -50px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.form-adicionar {
+  margin-bottom: 2rem;
+  display: grid;
+  gap: 0.5rem;
+  max-width: 400px;
+}
+
+.form-adicionar input {
+  padding: 0.5rem;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+
+.lista-produtos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.card-produto {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 1rem;
+  background: white;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.card-produto img {
+  width: 100%;
+  max-height: 200px;
+  object-fit: contain;
+  border-radius: 8px;
+}
+
+.card-produto input, .card-produto textarea {
+  width: 100%;
+  margin-top: 0.5rem;
+  padding: 0.4rem;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.card-produto button {
+  margin-top: 0.5rem;
+  margin-right: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #4caf50;
+  color: white;
+  cursor: pointer;
+}
+
+.modalBackground {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modalContainer {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+}
+
+
+/* Arquivo admin.css */
+
+.stiloPedido {
+  padding: 2rem;
+  font-family: Arial, sans-serif;
+}
+
+.navbar2 {
+  background-color: #222;
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tituloPainel {
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.logoutBtn2 {
+  background-color: crimson;
+  color: white;
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.container {
+  margin-top: 2rem;
+}
+
+.selectFiltro {
+  padding: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.notification-btn {
+  background-color: #4caf50;
+  color: white;
+  padding: 10px;
+  margin-bottom: 1rem;
+  border-radius: 6px;
+  font-weight: bold;
+}
+
+.estatisticas {
+  margin-bottom: 1rem;
+  font-size: 1.1rem;
+}
+
+.botoesExportar .btn {
+  padding: 8px 12px;
+  margin-bottom: 1rem;
+  background-color: #2196f3;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.pedidosGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 1.5rem;
+}
+
+.pedidoCard {
+  border: 1px solid #ccc;
+  border-radius: 12px;
+  padding: 1rem;
+  background: white;
+  box-shadow: 0 0 8px rgba(0,0,0,0.1);
+}
+
+.avisoAntigo {
+  color: #d32f2f;
+  font-weight: bold;
+}
+
+.status-pendente {
+  color: #f57c00;
+  font-weight: bold;
+}
+
+.status-entregue {
+  color: #388e3c;
+  font-weight: bold;
+}
+
+.actions button {
+  margin-right: 0.5rem;
+  padding: 6px 10px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.actions .btnEditar {
+  background-color: #ffb300;
+  color: white;
+}
+
+.actions .btnEntregue {
+  background-color: #4caf50;
+  color: white;
+}
+
+.actions .btn {
+  background-color: #2196f3;
+  color: white;
+}
+
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.modalEditar {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  width: 90%;
+  max-width: 600px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-content label {
+  display: block;
+  margin-top: 1rem;
+  font-weight: bold;
+}
+
+.modal-content input,
+.modal-content textarea {
+  width: 100%;
+  padding: 0.5rem;
+  margin-top: 0.3rem;
+  border-radius: 6px;
+  border: 1px solid #ddd;
+}
+
+.item-edicao {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  align-items: center;
+}
+
+.modal-actions {
+  margin-top: 1.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.btnSalvar {
+  background-color: #4caf50;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.btnCancelar {
+  background-color: #d32f2f;
+  color: white;
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
