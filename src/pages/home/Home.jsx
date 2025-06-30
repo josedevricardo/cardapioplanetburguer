@@ -21,7 +21,7 @@ function Home() {
   const hora = horaAtual.getHours();
   const minuto = horaAtual.getMinutes();
 
-  const inicioFuncionamento = hora > 0 || (hora === 0 && minuto >= 31);
+  const inicioFuncionamento = hora > 18 || (hora === 0 && minuto >= 59);
   const fimFuncionamento = hora < 23 || (hora === 23 && minuto <= 59);
   const pedidosDisponiveis = inicioFuncionamento && fimFuncionamento;
 
@@ -87,7 +87,7 @@ function Home() {
             animate={{ opacity: 1 }}
           >
             <h2 className="footer text-center">
-              Pedidos disponíveis das 00:31 às 23:59.
+              Pedidos disponíveis das 18:00 às 23:59.
             </h2>
             <p className="text-sm mt-2">
               Voltamos em breve! Agora são {formatarHora(horaAtual)}.

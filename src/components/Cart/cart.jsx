@@ -7,6 +7,8 @@ import { CartContext } from "../../contexts/cart-context.jsx";
 import InputMask from "react-input-mask";
 import back from "../../assets/back.png";
 
+// ...importações iguais...
+
 function Cart() {
   const [show, setShow] = useState(false);
   const [bairro, setBairro] = useState("");
@@ -32,7 +34,20 @@ function Cart() {
 
   const bairrosSemFrete = ["vitoria", "vitoria 1", "vitoria 2"];
   const bairroFormatado = bairro.trim().toLowerCase();
-  const frete = bairrosSemFrete.includes(bairroFormatado) ? 0 : 3;
+
+  let frete = 0;
+  if (bairrosSemFrete.includes(bairroFormatado)) {
+    frete = 0;
+  } else if (bairroFormatado === "industrial") {
+    frete = 2;
+  } else if (
+    bairroFormatado.includes("industrial") ||
+    bairroFormatado.includes("cidade industrial")
+  ) {
+    frete = 3;
+  } else {
+    frete = 4;
+  }
 
   function validarCampos() {
     if (!nome || !telefone || !rua || !numero || !bairro) {
@@ -48,8 +63,8 @@ function Cart() {
 
   function abrirModal() {
     if (validarCampos()) {
-      setShow(false); // Fecha carrinho
-      setShowModal(true); // Abre modal
+      setShow(false);
+      setShowModal(true);
     }
   }
 
@@ -62,17 +77,14 @@ function Cart() {
     const numeroPedido = `#${Math.floor(10000 + Math.random() * 90000)}`;
     const pagamento = pagamentoRef.current.value || "Não informado";
     const informacoesAdicionais = informacoesAdicionaisRef.current.value || "Nenhuma";
-
     const totalComFrete = (parseFloat(totalCart) + frete).toFixed(2);
 
-    // Monta os itens no formato esperado
     const itensFormatados = cartItems.map(item => ({
       produto: item.nome,
       qtd: item.qtd,
       descricao: item.descricao || ""
     }));
 
-    // Dados que serão enviados para a função serverless
     const pedidoParaSalvar = {
       nome,
       telefone,
@@ -80,10 +92,10 @@ function Cart() {
       numero,
       bairro,
       pagamento,
-      informacoes_adicionais: informacoesAdicionais, // nome correto
+      informacoes_adicionais: informacoesAdicionais,
       itens: itensFormatados,
       total: totalComFrete,
-      numeroPedido, // garante consistência do número do pedido
+      numeroPedido,
     };
 
     try {
@@ -99,7 +111,6 @@ function Cart() {
         setSuccessMessage("✅ Pedido enviado e salvo com sucesso!");
         console.log(dadosResposta);
 
-        // Limpa formulário e carrinho
         setNome("");
         setTelefone("");
         setRua("");
@@ -109,7 +120,6 @@ function Cart() {
         informacoesAdicionaisRef.current.value = "";
         clearCart();
 
-        // Abre WhatsApp com mensagem formatada, usando o valor correto
         const listaProdutos = cartItems.map(item =>
           `- ${item.qtd}x ${item.nome} ${item.descricao ? `(Obs: ${item.descricao})` : ''}`
         ).join("\n");
@@ -147,12 +157,7 @@ function Cart() {
   return (
     <>
       <Dock position="right" isVisible={show} fluid={false} size={340} onVisibleChange={(v) => setShow(v)}>
-        <motion.div
-          className="cart-motion-wrapper"
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
-          transition={{ type: "spring", stiffness: 300, damping: 20 }}
-        >
+        <motion.div className="cart-motion-wrapper" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
           <div className="text-center">
             <img onClick={() => setShow(false)} src={back} className="cart-btn-close" alt="Fechar" />
             <h1>Meu Pedido</h1>
@@ -172,7 +177,7 @@ function Cart() {
             <label>Forma de Pagamento:</label>
             <input ref={pagamentoRef} placeholder="Pix, Cartão ou Dinheiro" />
             <label>Informações Adicionais:</label>
-            <input ref={informacoesAdicionaisRef} placeholder="Ex. sem cebola..." />
+            <input ref={informacoesAdicionaisRef} placeholder="Ex. sem cebola - Troco pra 100" />
           </div>
 
           <div className="lista-produtos">
@@ -182,7 +187,7 @@ function Cart() {
           </div>
 
           {frete > 0 && (
-            <p className="frete-msg">🚚 Frete R$ 3,00 para bairros fora do Vitória.</p>
+            <p className="frete-msg">🚚 Frete de R$ {frete},00 aplicado para {bairro || "o bairro informado"}.</p>
           )}
 
           <div className="footer-cart-valor">
