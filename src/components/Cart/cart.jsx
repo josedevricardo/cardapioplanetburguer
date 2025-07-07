@@ -30,7 +30,9 @@ function Cart() {
     });
   }, []);
 
-  const bairrosSemFrete = ["vitoria", "vitoria 1", "vitoria 2"];
+  // Ajuste: bairros com frete grátis - "vitoria" e "vitoria 2"
+  const bairrosSemFrete = ["vitoria", "vitoria 2"];
+
   const bairroFormatado = bairro.trim().toLowerCase();
 
   let frete = 0;
@@ -58,6 +60,7 @@ function Cart() {
       setErrorMessage("Seu carrinho está vazio.");
       return false;
     }
+    setErrorMessage("");
     return true;
   }
 
@@ -134,7 +137,7 @@ function Cart() {
           `💰 Total com frete: R$ ${totalComFrete.replace(".", ",")}\n` +
           `📝 Informações adicionais: ${informacoesAdicionais}`;
 
-        const numeroWhatsApp = "5531984676843";
+        const numeroWhatsApp = "5538998017215";
         const whatsappUrl = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
 
         setTimeout(() => {
@@ -157,7 +160,12 @@ function Cart() {
   return (
     <>
       <Dock position="right" isVisible={show} fluid={false} size={340} onVisibleChange={(v) => setShow(v)}>
-        <motion.div className="cart-motion-wrapper" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }} transition={{ type: "spring", stiffness: 300, damping: 20 }}>
+        <motion.div
+          className="cart-motion-wrapper"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          transition={{ type: "spring", stiffness: 300, damping: 20 }}
+        >
           <div className="text-center">
             <img onClick={() => setShow(false)} src={back} className="cart-btn-close" alt="Fechar" />
             <h1>Meu Pedido</h1>
@@ -189,7 +197,7 @@ function Cart() {
           <p className="frete-msg">
             {frete === 0
               ? `🚚 Frete grátis para ${bairroExibicao || "BAIRRO INFORMADO"}.`
-              : `🚚 Frete aplicado para ${bairroExibicao || "BAIRRO INFORMADO"}.`}
+              : `🚚 Frete aplicado ao bairro ${bairroExibicao || "BAIRRO INFORMADO"}.`}
           </p>
 
           <div className="footer-cart-valor">
@@ -203,7 +211,7 @@ function Cart() {
           </div>
 
           {errorMessage && <div className="error-message">❌ {errorMessage}</div>}
-          {successMessage && <div className="success-message">✅ {successMessage}</div>}
+          {successMessage && <div className="success-message" style={{ fontSize: "1.2rem", fontWeight: "700", margin: "1rem 0", color: "green", textAlign: "center" }}>{successMessage}</div>}
 
           <button onClick={abrirModal} className="btn-checkout" disabled={isSending}>
             {isSending ? "Enviando..." : "Finalizar Pedido"}
