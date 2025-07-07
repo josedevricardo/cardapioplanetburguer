@@ -1,0 +1,79 @@
+/* modal.css – Estilo moderno para modal de novo produto */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Fundo escuro transparente */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Janela da modal */
+.modal-content {
+  background-color: #ffffff;
+  border-radius: 1rem;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  width: 100%;
+  max-width: 420px;
+  position: relative;
+  animation: fade-in 0.3s ease-out;
+}
+
+/* Botão de fechar */
+.modal-close {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  font-size: 1.25rem;
+  color: #6b7280;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.modal-close:hover {
+  color: #ef4444;
+}
+
+/* Título da modal */
+.modal-content h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: #111827;
+}
+
+/* Campos da modal (reutiliza .input) */
+.modal-content .input {
+  margin-bottom: 0.75rem;
+}
+
+/* Botão salvar */
+.modal-content button {
+  width: 100%;
+  background-color: #16a34a;
+  color: white;
+  padding: 0.6rem;
+  font-size: 0.9rem;
+  border-radius: 0.5rem;
+  margin-top: 1rem;
+  transition: background-color 0.2s ease;
+}
+
+.modal-content button:hover {
+  background-color: #15803d;
+}

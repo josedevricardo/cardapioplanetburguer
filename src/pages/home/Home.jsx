@@ -21,9 +21,14 @@ function Home() {
   const hora = horaAtual.getHours();
   const minuto = horaAtual.getMinutes();
 
-  const inicioFuncionamento = hora > 18 || (hora === 0 && minuto >= 59);
-  const fimFuncionamento = hora < 23 || (hora === 23 && minuto <= 59);
-  const pedidosDisponiveis = inicioFuncionamento && fimFuncionamento;
+  // ✅ Lógica corrigida: pedidos apenas entre 18:00 e 23:59
+  const horarioAtualEmMinutos = hora * 60 + minuto;
+  const inicioEmMinutos = 18 * 60;       // 1080 (18:00)
+  const fimEmMinutos = 23 * 60 + 59;     // 1439 (23:59)
+
+  const pedidosDisponiveis =
+    horarioAtualEmMinutos >= inicioEmMinutos &&
+    horarioAtualEmMinutos <= fimEmMinutos;
 
   const formatarHora = (date) => {
     const h = date.getHours().toString().padStart(2, "0");
@@ -59,7 +64,6 @@ function Home() {
             transition={{ delay: 0.4, duration: 0.6 }}
             className="text-center text-zinc-600 dark:text-zinc-300 text-sm md:text-lg mt-2"
             style={{ display: "block" }}
-            
           >
             O sabor de outro planeta te espera!
           </motion.p>

@@ -2,10 +2,8 @@ import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "./produto-vitrine2.css";
 
-import {
-  lanches,
-} from "../../dados";
 import { CartContext } from "../../contexts/cart-context";
+import { ProdutoContext } from "../../contexts/categoria-context"; 
 
 const ProdutoSlider = ({ busca }) => {
   const [showMessage, setShowMessage] = useState(false);
@@ -15,20 +13,19 @@ const ProdutoSlider = ({ busca }) => {
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
 
   const { addToCart, cartItems } = useContext(CartContext);
+  const { categorias } = useContext(ProdutoContext); //  usa dados do Firebase via contexto
   const navigate = useNavigate();
 
-  const categorias = [
-    { nome: "Artesanal", produtos: lanches },
-  ];
-
-  // Aqui: adiciona "Início" na lista de categorias para aparecer no menu
-  const categoriasNomes = ["Início", "Todas", ...categorias.map((c) => c.nome)];
-
-  const buscaLower = (busca || "").toLowerCase();
-
   const produtosUnificados = categorias.flatMap((cat) =>
-    cat.produtos.map((p) => ({ ...p, categoria: cat.nome }))
+    Object.entries(cat.produtos || {}).map(([id, p]) => ({
+      id,
+      ...p,
+      categoria: cat.nome,
+    }))
   );
+
+  const categoriasNomes = ["Início", "Todas", ...categorias.map((c) => c.nome)];
+  const buscaLower = (busca || "").toLowerCase();
 
   const produtosFiltradosPorCategoria =
     categoriaFiltro === "Todas"
@@ -41,10 +38,7 @@ const ProdutoSlider = ({ busca }) => {
       p.descricao.toLowerCase().includes(buscaLower)
   );
 
-  const produtosExibidos = produtosFiltradosPorBusca.slice(
-    0,
-    quantidadeExibida
-  );
+  const produtosExibidos = produtosFiltradosPorBusca.slice(0, quantidadeExibida);
 
   const formatarPreco = (preco) =>
     new Intl.NumberFormat("pt-BR", {
@@ -57,7 +51,7 @@ const ProdutoSlider = ({ busca }) => {
       id: produto.id,
       nome: produto.nome,
       preco: produto.preco,
-      foto: produto.foto,
+      foto: produto.imagem || produto.foto,
       qtd: 1,
     };
     addToCart(item);
@@ -96,14 +90,13 @@ const ProdutoSlider = ({ busca }) => {
         ))}
       </div>
 
-      {/* Título da categoria */}
       <h2 className="titulo-categoria">
         {categoriaFiltro === "Todas"
           ? "Todos os Produtos"
           : `Categoria: ${categoriaFiltro}`}
       </h2>
 
-      {/* Menu flutuante (mobile) */}
+      {/* Botão flutuante mobile */}
       <div className="floating-categorias-wrapper">
         <button
           className="botao-flutuante"
@@ -150,7 +143,7 @@ const ProdutoSlider = ({ busca }) => {
             return (
               <div key={produto.id} className="produto-item">
                 <img
-                  src={produto.foto || "https://via.placeholder.com/150"}
+                  src={produto.imagem || produto.foto || "https://via.placeholder.com/150"}
                   alt={produto.nome}
                   className="produto-imagem"
                 />

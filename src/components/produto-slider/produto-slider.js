@@ -1,17 +1,12 @@
 import React, { useState, useContext, useEffect } from "react";
+import { ref, onValue } from "firebase/database";
+import { db } from "../../firebaseConfig"; 
 import "./produto-slider.css";
-import {
-  produtos,
-  lanches,
-  omeletes,
-  bebidas,
-  sucos,
-  acrescimo,
-  acai,
-} from "../../dados";
 import { CartContext } from "../../contexts/cart-context";
 
+
 const ProdutoSlider = ({ busca }) => {
+  const [categoriasFirebase, setCategoriasFirebase] = useState([]);
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
   const [categoriaFiltro, setCategoriaFiltro] = useState("Todas");
@@ -21,22 +16,37 @@ const ProdutoSlider = ({ busca }) => {
 
   const { addToCart, cartItems } = useContext(CartContext);
 
-  const categorias = [
-    { nome: "+Pedidos", produtos: produtos },
-    { nome: "Artesanal", produtos: lanches },
-    { nome: "Omeletes", produtos: omeletes },
-    { nome: "Bebidas", produtos: bebidas },
-    { nome: "Sucos", produtos: sucos },
-    { nome: "Acréscimos", produtos: acrescimo },
-    { nome: "Açaí", produtos: acai },
-  ];
+  // 🔄 BUSCA OS DADOS DO FIREBASE (ADAPTADO PARA CATEGORIAS -> PRODUTOS)
+ useEffect(() => {
+  const categoriasRef = ref(db, "categorias");
+  onValue(categoriasRef, (snapshot) => {
+    const data = snapshot.val() || {};
 
+    const categoriasFormatadas = Object.entries(data).map(([chave, categoria]) => ({
+      nome: categoria.nome || chave,
+      produtos: Object.entries(categoria.produtos || {})
+        .map(([id, p]) => ({ id, ...p }))
+        .filter((p) => p.ativo === undefined || p.ativo === true)
+    }));
+
+    // ✅ Ordem desejada das categorias na vitrine
+    const ordemManual = ["Home", "Lanches", "Bebidas", "Sucos", "Omeletes", "Acresimos", "Açai"];
+
+    const categoriasOrdenadas = ordemManual
+      .map((nome) => categoriasFormatadas.find((cat) => cat.nome === nome))
+      .filter(Boolean); // remove qualquer categoria não encontrada
+
+    setCategoriasFirebase(categoriasOrdenadas);
+  });
+}, []);
+
+
+  const categorias = categoriasFirebase;
   const produtosUnificados = categorias.flatMap((cat) =>
     cat.produtos.map((p) => ({ ...p, categoria: cat.nome }))
   );
 
   const categoriasNomes = ["Todas", ...categorias.map((c) => c.nome)];
-
   const buscaLower = (busca || "").toLowerCase();
 
   const produtosFiltradosPorCategoria =
@@ -63,7 +73,7 @@ const ProdutoSlider = ({ busca }) => {
       id: produto.id,
       nome: produto.nome,
       preco: produto.preco,
-      foto: produto.foto,
+      foto: produto.imagem,
       qtd: 1,
     };
     addToCart(item);
@@ -80,7 +90,6 @@ const ProdutoSlider = ({ busca }) => {
     return texto.replace(regex, "<mark>$1</mark>");
   };
 
-  // Mostrar mensagem "faça seu pedido" por 2s a cada 15s
   useEffect(() => {
     const interval = setInterval(() => {
       setMostrarMensagemPedido(true);
@@ -107,7 +116,6 @@ const ProdutoSlider = ({ busca }) => {
         ))}
       </div>
 
-      {/* Título da categoria */}
       <h2 className="titulo-categoria">
         {categoriaFiltro === "Todas"
           ? "Todos os Produtos"
@@ -122,7 +130,7 @@ const ProdutoSlider = ({ busca }) => {
         ☰ Categorias
       </button>
 
-      {/* Submenu colado no botão */}
+      {/* Submenu colado ao botão */}
       {showFloatingMenu && (
         <div className="floating-menu">
           {categoriasNomes.map((cat) => (
@@ -158,7 +166,7 @@ const ProdutoSlider = ({ busca }) => {
             return (
               <div key={produto.id} className="produto-item">
                 <img
-                  src={produto.foto || "https://via.placeholder.com/150"}
+                  src={produto.imagem || "https://via.placeholder.com/150"}
                   alt={produto.nome}
                   className="produto-imagem"
                 />
@@ -188,7 +196,6 @@ const ProdutoSlider = ({ busca }) => {
         )}
       </div>
 
-      {/* Mostrar mais */}
       {quantidadeExibida < produtosFiltradosPorBusca.length &&
         produtosExibidos.length > 0 && (
           <div className="mostrar-mais-container">
@@ -196,7 +203,6 @@ const ProdutoSlider = ({ busca }) => {
           </div>
         )}
 
-      {/* Mensagem "adicionado à sacola" corrigida com span */}
       {showMessage && (
         <div className="message-fixed">
           <span>{message}</span>

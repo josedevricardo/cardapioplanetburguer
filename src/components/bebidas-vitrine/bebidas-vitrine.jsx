@@ -3,9 +3,12 @@ import "./bebidas-vitrine.css";
 import bag from "../../assets/bag-black.png";
 import { CartContext } from "../../contexts/cart-context";
 import { useContext } from "react";
+import { ProdutoContext } from "../../contexts/categoria-context";
+
 
 
 function BebidasVitrine(props) {
+  const { categorias } = useContext(ProdutoContext); // usa dados do contexto atualizado via Firebase
   const { addToCart } = useContext(CartContext);
 
   const [showMessage, setShowMessage] = useState(false); // Estado para controlar a exibição da mensagem

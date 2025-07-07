@@ -27,13 +27,36 @@
 .navRight {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 85rem;
 }
 
 
 .navbar-buttons {
   display: flex;
   gap: 10px;
+}
+
+.stiloPedido,
+.menu-btn {
+  .menu-btn {
+  display: inline-block;
+  background-color: #1f29; 
+  color: #1f2937;             
+  font-weight: 600;
+  padding: 8px 16px;
+  border-radius: 8px;
+  text-decoration: none;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  margin-right: 10px;
+
+}
+
+.menu-btn:hover {
+  background-color: #fbbf24; /* Tailwind: hover:bg-yellow-500 */
+  transform: translateY(-1px);
+}
+
 }
 
 .logoutBtn,
@@ -56,10 +79,11 @@
   background-color: #e60000;
 }
 
+
 .logoTitulo {
   display: flex;
   flex-direction: column; /* Coluna: um abaixo do outro */
-  align-items: flex-start; /* Alinhar à esquerda (ou center, se preferir) */
+  align-items: flex-start; /* Alinhar à esquerda */
   gap: 4px;
 }
 

@@ -1,9 +1,10 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
 import "./navbar.css";
 import logo from "../../assets/mascote.png";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { CartContext } from "../../contexts/cart-context";
 import Cart from "../Cart/cart";
+import { categoriasFixas } from "../../rotas2"; 
 
 function Navbar() {
   const [isSticky, setSticky] = useState(false);
@@ -11,6 +12,7 @@ function Navbar() {
   const [loading, setLoading] = useState(false);
   const { totalCart } = useContext(CartContext);
   const menuRef = useRef();
+  const location = useLocation();
 
   const openSidebar = () => {
     const event = new CustomEvent("openSidebar");
@@ -23,11 +25,7 @@ function Navbar() {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (
-        isMobileMenuOpen &&
-        menuRef.current &&
-        !menuRef.current.contains(event.target)
-      ) {
+      if (isMobileMenuOpen && menuRef.current && !menuRef.current.contains(event.target)) {
         setMobileMenuOpen(false);
       }
     };
@@ -36,9 +34,7 @@ function Navbar() {
   }, [isMobileMenuOpen]);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setSticky(window.pageYOffset > 80);
-    };
+    const handleScroll = () => setSticky(window.pageYOffset > 80);
     window.addEventListener("scroll", handleScroll);
 
     setLoading(true);
@@ -65,6 +61,7 @@ function Navbar() {
       <div className="gif-background" />
 
       <nav className={isSticky ? "navbar sticky" : "navbar"}>
+        {/* Mobile esquerdo */}
         <div className="mobile-left">
           <button
             className={`hamburger ${isMobileMenuOpen ? "open" : ""}`}
@@ -83,17 +80,21 @@ function Navbar() {
           </Link>
         </div>
 
+        {/* Menu Desktop fixo */}
         <ul className="menu desktop-menu">
-          <li><Link to="/" className="menu-link">Home</Link></li>
-          <li><Link to="/produto2" className="menu-link">+Lanches</Link></li>
-          <li><Link to="/omeletes" className="menu-link">Omeletes</Link></li>
-          <li><Link to="/lanches" className="menu-link">Artesanal</Link></li>
-          <li><Link to="/bebidas" className="menu-link">Bebidas</Link></li>
-          <li><Link to="/sucos" className="menu-link">Sucos</Link></li>
-          <li><Link to="/acrescimo" className="menu-link">Acréscimos</Link></li>
-          <li><Link to="/acai" className="menu-link">Açaí</Link></li>
+          {categoriasFixas.map(({ nome, rota }) => (
+            <li key={nome}>
+              <Link
+                to={rota}
+                className={`menu-link ${location.pathname === rota ? "ativo" : ""}`}
+              >
+                {nome}
+              </Link>
+            </li>
+          ))}
         </ul>
 
+        {/* Botão Sacola */}
         <div className="right-buttons">
           <button onClick={openSidebar} className="sacola-button" aria-label="Abrir sacola">
             <div className="sacola-icon">🛍️</div>
@@ -103,20 +104,21 @@ function Navbar() {
           </button>
         </div>
 
+        {/* Menu Mobile lateral */}
         {isMobileMenuOpen && (
           <div className="mobile-sidebar" ref={menuRef}>
             <ul className="mobile-menu">
-              <li><Link to="/" onClick={toggleMobileMenu}>Home</Link></li>
-              <li><Link to="/produto2" onClick={toggleMobileMenu}>+Lanches</Link></li>
-              <li><Link to="/omeletes" onClick={toggleMobileMenu}>Omeletes</Link></li>
-              <li><Link to="/lanches" onClick={toggleMobileMenu}>Artesanal</Link></li>
-              <li><Link to="/bebidas" onClick={toggleMobileMenu}>Bebidas</Link></li>
-              <li><Link to="/sucos" onClick={toggleMobileMenu}>Sucos</Link></li>
-              <li><Link to="/acrescimo" onClick={toggleMobileMenu}>Acréscimos</Link></li>
-              <li><Link to="/acai" onClick={toggleMobileMenu}>Açaí</Link></li>
+              {categoriasFixas.map(({ nome, rota }) => (
+                <li key={nome}>
+                  <Link to={rota} onClick={toggleMobileMenu}>
+                    {nome}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
         )}
+
         {isMobileMenuOpen && <div className="mobile-overlay" />}
         <Cart id="cart" />
       </nav>

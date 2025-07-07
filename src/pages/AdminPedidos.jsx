@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom"; 
 import { db } from "../firebaseConfig";
 import { ref, onValue, update, set } from "firebase/database";
 import { jsPDF } from "jspdf";
@@ -286,7 +287,7 @@ export default function AdminPedidos() {
     signOut(auth)
       .then(() => {
         localStorage.removeItem("adminLogado");
-        navigate("/login-admin", { replace: true });
+        navigate("/admin-estatisticas", { replace: true });
       })
       .catch((error) => {
         console.error("Erro ao fazer logout:", error);
@@ -299,17 +300,27 @@ export default function AdminPedidos() {
 
   return (
     <div className="stiloPedido">
-      <nav className="navbar2">
-        <div className="logoTitulo">
-          <div className="logo-pequeno" />
-          <span className="tituloPainel">Painel Pedidos Delivery</span>
+    <nav className="navbar2">
+      <div className="logoTitulo">
+        <div className="logo-pequeno" />
+        <span className="tituloPainel">Painel Pedidos Delivery</span>
+      </div>
+
+      <div className="navRight">
+        <div className="navbar-buttons">
+          <Link to="/admin-estatisticas" className="menu-btn">
+            📊 Estatísticas
+          </Link>
+          <Link to="/admin-produtos" className="menu-btn">
+            🛒 Produtos
+          </Link>
         </div>
-        <div className="navRight">
-          <button className="logoutBtn2" onClick={handleLogout}>
-            Sair
-          </button>
-        </div>
-      </nav>
+        <button className="logoutBtn2" onClick={handleLogout}>
+          Sair
+        </button>
+        
+      </div>
+    </nav>
 
       <div className="container">
         <select

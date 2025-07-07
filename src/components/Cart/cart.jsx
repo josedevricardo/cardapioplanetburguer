@@ -7,8 +7,6 @@ import { CartContext } from "../../contexts/cart-context.jsx";
 import InputMask from "react-input-mask";
 import back from "../../assets/back.png";
 
-// ...importações iguais...
-
 function Cart() {
   const [show, setShow] = useState(false);
   const [bairro, setBairro] = useState("");
@@ -44,10 +42,12 @@ function Cart() {
     bairroFormatado.includes("industrial") ||
     bairroFormatado.includes("cidade industrial")
   ) {
-    frete = 3;
+    frete = 2;
   } else {
     frete = 4;
   }
+
+  const bairroExibicao = bairro.trim().toUpperCase();
 
   function validarCampos() {
     if (!nome || !telefone || !rua || !numero || !bairro) {
@@ -186,17 +186,19 @@ function Cart() {
             ))}
           </div>
 
-          {frete > 0 && (
-            <p className="frete-msg">🚚 Frete de R$ {frete},00 aplicado para {bairro || "o bairro informado"}.</p>
-          )}
+          <p className="frete-msg">
+            {frete === 0
+              ? `🚚 Frete grátis para ${bairroExibicao || "BAIRRO INFORMADO"}.`
+              : `🚚 Frete aplicado para ${bairroExibicao || "BAIRRO INFORMADO"}.`}
+          </p>
 
           <div className="footer-cart-valor">
-            <span>Total</span>
+            <span>Total com frete</span>
             <strong>
               {new Intl.NumberFormat("pt-BR", {
                 style: "currency",
                 currency: "BRL"
-              }).format(totalCart)}
+              }).format(parseFloat(totalCart) + frete)}
             </strong>
           </div>
 

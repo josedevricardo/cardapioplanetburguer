@@ -3,14 +3,16 @@ import "./acai-vitrine.css";
 import bag from "../../assets/bag-black.png";
 import { CartContext } from "../../contexts/cart-context";
 import { useContext } from "react";
+import { ProdutoContext } from "../../contexts/categoria-context";
 
 function AcaiVitrine(props) {
+  const { categorias } = useContext(ProdutoContext); // usa dados do contexto atualizado via Firebase
   const { addToCart } = useContext(CartContext);
   const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
     function handleScroll() {
-      // Função vazia removida, pois não estava sendo usada
+      // Função vazia removida
     }
     window.addEventListener("scroll", handleScroll);
     return () => {

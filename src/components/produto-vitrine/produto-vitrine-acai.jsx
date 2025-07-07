@@ -1,29 +1,47 @@
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./produto-vitrine2.css";
-import { acai } from "../../dados";
 import { CartContext } from "../../contexts/cart-context";
+import { ProdutoContext } from "../../contexts/categoria-context";
 
 const ProdutoVitrine = ({ busca }) => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const { categorias } = useContext(ProdutoContext);
+  const { addToCart, cartItems } = useContext(CartContext);
+
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
   const [categoriaFiltro, setCategoriaFiltro] = useState("Todas");
   const [quantidadeExibida, setQuantidadeExibida] = useState(10);
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
 
-  const { addToCart, cartItems } = useContext(CartContext);
-  const navigate = useNavigate();
+  // Atualiza categoria com base na URL
+  useEffect(() => {
+    const path = location.pathname.replace("/", "").toLowerCase();
 
-  const categorias = [
-    { nome: "Açaí", produtos: acai },
-  ];
+    const categoriaEncontrada = categorias.find(
+      (cat) => cat.nome.toLowerCase() === path
+    );
+
+    if (categoriaEncontrada) {
+      setCategoriaFiltro(categoriaEncontrada.nome);
+      setQuantidadeExibida(10);
+    } else {
+      setCategoriaFiltro("Todas");
+    }
+  }, [location.pathname, categorias]);
 
   const produtosUnificados = categorias.flatMap((cat) =>
-    cat.produtos.map((p) => ({ ...p, categoria: cat.nome }))
+    Object.entries(cat.produtos || {}).map(([id, p]) => ({
+      id,
+      ...p,
+      categoria: cat.nome,
+    }))
   );
 
   const categoriasNomes = ["Início", "Todas", ...categorias.map((c) => c.nome)];
-
   const buscaLower = (busca || "").toLowerCase();
 
   const produtosFiltradosPorCategoria =
@@ -37,10 +55,7 @@ const ProdutoVitrine = ({ busca }) => {
       p.descricao.toLowerCase().includes(buscaLower)
   );
 
-  const produtosExibidos = produtosFiltradosPorBusca.slice(
-    0,
-    quantidadeExibida
-  );
+  const produtosExibidos = produtosFiltradosPorBusca.slice(0, quantidadeExibida);
 
   const formatarPreco = (preco) =>
     new Intl.NumberFormat("pt-BR", {
@@ -53,7 +68,7 @@ const ProdutoVitrine = ({ busca }) => {
       id: produto.id,
       nome: produto.nome,
       preco: produto.preco,
-      foto: produto.foto,
+      foto: produto.imagem || produto.foto,
       qtd: 1,
     };
     addToCart(item);
@@ -92,18 +107,16 @@ const ProdutoVitrine = ({ busca }) => {
         ))}
       </div>
 
-      {/* Título da categoria */}
       <h2 className="titulo-categoria">
         {categoriaFiltro === "Todas"
           ? "Todos os Produtos"
           : `Categoria: ${categoriaFiltro}`}
       </h2>
 
-      {/* Menu flutuante (mobile) */}
+      {/* Botão flutuante mobile */}
       <div className="floating-categorias-wrapper">
         <button
           className="botao-flutuante"
-          aria-expanded={showFloatingMenu}
           onClick={() => setShowFloatingMenu((prev) => !prev)}
         >
           ☰ Categorias
@@ -146,7 +159,7 @@ const ProdutoVitrine = ({ busca }) => {
             return (
               <div key={produto.id} className="produto-item">
                 <img
-                  src={produto.foto || "https://via.placeholder.com/150"}
+                  src={produto.imagem || produto.foto || "https://via.placeholder.com/150"}
                   alt={produto.nome}
                   className="produto-imagem"
                 />
@@ -176,7 +189,6 @@ const ProdutoVitrine = ({ busca }) => {
         )}
       </div>
 
-      {/* Botão mostrar mais */}
       {quantidadeExibida < produtosFiltradosPorBusca.length &&
         produtosExibidos.length > 0 && (
           <div className="mostrar-mais-container">
@@ -184,7 +196,6 @@ const ProdutoVitrine = ({ busca }) => {
           </div>
         )}
 
-      {/* Mensagem de adicionado */}
       {showMessage && <div className="message-fixed">{message}</div>}
     </div>
   );

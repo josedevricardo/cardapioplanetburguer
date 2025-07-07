@@ -3,24 +3,32 @@ import "./lanche-vitrine.css";
 import bag from "../../assets/bag-black.png";
 import { CartContext } from "../../contexts/cart-context";
 import { useContext } from "react";
+import { ProdutoContext } from "../../contexts/categoria-context";
 
 
 function LancheVitrine(props) {
+  const { categorias } = useContext(ProdutoContext); // usa dados do contexto atualizado via Firebase
   const { addToCart } = useContext(CartContext);
   
+  const [showBackToTop, setShowBackToTop] = useState(false);
   const [showMessage, setShowMessage] = useState(false); // Estado para controlar a exibição da mensagem
 
   useEffect(() => {
     function handleScroll() {
-      
+      if (window.pageYOffset > 100) {
+        setShowBackToTop(true);
+      } else {
+        setShowBackToTop(false);
+      }
     }
 
     window.addEventListener("scroll", handleScroll);
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
 
 
@@ -36,6 +44,13 @@ function LancheVitrine(props) {
     addToCart(item);
     setShowMessage(true); // Exibir mensagem ao clicar no botão
   }
+
+  // Oculta a mensagem após 2 segundos
+    setTimeout(() => setShowMessage(false), 2000);
+  }
+
+  // Verificação opcional para segurança
+  if (!props || !props.nome || !props.preco) return null;
 
   return (
     <div className="produto-box text-center">
@@ -66,6 +81,6 @@ function LancheVitrine(props) {
       </div>
     </div>
   );
-}
+
 
 export default LancheVitrine;

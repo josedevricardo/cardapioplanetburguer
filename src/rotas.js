@@ -1,8 +1,9 @@
+// src/Rotas.jsx
+import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-// Import das páginas públicas
+
 import Home from "./pages/home/Home.jsx";
-import Checkout from "./pages/checkout/Checkout.jsx";
 import Lanches from "./pages/lanches/Lanches.jsx";
 import Produto2 from "./pages/produto2/Produto2.jsx";
 import Omeletes from "./pages/omeletes/Omeletes.jsx";
@@ -10,11 +11,13 @@ import Bebidas from "./pages/bebidas/Bebidas.jsx";
 import Sucos from "./pages/sucos/Sucos.jsx";
 import Acrescimo from "./pages/acrescimo/Acrescimo.jsx";
 import Acai from "./pages/acai/Acai.jsx";
+import AdminEstatisticas from "./pages/AdminEstatisticas.jsx";
+import Checkout from "./pages/checkout/Checkout.jsx";
 
-// Import das páginas admin
 import AdminPedidos from "./pages/AdminPedidos.jsx";
 import LoginAdmin from "./pages/LoginAdmin.jsx";
-import PrivateRoute from "./PrivateRoute.jsx"; // ajuste o caminho aqui para o correto
+import PrivateRoute from "./PrivateRoute.jsx";
+import AdminProdutosCompleto from "./pages/AdminProdutosCompleto.jsx";
 
 function Rotas() {
   return (
@@ -40,14 +43,28 @@ function Rotas() {
           </PrivateRoute>
         }
       />
+      <Route
+        path="/admin-estatisticas"
+        element={
+          <PrivateRoute>
+            <AdminEstatisticas />
+          </PrivateRoute>
+        }
+      />
+      <Route
+        path="/admin-produtos"
+        element={
+          <PrivateRoute>
+            <AdminProdutosCompleto />
+          </PrivateRoute>
+        }
+      />
 
       {/* Página 404 */}
       <Route
         path="*"
         element={
-          <h1 className="text-center p-10 text-2xl">
-            🚫 Página não encontrada
-          </h1>
+          <h1 className="text-center p-10 text-2xl">🚫 Página não encontrada</h1>
         }
       />
     </Routes>

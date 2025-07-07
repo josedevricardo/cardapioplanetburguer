@@ -1,8 +1,9 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "./produto-vitrine2.css";
-import { produto2 } from "../../dados";
+
 import { CartContext } from "../../contexts/cart-context";
+import { ProdutoContext } from "../../contexts/categoria-context"; // importado contexto
 
 const ProdutoSlider = ({ busca }) => {
   const [showMessage, setShowMessage] = useState(false);
@@ -12,14 +13,16 @@ const ProdutoSlider = ({ busca }) => {
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
 
   const { addToCart, cartItems } = useContext(CartContext);
+  const { categorias } = useContext(ProdutoContext); // pega categorias do Firebase
   const navigate = useNavigate();
 
-  const categorias = [
-    { nome: "+Pedidos", produtos: produto2 },
-  ];
-
+  // Unifica produtos convertendo objeto em array, adicionando categoria
   const produtosUnificados = categorias.flatMap((cat) =>
-    cat.produtos.map((p) => ({ ...p, categoria: cat.nome }))
+    Object.entries(cat.produtos || {}).map(([id, p]) => ({
+      id,
+      ...p,
+      categoria: cat.nome,
+    }))
   );
 
   const categoriasNomes = ["Início", "Todas", ...categorias.map((c) => c.nome)];
@@ -36,10 +39,7 @@ const ProdutoSlider = ({ busca }) => {
       p.descricao.toLowerCase().includes(buscaLower)
   );
 
-  const produtosExibidos = produtosFiltradosPorBusca.slice(
-    0,
-    quantidadeExibida
-  );
+  const produtosExibidos = produtosFiltradosPorBusca.slice(0, quantidadeExibida);
 
   const formatarPreco = (preco) =>
     new Intl.NumberFormat("pt-BR", {
@@ -52,7 +52,7 @@ const ProdutoSlider = ({ busca }) => {
       id: produto.id,
       nome: produto.nome,
       preco: produto.preco,
-      foto: produto.foto,
+      foto: produto.imagem || produto.foto,
       qtd: 1,
     };
     addToCart(item);
@@ -145,7 +145,7 @@ const ProdutoSlider = ({ busca }) => {
             return (
               <div key={produto.id} className="produto-item">
                 <img
-                  src={produto.foto || "https://via.placeholder.com/150"}
+                  src={produto.imagem || produto.foto || "https://via.placeholder.com/150"}
                   alt={produto.nome}
                   className="produto-imagem"
                 />

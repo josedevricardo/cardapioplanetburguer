@@ -33,13 +33,28 @@
 }
 
 .logo-text {
-  font-size: 20px;
-  font-weight: 600;
+  font-size: 22px;
+  font-weight: 700;
   color: #e53935;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease-in-out;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
+  opacity: 0;
+  transform: translateY(-10px);
+  animation: fadeSlideIn 0.8s ease forwards, pulse 3s ease-in-out infinite;
 }
+
+.logo-text:hover {
+  background: linear-gradient(90deg, #e53935, #ff7043);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  transform: scale(1.08) translateY(-2px);
+  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
+}
+
 
 .logo-text strong {
   color: #333;
@@ -54,24 +69,31 @@
   display: flex;
   gap: 20px;
   list-style: none;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
 }
 
 .menu-link {
-  position: relative;
-  padding: 8px 14px;
-  font-weight: 500;
-  font-size: 16px;
+  font-size: 20px;
+  font-weight: 600;
   color: #333;
-  text-decoration: none;
-  transition: transform 0.2s ease, color 0.3s ease;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
+  transition: transform 0.4s ease, text-shadow 0.4s ease, color 0.4s ease;
+  cursor: pointer;
+  display: inline-block;
+  position: relative;
  
   
 }
 
 .menu-link:hover {
-  color: green;
+  color: #ff6600;
   transform: scale(1.08);
+  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
 }
+
 
 .menu-link::after {
   content: "Vamos pedir agora";
@@ -303,12 +325,30 @@
   text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
 }
 
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(-1px);
+    opacity: 0.85;
+  }
+}
+
 
 /* -------- Responsivo -------- */
 
 
 
-@media (max-width: 768px) {
+@media (max-width: 982px) {
   .desktop-menu {
     display: none;
   }
@@ -343,14 +383,14 @@
     gap: 10px;
   }
 
-  /* Fundo laranja do menu mobile */
+  /* Fundo cinza do menu mobile */
   .mobile-sidebar {
     position: fixed;
     top: 0;
     left: 0;
     width: 250px;
     height: 100%;
-    background-color: #ff6600; /* Fundo laranja */
+    background-color: #333; /* Fundo laranja */
     padding: 20px;
     z-index: 1100;
     animation: slideIn 0.3s ease-out;

@@ -1,8 +1,9 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import "./produto-vitrine2.css";
-import { omeletes } from "../../dados";
+
 import { CartContext } from "../../contexts/cart-context";
+import { ProdutoContext } from "../../contexts/categoria-context"; // importado
 
 const ProdutoVitrine = ({ busca }) => {
   const [showMessage, setShowMessage] = useState(false);
@@ -12,18 +13,19 @@ const ProdutoVitrine = ({ busca }) => {
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
 
   const { addToCart, cartItems } = useContext(CartContext);
+  const { categorias } = useContext(ProdutoContext); // dados do Firebase
   const navigate = useNavigate();
 
-  const categorias = [
-    { nome: "Omeletes", produtos: omeletes },
-  ];
-
+  // transforma produtos que podem estar como objeto em array, adicionando categoria
   const produtosUnificados = categorias.flatMap((cat) =>
-    cat.produtos.map((p) => ({ ...p, categoria: cat.nome }))
+    Object.entries(cat.produtos || {}).map(([id, p]) => ({
+      id,
+      ...p,
+      categoria: cat.nome,
+    }))
   );
 
   const categoriasNomes = ["Início", "Todas", ...categorias.map((c) => c.nome)];
-
   const buscaLower = (busca || "").toLowerCase();
 
   const produtosFiltradosPorCategoria =
@@ -50,7 +52,7 @@ const ProdutoVitrine = ({ busca }) => {
       id: produto.id,
       nome: produto.nome,
       preco: produto.preco,
-      foto: produto.foto,
+      foto: produto.imagem || produto.foto,
       qtd: 1,
     };
     addToCart(item);
@@ -143,7 +145,7 @@ const ProdutoVitrine = ({ busca }) => {
             return (
               <div key={produto.id} className="produto-item">
                 <img
-                  src={produto.foto || "https://via.placeholder.com/150"}
+                  src={produto.imagem || produto.foto || "https://via.placeholder.com/150"}
                   alt={produto.nome}
                   className="produto-imagem"
                 />
