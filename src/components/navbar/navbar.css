@@ -10,11 +10,31 @@
   width: 100%;
   z-index: 100;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  
+  
 }
 
 .navbar.sticky {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
+
+
+.gif-background {
+  position: absolute;
+  top: 70px; /* altura da navbar */
+  left: 0;
+  right: 0;
+  height: 300px;
+  background-image: url("../../assets/planetburguer.gif");
+  background-repeat: no-repeat;
+
+  background-size: contain;
+  opacity: 0.12;
+  z-index: 0;
+  pointer-events: none;
+}
+
+
 
 /* -------- Logo com texto -------- */
 .logo-link {
@@ -35,7 +55,7 @@
 .logo-text {
   font-size: 22px;
   font-weight: 700;
-  color: #e53935;
+  color: #006400;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   transition: all 0.4s ease-in-out;
@@ -55,7 +75,6 @@
   text-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
 }
 
-
 .logo-text strong {
   color: #333;
 }
@@ -64,85 +83,79 @@
   transform: scale(1.05);
 }
 
-/* -------- Menu Desktop com Tooltip -------- */
+/* -------- Menu Desktop -------- */
 .desktop-menu {
   display: flex;
-  gap: 20px;
-  list-style: none;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  gap: 1.5rem;
   text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
   transition: transform 0.3s ease;
+  list-style: none;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* Botões do menu limpos sem borda */
 .menu-link {
-  font-size: 20px;
-  font-weight: 600;
-  color: #333;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15);
-  transition: transform 0.4s ease, text-shadow 0.4s ease, color 0.4s ease;
+  background: none;
+  border: none;
+  outline: none;
   cursor: pointer;
-  display: inline-block;
-  position: relative;
- 
+  text-decoration: none;
+  color: #333;
+  font-weight: 500;
+  transition: color 0.3s, background-color 0.3s, box-shadow 0.3s;
+  padding: 6px 10px;
+  border-radius: 6px;
+  user-select: none;
+}
+
+/* Hover e foco com sombra verde */
+.menu-link:hover,
+.menu-link:focus {
+  color: #004d00; /* verde escuro */
+  background-color: rgba(0, 77, 0, 0.12); /* fundo verde claro translúcido */
+  box-shadow: 0 0 6px rgba(0, 77, 0, 0.25); /* sombra verde ao redor */
+  outline: none;
+}
+
+/* Link ativo */
+.menu-link.ativo {
+  color: #e60000;
+  font-weight: 700;
   
 }
 
-.menu-link:hover {
-  color: #ff6600;
-  transform: scale(1.08);
-  text-shadow: 0 2px 5px rgba(0, 0, 0, 0.15);
-}
-
-
-.menu-link::after {
-  content: "Vamos pedir agora";
-  position: absolute;
-  bottom: -28px;
-  left: 50%;
-  transform: translateX(-50%) scale(0.9);
-  background-color: #e53935;
-  color: #fff;
-  padding: 4px 10px;
-  border-radius: 8px;
-  font-size: 12px;
-  white-space: nowrap;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.3s ease;
-  z-index: 99;
-}
-
-.menu-link:hover::after {
-  opacity: 1;
-}
-
-/* -------- Botão Sacola Moderno -------- */
+/* -------- Botão Sacola -------- */
 .right-buttons {
   display: flex;
   align-items: center;
   margin-left: 12px;
 }
 
+
+
 .sacola-button {
-   background: none;
+  background: none;
   border: none;
+  outline: none;
   cursor: pointer;
   display: flex;
   align-items: center;
-  color: green;
+  color: rgb(2, 80, 2);
   margin-left: -11rem;
   margin-top: 3rem;
   padding: 6px 12px;
-  cursor: pointer;
-  transition: 0.3s;
   border-radius: 8px;
- 
+  transition: background-color 0.3s, color 0.3s;
 }
 
-.sacola-button:hover {
-  background-color: #e53935;
+.sacola-button:hover,
+.sacola-button:focus {
+  background-color: rgb(2, 80, 2);
   color: #fff;
+  outline: none;
 }
 
 .sacola-icon {
@@ -155,28 +168,11 @@
   font-size: 14px;
 }
 
-
-/* GIF discreto abaixo da navbar */
-.gif-background {
-  position: absolute;
-  top: 70px; /* altura da navbar */
-  left: 0;
-  right: 0;
-  height: 220px;
-  background-image: url("../../assets/planetburguer.gif");
-  background-repeat: no-repeat;
-  background-position: center top;
-  background-size: contain;
-  opacity: 0.12;
-  z-index: 0;
-  pointer-events: none;
-}
-
-
-/* -------- Mobile Menu -------- */
+/* -------- Hamburger Menu -------- */
 .hamburger {
   background: none;
   border: none;
+  outline: none;
   cursor: pointer;
   padding: 6px;
   display: flex;
@@ -206,6 +202,7 @@
   transform: rotate(-45deg) translate(6px, -6px);
 }
 
+/* -------- Menu Mobile Lateral -------- */
 .mobile-left {
   display: flex;
   align-items: center;
@@ -225,292 +222,54 @@
   transition: transform 0.3s ease-in-out;
 }
 
+/* Menu mobile: usar botões com reset de estilos para remover bordas */
 .mobile-menu {
   list-style: none;
   padding: 0;
   margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .mobile-menu li {
-  margin-bottom: 20px;
+  width: 100%;
 }
 
-.mobile-menu a {
-  text-decoration: none;
-  font-size: 18px;
+.mobile-menu button.menu-link {
+  all: unset;
+  display: block;
+  width: 100%;
+  padding: 12px 16px;
+  font-size: 1rem;
+  font-weight: 600;
   color: #333;
-  font-weight: 500;
+  background-color: transparent;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  text-align: left;
+  user-select: none;
+}
+
+.mobile-menu button.menu-link:hover,
+.mobile-menu button.menu-link:focus {
+  background-color: #006400;
+  color: #f9f9f9;
+  outline: none;
 }
 
 .mobile-overlay {
   position: fixed;
   top: 0;
-  left: 0;
+  left: 240px;
   right: 0;
   bottom: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: 100;
+  background: transparent;
+  z-index: 1000;
 }
 
 /* -------- Loader -------- */
-.loading-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #fff;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  z-index: 999;
-  animation: fadeOut 2s forwards;
-}
-
-.loading-logo {
-  width: 80px;
-  margin-bottom: 1rem;
-  animation: spin 2s linear infinite;
-}
-
-.burger-icon {
-  font-size: 24px;
-  margin-bottom: 0.5rem;
-}
-
-.loading-content p {
-  font-size: 18px;
-  color: #e53935;
-}
-
-/* -------- Espaço da navbar fixa -------- */
-.navbar-space {
-  height: 70px;
-}
-
-
-/* -------- Animações -------- */
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-@keyframes fadeOut {
-  0% { opacity: 1; }
-  99% { opacity: 1; }
-  100% { opacity: 0; visibility: hidden; }
-}
-
-.banner-gif {
-  width: 100%;
-  background-image: url("../../assets/planetburguer.gif");
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-position: center;
-  padding: 60px 20px;
-  margin-top: -10px;
-  opacity: 0.15;
-  position: relative;
-  z-index: 1;
-  text-align: center;
-}
-
-.titulo-gif {
-  position: relative;
-  z-index: 2;
-  color: #333;
-  font-size: 1.8rem;
-  font-weight: bold;
-  text-shadow: 0 1px 2px rgba(255, 255, 255, 0.9);
-}
-
-@keyframes fadeSlideIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse {
-  0%, 100% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  50% {
-    transform: translateY(-1px);
-    opacity: 0.85;
-  }
-}
-
-
-/* -------- Responsivo -------- */
-
-
-
-@media (max-width: 982px) {
-  .desktop-menu {
-    display: none;
-  }
-
-  .right-buttons {
-    margin-left: auto;
-  }
-}
-
-/* Para telas menores, manter visível e ajustar altura */
-@media (max-width: 710px) {
-  .gif-background {
-    height: 160px; /* menor altura para caber no mobile */
-    opacity: 0.10; /* um pouco mais sutil */
-    top: 95px; /* ajuste da navbar mobile se for menor */
-  }
-}
-
-/* Mobile Styles */
-@media (max-width: 768px) {
-  .desktop-menu {
-    display: none;
-  }
-
-  .hamburger {
-    display: flex;
-  }
-
-  .mobile-left {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-
-  /* Fundo cinza do menu mobile */
-  .mobile-sidebar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 250px;
-    height: 100%;
-    background-color: #333; /* Fundo laranja */
-    padding: 20px;
-    z-index: 1100;
-    animation: slideIn 0.3s ease-out;
-    box-shadow: none;
-  }
-
-  /* Menu mobile: lista vertical */
-  .mobile-menu {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.6rem; /* Espaço menor */
-  }
-
-  .mobile-menu li {
-    width: 100%;
-  }
-
-  /* Botões móveis menores, integrados ao fundo */
-  .mobile-menu a {
-    display: block;
-    width: 100%;
-    padding: 8px 16px; /* Menor padding */
-    font-size: 0.9rem; /* Botões menores */
-    font-weight: 700;
-    color: white;
-    text-decoration: none;
-    border-radius: 8px;
-    background-color: rgba(255 255 255 / 0.15); /* Fundo semi-transparente */
-    transition: background-color 0.3s ease, transform 0.2s ease;
-    user-select: none;
-    cursor: pointer;
-    box-shadow: none;
-  }
-
-  /* Hover e foco */
-  .mobile-menu a:hover,
-  .mobile-menu a:focus {
-    background-color: rgba(255 255 255 / 0.35);
-    color: #b34700;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(179 71 0 / 0.4);
-  }
-
-  /* Feedback ao tocar */
-  .mobile-menu a:active {
-    transform: translateY(0);
-    background-color: rgba(255 255 255 / 0.5);
-    color: #993d00;
-    box-shadow: none;
-  }
-
-  .mobile-overlay {
-    position: fixed;
-    top: 0;
-    left: 250px;
-    right: 0;
-    bottom: 0;
-    background: transparent;
-    z-index: 1000;
-  }
-}
-
-/* Animação menu lateral */
-@keyframes slideIn {
-  from {
-    transform: translateX(-100%);
-  }
-  to {
-    transform: translateX(0);
-  }
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Gira o logo */
-@keyframes rotate {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Pulsa o texto */
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scale(1.05);
-  }
-}
-
-/* Animação de fundo gradiente */
-@keyframes gradientBackground {
-  0% {
-    background-position: 0% 50%;
-  }
-  50% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0% 50%;
-  }
-}
-
 .loading-screen {
   position: fixed;
   top: 0;
@@ -551,6 +310,12 @@
   font-weight: bold;
 }
 
+/* -------- Espaço da navbar fixa -------- */
+.navbar-space {
+  height: 40px; /* reduzido para desktop */
+}
+
+/* -------- Animações -------- */
 @keyframes spin {
   from {
     transform: rotate(0deg);
@@ -579,39 +344,108 @@
   }
 }
 
-
-/* Aplica o GIF como background APENAS no mobile */
-@media (max-width: 756px) {
-  .navbar {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    background-color: #fff;
-    background-image: url("../../assets/planetburguer.gif");
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    opacity: 0.97;
-    z-index: 1000;
-    transition: background 0.3s ease;
-  }
-
-  .logo-text { display: none;
-  }
-
-  .navbar::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    background-image: url("../../assets/planetburguer.gif");
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-position: center;
-    opacity: 0.15;
-    z-index: -1;
-    pointer-events: none;
+@keyframes fadeSlideIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
 
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(1.05);
+  }
+}
 
+/* -------- Responsividade -------- */
+@media (max-width: 982px) {
+  .desktop-menu {
+    display: none;
+  }
+
+  .right-buttons {
+    margin-left: auto;
+  }
+}
+
+/* -------- Responsividade Melhorada -------- */
+@media (max-width: 768px) {
+  .navbar {
+    padding: 10px 16px;
+    height: 56px;
+  }
+
+  .navbar-space {
+    height: 50px;
+  }
+
+  .logo-text {
+    font-size: 18px;
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .logotipo {
+    width: 36px;
+  }
+
+  .right-buttons {
+    margin-left: auto;
+    margin-top: 0;
+  }
+
+  .sacola-button {
+    margin-left: 0;
+    margin-top: 0;
+    padding: 6px 10px;
+    font-size: 14px;
+  }
+
+  .sacola-icon {
+    font-size: 18px;
+  }
+
+  .hamburger {
+    margin-right: 8px;
+  }
+
+  .mobile-left {
+    gap: 8px;
+  }
+
+  .mobile-sidebar {
+    background-color: #ffffff;
+    padding: 1.5rem 1rem;
+    width: 220px;
+  }
+
+  .mobile-menu button.menu-link {
+    font-size: 0.95rem;
+    padding: 10px 14px;
+  }
+
+  .gif-background {
+    position: absolute;
+    top: 56px;
+    height: 220px;
+    background-size: contain;
+    background-position: center;
+    opacity: 0.15;
+    margin-top: 10px;
+  }
+
+  .loading-logo {
+    width: 90px;
+  }
+
+  .loading-content p {
+    font-size: 1.1rem;
+  }
+}

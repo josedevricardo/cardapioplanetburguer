@@ -2,11 +2,12 @@
 import React, { useEffect, useState, useContext } from "react";
 import "./sucos-vitrine.css";
 import bag from "../../assets/bag-black.png";
-import { CartContext } from "../../contexts/cart-context"; // corrigido
+import { CartContext } from "../../contexts/cart-context";
 import { ProdutoContext } from "../../contexts/categoria-context";
+import AlertaAviso from "../produto-vitrine/AlertaAviso"; 
 
 function SucosVitrine(props) {
-  const { categorias } = useContext(ProdutoContext); // dados do contexto
+  const { categorias } = useContext(ProdutoContext);
   const { addToCart } = useContext(CartContext);
 
   const [showBackToTop, setShowBackToTop] = useState(false);
@@ -14,13 +15,8 @@ function SucosVitrine(props) {
 
   useEffect(() => {
     function handleScroll() {
-      if (window.pageYOffset > 100) {
-        setShowBackToTop(true);
-      } else {
-        setShowBackToTop(false);
-      }
+      setShowBackToTop(window.pageYOffset > 100);
     }
-
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -40,12 +36,9 @@ function SucosVitrine(props) {
 
     addToCart(item);
     setShowMessage(true);
-
-    // Oculta a mensagem após 2 segundos
-    setTimeout(() => setShowMessage(false), 2000);
+    setTimeout(() => setShowMessage(false), 3000);
   }
 
-  // Verificação opcional para segurança
   if (!props || !props.nome || !props.preco) return null;
 
   return (
@@ -63,19 +56,18 @@ function SucosVitrine(props) {
       </div>
 
       <div>
-        <button
-          type="button"
-          onClick={addItem}
-          className="btn btn-cart"
-        >
+        <button type="button" onClick={addItem} className="btn btn-cart">
           <img src={bag} className="icon" alt="bag" />
           Comprar
         </button>
-
-        {showMessage && (
-          <div className="message-hover-slider6">Adicionado à sacola</div>
-        )}
       </div>
+
+      {showMessage && (
+        <AlertaAviso
+          tipo="sucesso"
+          mensagem="Produto adicionado à sacola com sucesso!"
+        />
+      )}
     </div>
   );
 }

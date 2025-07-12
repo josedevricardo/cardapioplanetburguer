@@ -2,24 +2,24 @@
 
 export const categoriasFixas = [
   { nome: "Home", rota: "/" },
-  { nome: "+Lanches", rota: "/produto2" },
+  { nome: "+Lanches", rota: "/lanches" },
   { nome: "Bebidas", rota: "/bebidas" },
   { nome: "Sucos", rota: "/sucos" },
   { nome: "Omeletes", rota: "/omeletes" },
-  { nome: "Acréscimos", rota: "/acrescimo" },
+  { nome: "Acréscimos", rota: "/Acrescimo" },
   { nome: "Açaí", rota: "/acai" },
 ];
 
 export const rotas = {
-  home: "/",
-  checkout: "/checkout",
+  home: "/home",
+  
   lanches: "/lanches",
-  produto2: "/produto2",
-  omeletes: "/omeletes",
   bebidas: "/bebidas",
   sucos: "/sucos",
-  acrescimo: "/acrescimo",
+  omeletes: "/omeletes",
+  acrescimo: "/Acrescimo",
   acai: "/acai",
+  
   loginAdmin: "/login-admin",
   adminPedidos: "/admin",
   adminEstatisticas: "/admin-estatisticas",

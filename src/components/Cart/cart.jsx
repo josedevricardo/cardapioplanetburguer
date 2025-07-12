@@ -11,6 +11,7 @@ function Cart() {
   const [show, setShow] = useState(false);
   const [bairro, setBairro] = useState("");
   const [nome, setNome] = useState("");
+  const [quemRecebe, setQuemRecebe] = useState("");
   const [telefone, setTelefone] = useState("");
   const [rua, setRua] = useState("");
   const [numero, setNumero] = useState("");
@@ -30,9 +31,7 @@ function Cart() {
     });
   }, []);
 
-  // Ajuste: bairros com frete grátis - "vitoria" e "vitoria 2"
   const bairrosSemFrete = ["vitoria", "vitoria 2"];
-
   const bairroFormatado = bairro.trim().toLowerCase();
 
   let frete = 0;
@@ -44,7 +43,7 @@ function Cart() {
     bairroFormatado.includes("industrial") ||
     bairroFormatado.includes("cidade industrial")
   ) {
-    frete = 2;
+    frete = 3;
   } else {
     frete = 4;
   }
@@ -52,7 +51,7 @@ function Cart() {
   const bairroExibicao = bairro.trim().toUpperCase();
 
   function validarCampos() {
-    if (!nome || !telefone || !rua || !numero || !bairro) {
+    if (!nome || !quemRecebe || !telefone || !rua || !numero || !bairro) {
       setErrorMessage("Por favor, preencha todos os campos obrigatórios.");
       return false;
     }
@@ -90,6 +89,7 @@ function Cart() {
 
     const pedidoParaSalvar = {
       nome,
+      quemRecebe,
       telefone,
       rua,
       numero,
@@ -115,6 +115,7 @@ function Cart() {
         console.log(dadosResposta);
 
         setNome("");
+        setQuemRecebe("");
         setTelefone("");
         setRua("");
         setNumero("");
@@ -130,6 +131,7 @@ function Cart() {
         const mensagem = `Olá, gostaria de finalizar meu pedido.\n\n` +
           `📌 Número do Pedido: ${numeroPedido}\n` +
           `👤 Nome: ${nome}\n` +
+          `🙋 Quem vai receber: ${quemRecebe}\n` +
           `📞 Telefone: ${telefone}\n` +
           `📍 Endereço: Rua ${rua}, Nº ${numero}, Bairro ${bairro}\n` +
           `💳 Forma de Pagamento: ${pagamento}\n\n` +
@@ -174,18 +176,32 @@ function Cart() {
           <div className="formulario-cliente">
             <label>Nome:</label>
             <input value={nome} onChange={(e) => setNome(e.target.value)} placeholder="Digite seu nome" />
+
             <label>Telefone:</label>
-            <InputMask mask="(99) 99999-9999" value={telefone} onChange={(e) => setTelefone(e.target.value)} placeholder="(31) 91234-5678" />
+            <InputMask
+              mask="(99) 99999-9999"
+              value={telefone}
+              onChange={(e) => setTelefone(e.target.value)}
+              placeholder="(31) 91234-5678"
+            />
+
             <label>Rua:</label>
             <input value={rua} onChange={(e) => setRua(e.target.value)} placeholder="Digite sua rua" />
+
             <label>Número:</label>
             <input value={numero} onChange={(e) => setNumero(e.target.value)} placeholder="Número da casa" />
+
             <label>Bairro:</label>
             <input value={bairro} onChange={(e) => setBairro(e.target.value)} placeholder="Digite seu bairro" />
+
             <label>Forma de Pagamento:</label>
             <input ref={pagamentoRef} placeholder="Pix, Cartão ou Dinheiro" />
+
             <label>Informações Adicionais:</label>
             <input ref={informacoesAdicionaisRef} placeholder="Ex. sem cebola - Troco pra 100" />
+
+            <label>Quem recebe:</label>
+            <input value={quemRecebe} onChange={(e) => setQuemRecebe(e.target.value)} placeholder="Nome de quem receberá o pedido" />
           </div>
 
           <div className="lista-produtos">
@@ -211,7 +227,14 @@ function Cart() {
           </div>
 
           {errorMessage && <div className="error-message">❌ {errorMessage}</div>}
-          {successMessage && <div className="success-message" style={{ fontSize: "1.2rem", fontWeight: "700", margin: "1rem 0", color: "green", textAlign: "center" }}>{successMessage}</div>}
+          {successMessage && (
+            <div className="success-message" style={{
+              fontSize: "1.2rem", fontWeight: "700", margin: "1rem 0",
+              color: "green", textAlign: "center"
+            }}>
+              {successMessage}
+            </div>
+          )}
 
           <button onClick={abrirModal} className="btn-checkout" disabled={isSending}>
             {isSending ? "Enviando..." : "Finalizar Pedido"}

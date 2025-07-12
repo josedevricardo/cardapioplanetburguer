@@ -110,27 +110,7 @@
   }
 }
 
-/* Dark mode (opcional) */
-@media (prefers-color-scheme: dark) {
-  .floating-menu {
-    background: #1e1e1e;
-    border: 1px solid #444;
-  }
 
-  .floating-item {
-    background-color: #2a2a2a;
-    color: #eee;
-  }
-
-  .floating-item:hover {
-    background-color: #333;
-  }
-
-  .floating-item.ativo {
-    background-color: #ff3c00;
-    color: white;
-  }
-}
 
 
 /* Produto slider grid */
@@ -214,11 +194,11 @@
   border-radius: 8px;
   cursor: pointer;
   font-weight: 600;
-  padding: 10px 16px;
+  padding: 16px 16px;
   width: 90%;
   max-width: 220px;
   transition: background-color 0.3s ease;
-  margin-top: auto; /* empurra botão para baixo */
+  margin-top: auto; 
 }
 
 .botao-adicionar:hover {
@@ -246,22 +226,54 @@
   background-color: #e65500;
 }
 
-/* Mensagem fixa */
 .message-fixed {
   position: fixed;
   bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
-  background: #28a745;
+  background: #e65500;
   color: white;
-  padding: 14px 22px;
+  padding: 12px 18px;
   border-radius: 50px;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgb(0 0 0 / 0.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 1000;
+
+
+  max-width: 90%;
+  width: fit-content;
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
+  line-height: 1.4;
+  font-size: 14px;
 }
 
-/* Dark mode (opcional) */
+.aviso-cerveja {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 16px;
+  font-weight: bold;
+  border: 1px solid #ffeeba;
+  text-align: center;
+}
+
+.aviso-baneston {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 16px auto;
+  font-weight: bold;
+  border: 1px solid #ffeeba;
+  text-align: center;
+  max-width: 600px;
+}
+
+
+
 @media (prefers-color-scheme: dark) {
   .floating-menu {
     background: #1e1e1e;
@@ -282,6 +294,8 @@
     color: white;
   }
 }
+
+
 
 /* ----------- Ajustes mobile ----------- */
 @media (max-width: 768px) {
@@ -328,4 +342,40 @@
   .filtro-categorias {
     display: none;
   }
+
+.message-fixed {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #e65500;
+  color: white;
+  padding: 22px 18px;
+  border-radius: 50px;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+
+  
+  max-width: 90%;
+  width: fit-content;
+  white-space: normal;
+  word-break: break-word;
+  text-align: center;
+  line-height: 1.4;
+  font-size: 14px;
+}
+
+.aviso-cerveja {
+  background-color: #fff3cd;
+  color: #856404;
+  padding: 12px;
+  border-radius: 8px;
+  margin: 16px;
+  font-weight: bold;
+  border: 1px solid #ffeeba;
+  text-align: center;
+}
+
+
 }

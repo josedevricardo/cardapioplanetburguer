@@ -1,47 +1,52 @@
 import React, { useState, useContext, useEffect } from "react";
 import { ref, onValue } from "firebase/database";
-import { db } from "../../firebaseConfig"; 
+import { db } from "../../firebaseConfig";
 import "./produto-slider.css";
 import { CartContext } from "../../contexts/cart-context";
-
+import { useParams } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 
 const ProdutoSlider = ({ busca }) => {
-  const [categoriasFirebase, setCategoriasFirebase] = useState([]);
+  const [categorias, setCategorias] = useState([]);
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
   const [categoriaFiltro, setCategoriaFiltro] = useState("Todas");
   const [quantidadeExibida, setQuantidadeExibida] = useState(10);
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
   const [mostrarMensagemPedido, setMostrarMensagemPedido] = useState(false);
-
+  const [loading, setLoading] = useState(true);
   const { addToCart, cartItems } = useContext(CartContext);
+  const { nome } = useParams();
 
-  // 🔄 BUSCA OS DADOS DO FIREBASE (ADAPTADO PARA CATEGORIAS -> PRODUTOS)
- useEffect(() => {
-  const categoriasRef = ref(db, "categorias");
-  onValue(categoriasRef, (snapshot) => {
-    const data = snapshot.val() || {};
+  useEffect(() => {
+    const categoriasRef = ref(db, "categorias");
+    const unsubscribe = onValue(categoriasRef, (snapshot) => {
+      const data = snapshot.val() || {};
+      const categoriasFormatadas = Object.entries(data).map(([chave, categoria]) => ({
+        nome: categoria.nome || chave,
+        produtos: Object.entries(categoria.produtos || {})
+          .map(([id, p]) => ({ id, ...p }))
+          .filter((p) => p.ativo === undefined || p.ativo === true),
+      }));
 
-    const categoriasFormatadas = Object.entries(data).map(([chave, categoria]) => ({
-      nome: categoria.nome || chave,
-      produtos: Object.entries(categoria.produtos || {})
-        .map(([id, p]) => ({ id, ...p }))
-        .filter((p) => p.ativo === undefined || p.ativo === true)
-    }));
+      const ordemManual = ["Lanches", "Bebidas", "Sucos", "Omeletes", "Acresimos", "Açai"];
+      const categoriasOrdenadas = ordemManual
+        .map((nome) => categoriasFormatadas.find((cat) => cat.nome === nome))
+        .filter(Boolean);
 
-    // ✅ Ordem desejada das categorias na vitrine
-    const ordemManual = ["Home", "Lanches", "Bebidas", "Sucos", "Omeletes", "Acresimos", "Açai"];
+      setCategorias(categoriasOrdenadas);
+      setLoading(false); // só mostra botão depois que carregar
+    });
 
-    const categoriasOrdenadas = ordemManual
-      .map((nome) => categoriasFormatadas.find((cat) => cat.nome === nome))
-      .filter(Boolean); // remove qualquer categoria não encontrada
+    return () => unsubscribe();
+  }, []);
 
-    setCategoriasFirebase(categoriasOrdenadas);
-  });
-}, []);
+  useEffect(() => {
+    if (nome) {
+      setCategoriaFiltro(nome);
+    }
+  }, [nome]);
 
-
-  const categorias = categoriasFirebase;
   const produtosUnificados = categorias.flatMap((cat) =>
     cat.produtos.map((p) => ({ ...p, categoria: cat.nome }))
   );
@@ -49,24 +54,17 @@ const ProdutoSlider = ({ busca }) => {
   const categoriasNomes = ["Todas", ...categorias.map((c) => c.nome)];
   const buscaLower = (busca || "").toLowerCase();
 
-  const produtosFiltradosPorCategoria =
-    categoriaFiltro === "Todas"
-      ? produtosUnificados
-      : produtosUnificados.filter((p) => p.categoria === categoriaFiltro);
-
-  const produtosFiltradosPorBusca = produtosFiltradosPorCategoria.filter(
-    (p) =>
+  const produtosFiltrados = produtosUnificados
+    .filter((p) => categoriaFiltro === "Todas" || p.categoria === categoriaFiltro)
+    .filter((p) =>
       p.nome.toLowerCase().includes(buscaLower) ||
       p.descricao.toLowerCase().includes(buscaLower)
-  );
+    );
 
-  const produtosExibidos = produtosFiltradosPorBusca.slice(0, quantidadeExibida);
+  const produtosExibidos = produtosFiltrados.slice(0, quantidadeExibida);
 
   const formatarPreco = (preco) =>
-    new Intl.NumberFormat("pt-BR", {
-      style: "currency",
-      currency: "BRL",
-    }).format(preco);
+    new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(preco);
 
   const handleClick = (produto) => {
     const item = {
@@ -91,16 +89,15 @@ const ProdutoSlider = ({ busca }) => {
   };
 
   useEffect(() => {
-    const interval = setInterval(() => {
+    const intervalo = setInterval(() => {
       setMostrarMensagemPedido(true);
       setTimeout(() => setMostrarMensagemPedido(false), 2000);
     }, 15000);
-    return () => clearInterval(interval);
+    return () => clearInterval(intervalo);
   }, []);
 
   return (
     <div className="produto-slider-container">
-      {/* Filtro de categorias */}
       <div className="filtro-categorias">
         {categoriasNomes.map((cat) => (
           <button
@@ -117,40 +114,49 @@ const ProdutoSlider = ({ busca }) => {
       </div>
 
       <h2 className="titulo-categoria">
-        {categoriaFiltro === "Todas"
-          ? "Todos os Produtos"
-          : `Categoria: ${categoriaFiltro}`}
+        {categoriaFiltro === "Todas" ? "Todos os Produtos" : `Categoria: ${categoriaFiltro}`}
       </h2>
 
-      {/* Botão flutuante mobile */}
-      <button
-        className="botao-flutuante"
-        onClick={() => setShowFloatingMenu((prev) => !prev)}
-      >
-        ☰ Categorias
-      </button>
+      {/* Botão e menu flutuante só aparecem após carregamento */}
+      {!loading && (
+        <>
+          <button
+            className="botao-flutuante"
+            onClick={() => setShowFloatingMenu((prev) => !prev)}
+          >
+            ☰ Categorias
+          </button>
 
-      {/* Submenu colado ao botão */}
-      {showFloatingMenu && (
-        <div className="floating-menu">
-          {categoriasNomes.map((cat) => (
-            <button
-              key={cat}
-              className={`floating-item ${cat === categoriaFiltro ? "ativo" : ""}`}
-              onClick={() => {
-                setCategoriaFiltro(cat);
-                setQuantidadeExibida(10);
-                setShowFloatingMenu(false);
-              }}
-            >
-              {cat}
-            </button>
-          ))}
-        </div>
+          <AnimatePresence>
+            {showFloatingMenu && (
+              <motion.div
+                className="floating-menu"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                transition={{ duration: 0.3 }}
+              >
+                {categoriasNomes.map((cat) => (
+                  <button
+                    key={cat}
+                    className={`floating-item ${cat === categoriaFiltro ? "ativo" : ""}`}
+                    onClick={() => {
+                      setCategoriaFiltro(cat);
+                      setQuantidadeExibida(10);
+                      setShowFloatingMenu(false);
+                    }}
+                  >
+                    {cat}
+                  </button>
+                ))}
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </>
       )}
 
-      {/* Mensagem animada a cada 15s */}
-      {mostrarMensagemPedido && !showFloatingMenu && (
+      {/* Mensagem de pedido */}
+      {!loading && mostrarMensagemPedido && !showFloatingMenu && (
         <div className="mensagem-pedido">🍔 Já fez seu pedido?</div>
       )}
 
@@ -172,18 +178,16 @@ const ProdutoSlider = ({ busca }) => {
                 />
                 <h3
                   dangerouslySetInnerHTML={{
-                    __html: destacarTexto(produto.nome),
+                    __html: destacarTexto(produto.nome || ""),
                   }}
                 />
                 <p
                   className="text-descricao"
                   dangerouslySetInnerHTML={{
-                    __html: destacarTexto(produto.descricao),
+                    __html: destacarTexto(produto.descricao || ""),
                   }}
                 />
-                <p className="prod-vitrine-preco">
-                  {formatarPreco(produto.preco)}
-                </p>
+                <p className="prod-vitrine-preco">{formatarPreco(produto.preco)}</p>
                 <button
                   className="botao-adicionar"
                   onClick={() => handleClick(produto)}
@@ -196,13 +200,14 @@ const ProdutoSlider = ({ busca }) => {
         )}
       </div>
 
-      {quantidadeExibida < produtosFiltradosPorBusca.length &&
-        produtosExibidos.length > 0 && (
-          <div className="mostrar-mais-container">
-            <button onClick={mostrarMais}>Mostrar mais</button>
-          </div>
-        )}
+      {/* Botão mostrar mais */}
+      {quantidadeExibida < produtosFiltrados.length && produtosExibidos.length > 0 && (
+        <div className="mostrar-mais-container">
+          <button onClick={mostrarMais}>Mostrar mais</button>
+        </div>
+      )}
 
+      {/* Mensagem de item adicionado */}
       {showMessage && (
         <div className="message-fixed">
           <span>{message}</span>

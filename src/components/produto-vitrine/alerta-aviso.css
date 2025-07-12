@@ -1,0 +1,49 @@
+/* src/components/alerta-aviso.css */
+
+.alerta-aviso {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 999;
+  width: 100%;
+  max-width: 90%;
+  background-color: #fef3c7;
+  color: #92400e;
+  border-left: 6px solid #f59e0b;
+  padding: 16px 20px;
+  border-radius: 12px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.icone-alerta {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  color: #f59e0b;
+}
+
+.texto-alerta {
+  font-size: 0.95rem;
+  font-weight: 500;
+  flex: 1;
+  word-wrap: break-word;
+}
+
+.fechar-alerta {
+  background: transparent;
+  border: none;
+  color: #f59e0b;
+  cursor: pointer;
+  position: absolute;
+  top: 8px;
+  right: 12px;
+}
+
+.icone-fechar {
+  width: 16px;
+  height: 16px;
+}

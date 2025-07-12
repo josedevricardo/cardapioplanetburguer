@@ -1,9 +1,9 @@
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import "./produto-vitrine2.css";
 
 import { CartContext } from "../../contexts/cart-context";
-import { ProdutoContext } from "../../contexts/categoria-context"; // importado
+import { ProdutoContext } from "../../contexts/categoria-context";
 
 const ProdutoVitrine = ({ busca }) => {
   const [showMessage, setShowMessage] = useState(false);
@@ -13,10 +13,34 @@ const ProdutoVitrine = ({ busca }) => {
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
 
   const { addToCart, cartItems } = useContext(CartContext);
-  const { categorias } = useContext(ProdutoContext); // dados do Firebase
+  const { categorias } = useContext(ProdutoContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // transforma produtos que podem estar como objeto em array, adicionando categoria
+  // 👉 Função para normalizar nomes (remover acentos, espaços, etc.)
+  const normalizar = (texto) =>
+    texto
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/\s+/g, "-");
+
+  // 👉 Atualiza categoria com base na URL
+  useEffect(() => {
+    const path = normalizar(location.pathname.replace("/", ""));
+
+    const categoriaEncontrada = categorias.find(
+      (cat) => normalizar(cat.nome) === path
+    );
+
+    if (categoriaEncontrada) {
+      setCategoriaFiltro(categoriaEncontrada.nome);
+      setQuantidadeExibida(10);
+    } else {
+      setCategoriaFiltro("Todas");
+    }
+  }, [location.pathname, categorias]);
+
   const produtosUnificados = categorias.flatMap((cat) =>
     Object.entries(cat.produtos || {}).map(([id, p]) => ({
       id,
@@ -98,6 +122,13 @@ const ProdutoVitrine = ({ busca }) => {
           : `Categoria: ${categoriaFiltro}`}
       </h2>
 
+      {/* Aviso específico para bebidas */}
+      {categoriaFiltro === "Bebidas" && (
+        <div className="aviso-cerveja">
+          🚫 Entregas de <strong>cervejas</strong> apenas a partir de <strong>4 unidades</strong>!
+        </div>
+      )}
+
       {/* Menu flutuante (mobile) */}
       <div className="floating-categorias-wrapper">
         <button
@@ -113,9 +144,7 @@ const ProdutoVitrine = ({ busca }) => {
             {categoriasNomes.map((cat) => (
               <button
                 key={cat}
-                className={`floating-item ${
-                  cat === categoriaFiltro ? "ativo" : ""
-                }`}
+                className={`floating-item ${cat === categoriaFiltro ? "ativo" : ""}`}
                 onClick={() => {
                   if (cat === "Início") {
                     navigate("/");
@@ -183,7 +212,7 @@ const ProdutoVitrine = ({ busca }) => {
           </div>
         )}
 
-      {/* Mensagem de adicionado */}
+      {/* Mensagem de confirmação */}
       {showMessage && <div className="message-fixed">{message}</div>}
     </div>
   );

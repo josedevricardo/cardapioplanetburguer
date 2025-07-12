@@ -1,22 +1,14 @@
 import React from "react";
 import "./footer.css";
 import Navbar from "../../components/navbar/navbar.jsx";
-import LancheVitrine from "../../components/produto-vitrine/produto-vitrine-artersanal.jsx";
+import LancheVitrine from "../../components/produto-vitrine/produto-vitrine-lanches.jsx";
 
 function Lanches() {
   return (
     <>
       <Navbar showMenu={true} />
 
-      <div className="container">
-        <div className="titulo text-center">
-          <h1>Lanches Artesanais</h1>
-          <p className="subtitulo">
-            Adicione seu pedido na sacola de comprar e ao finalizar será
-            redirecionado seu pedido para whatsapp e só aguardar...
-          </p>
-        </div>
-      </div>
+    
 
       <LancheVitrine/>
 

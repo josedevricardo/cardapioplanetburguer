@@ -1,9 +1,10 @@
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import "./produto-vitrine2.css";
 
 import { CartContext } from "../../contexts/cart-context";
-import { ProdutoContext } from "../../contexts/categoria-context"; // importado
+import { ProdutoContext } from "../../contexts/categoria-context";
 
 const ProdutoVitrine = ({ busca }) => {
   const [showMessage, setShowMessage] = useState(false);
@@ -11,12 +12,43 @@ const ProdutoVitrine = ({ busca }) => {
   const [categoriaFiltro, setCategoriaFiltro] = useState("Todas");
   const [quantidadeExibida, setQuantidadeExibida] = useState(10);
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
+  const [mostrarMensagemPedido, setMostrarMensagemPedido] = useState(false);
 
   const { addToCart, cartItems } = useContext(CartContext);
-  const { categorias } = useContext(ProdutoContext); // dados do Firebase
+  const { categorias } = useContext(ProdutoContext);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // transforma produtos que podem estar como objeto em array, adicionando categoria
+  // Exibir mensagem "Vitaminas Baneston" a cada 15s
+  useEffect(() => {
+    const intervalo = setInterval(() => {
+      setMostrarMensagemPedido(true);
+      setTimeout(() => setMostrarMensagemPedido(false), 5000);
+    }, 15000);
+    return () => clearInterval(intervalo);
+  }, []);
+
+  const normalizar = (texto) =>
+    texto
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/\s+/g, "-");
+
+  useEffect(() => {
+    const path = normalizar(location.pathname.replace("/", ""));
+    const categoriaEncontrada = categorias.find(
+      (cat) => normalizar(cat.nome) === path
+    );
+
+    if (categoriaEncontrada) {
+      setCategoriaFiltro(categoriaEncontrada.nome);
+      setQuantidadeExibida(10);
+    } else {
+      setCategoriaFiltro("Todas");
+    }
+  }, [location.pathname, categorias]);
+
   const produtosUnificados = categorias.flatMap((cat) =>
     Object.entries(cat.produtos || {}).map(([id, p]) => ({
       id,
@@ -56,7 +88,16 @@ const ProdutoVitrine = ({ busca }) => {
       qtd: 1,
     };
     addToCart(item);
-    setMessage(`🍔 "${produto.nome}" adicionado à sacola!`);
+
+    if (
+      produto.nome.toLowerCase().includes("basneton") ||
+      produto.nome.toLowerCase().includes("baneston")
+    ) {
+      // Nenhuma mensagem para esses produtos
+    } else {
+      setMessage(`🍔 "${produto.nome}" adicionado à sacola!`);
+    }
+
     setShowMessage(true);
     setTimeout(() => setShowMessage(false), 3000);
   };
@@ -71,6 +112,13 @@ const ProdutoVitrine = ({ busca }) => {
 
   return (
     <div className="produto-slider-container">
+      {/* Mensagem animada a cada 15s */}
+      {mostrarMensagemPedido && !showFloatingMenu && (
+        <div className="mensagem-pedido">
+          ⚠️ Atenção: Vitaminas Baneston só são entregues junto com outros pedidos.
+        </div>
+      )}
+
       {/* Filtro de categorias */}
       <div className="filtro-categorias">
         {categoriasNomes.map((cat) => (
@@ -97,6 +145,11 @@ const ProdutoVitrine = ({ busca }) => {
           ? "Todos os Produtos"
           : `Categoria: ${categoriaFiltro}`}
       </h2>
+
+      {/* Aviso fixo do Baneston */}
+      <div className="aviso-baneston">
+        ⚠️ <strong>Vitaminas Baneston</strong> só são entregues junto com outros pedidos.
+      </div>
 
       {/* Menu flutuante (mobile) */}
       <div className="floating-categorias-wrapper">
@@ -145,7 +198,9 @@ const ProdutoVitrine = ({ busca }) => {
             return (
               <div key={produto.id} className="produto-item">
                 <img
-                  src={produto.imagem || produto.foto || "https://via.placeholder.com/150"}
+                  src={
+                    produto.imagem || produto.foto || "https://via.placeholder.com/150"
+                  }
                   alt={produto.nome}
                   className="produto-imagem"
                 />
@@ -160,9 +215,7 @@ const ProdutoVitrine = ({ busca }) => {
                     __html: destacarTexto(produto.descricao),
                   }}
                 />
-                <p className="prod-vitrine-preco">
-                  {formatarPreco(produto.preco)}
-                </p>
+                <p className="prod-vitrine-preco">{formatarPreco(produto.preco)}</p>
                 <button
                   className="botao-adicionar"
                   onClick={() => handleClick(produto)}
@@ -183,7 +236,7 @@ const ProdutoVitrine = ({ busca }) => {
           </div>
         )}
 
-      {/* Mensagem de adicionado */}
+      {/* Mensagem fixa ao adicionar */}
       {showMessage && <div className="message-fixed">{message}</div>}
     </div>
   );

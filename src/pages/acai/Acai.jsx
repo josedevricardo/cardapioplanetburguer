@@ -60,7 +60,8 @@ function AcaiPage() {
                 style={{
                   padding: "10px",
                   borderRadius: "8px",
-                  textAlign: "center"
+                  textAlign: "center",
+                  
                 }}
               >
                 {item}

@@ -1,5 +1,126 @@
+/* Centralização e organização do bloco inicial */
+.hero-centralizado {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 1rem;
+  text-align: center;
+  gap: 1rem;
+  margin-top: -6rem;
+}
 
+/* ---------- TIPOGRAFIA ---------- */
+h1 {
+  font-size: 2.3rem;
+  color: #D2691E;
+}
 
+.logo-container .logo-text {
+  font-size: 2.5rem;
+  font-weight: 900;
+  color: #16a34a;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease-in-out;
+  animation: fadeSlideIn 0.8s ease forwards, pulse 3s ease-in-out infinite;
+  opacity: 0;
+  transform: translateY(-10px);
+  margin: 0.5rem 0;
+  cursor: pointer;
+}
+
+.logo-text2 {
+  font-size: 1rem;
+  font-weight: 500;
+  color: #101a14;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  transition: all 0.4s ease-in-out;
+  animation: fadeSlideIn 0.8s ease forwards, pulse 3s ease-in-out infinite;
+  opacity: 0;
+  transform: translateY(-10px);
+  margin-bottom: 0.6rem;
+  cursor: pointer;
+}
+
+/* ---------- AVALIAÇÃO ---------- */
+.avaliacao-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  margin-top: 0;
+}
+
+.estrelas {
+  color: #facc15;
+  font-size: 20px;
+  display: flex;
+  gap: 3px;
+}
+
+.nota-texto {
+  font-size: 13px;
+  color: #6b7280;
+}
+
+.avaliar-link {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.avaliar-link:hover {
+  color: #1d4ed8;
+}
+
+.avaliar-link svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ---------- BUSCAR ---------- */
+.buscar {
+  margin-top: -3rem;
+}
+
+/* ---------- FOOTER ---------- */
+.footer {
+  background-color: green;
+  color: white;
+  padding: 20px;
+  text-align: center;
+}
+
+.direitos {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  color: #333;
+  font-size: 14px;
+}
+
+/* ---------- HORÁRIO ---------- */
+.text-pedidos {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #fff;
+  font-size: 20px;
+  font-weight: bold;
+  background-color: chocolate;
+}
+
+.time {
+  text-align: center;
+  font-size: 10px;
+}
+
+/* ---------- GLOW ---------- */
 .glow-text {
   text-shadow:
     0 0 8px rgba(255, 105, 180, 0.7),
@@ -14,88 +135,12 @@
     0 0 30px rgba(253, 224, 71, 0.5);
 }
 
-.animate-fadeIn {
-  animation: fadeIn 0.6s ease-in-out forwards;
-}
-
-/* ---------- TIPOGRAFIA ---------- */
-h1 {
-  font-size: 2.3rem;
-  color: #D2691E;
-}
-
-/* ---------- ALERTAS ---------- */
-.alert {
-  background-color: #e63946;
-  color: white;
-  padding: 16px;
-  border-radius: 12px;
-  margin: 1rem auto;
-  max-width: 600px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  animation: fadeIn 0.5s ease-in-out;
-}
-
-.alert p {
-  margin-bottom: 10px;
-}
-
-.alert button {
-  background-color: #f1c40f;
-  color: #1a1a1a;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  transition: background 0.3s ease;
-}
-
-.alert button:hover {
-  background-color: #ffd700;
-}
-
-/* ---------- FOOTER ---------- */
-.footer {
-  background-color: green;
-  color: white;
-  padding: 20px;
-  text-align: center;
-}
-
-
-.direitos {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  color: #333;
-  font-size: 14px;
-}
-
-/* ---------- AVISOS DE PEDIDO ---------- */
-.text-pedidos {
-  text-align: center;
-  margin-bottom: 10px;
-  color: #fff;
-  font-size: 20px;
-  font-weight: bold;
-  background-color: chocolate;
-}
-
-/* ---------- INFORMAÇÃO DE HORÁRIO ---------- */
-.time {
-  text-align: center;
-  font-size: 10px;
-}
 
 /* ---------- ANIMAÇÕES ---------- */
-@keyframes fadeIn {
+@keyframes fadeSlideIn {
   from {
     opacity: 0;
-    transform: translateY(-10px);
+    transform: translateY(-15px);
   }
   to {
     opacity: 1;
@@ -103,17 +148,43 @@ h1 {
   }
 }
 
-/* ---------- COMPORTAMENTO DE SCROLL ---------- */
-html {
-  scroll-behavior: smooth;
-}
-
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
+@keyframes pulse {
+  0%, 100% {
+    text-shadow:
+      0 0 2px rgba(34, 197, 94, 0.4),
+      0 0 6px rgba(34, 197, 94, 0.3);
   }
-  to {
-    opacity: 1;
+  50% {
+    text-shadow:
+      0 0 3px rgba(34, 197, 94, 0.6),
+      0 0 8px rgba(34, 197, 94, 0.5);
   }
 }
+
+.buscar-desktop-container {
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 1.5rem;
+  background-color: #ffffff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.07);
+  border-radius: 16px;
+  text-align: center;
+  margin-top: -3rem;
+}
+
+.dark .buscar-desktop-container {
+  background-color: #18181b;
+  color: #e5e7eb;
+}
+
+.buscar-desktop-container h2 {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #1f2937;
+  margin-bottom: 1rem;
+}
+
+.dark .buscar-desktop-container h2 {
+  color: #f3f4f6;
+}
+

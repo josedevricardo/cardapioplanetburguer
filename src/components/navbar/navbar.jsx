@@ -1,26 +1,42 @@
 import React, { useState, useEffect, useContext, useRef } from "react";
-import "./navbar.css";
-import logo from "../../assets/mascote.png";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { CartContext } from "../../contexts/cart-context";
+import { categoriasFixas } from "../../rotas2";
 import Cart from "../Cart/cart";
-import { categoriasFixas } from "../../rotas2"; 
+import logo from "../../assets/mascote.png";
+import "./navbar.css";
 
 function Navbar() {
   const [isSticky, setSticky] = useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [motinhaAtiva, setMotinhaAtiva] = useState(false);
+
   const { totalCart } = useContext(CartContext);
-  const menuRef = useRef();
+  const menuRef = useRef(null);
   const location = useLocation();
+  const navigate = useNavigate();
 
   const openSidebar = () => {
-    const event = new CustomEvent("openSidebar");
-    window.dispatchEvent(event);
+    window.dispatchEvent(new CustomEvent("openSidebar"));
   };
 
   const toggleMobileMenu = () => {
     setMobileMenuOpen((prev) => !prev);
+  };
+
+  // Motinha + vibração + navegação
+  const handleMenuClick = (rota) => {
+    if ("vibrate" in navigator) {
+      navigator.vibrate(100);
+    }
+
+    setMotinhaAtiva(true);
+    setTimeout(() => {
+      setMotinhaAtiva(false);
+      navigate(rota);
+    }, 1000);
   };
 
   useEffect(() => {
@@ -60,13 +76,13 @@ function Navbar() {
 
       <div className="gif-background" />
 
-      <nav className={isSticky ? "navbar sticky" : "navbar"}>
-        {/* Mobile esquerdo */}
+      <nav className={`navbar ${isSticky ? "sticky" : ""}`}>
+        {/* Logo + Mobile */}
         <div className="mobile-left">
           <button
             className={`hamburger ${isMobileMenuOpen ? "open" : ""}`}
             onClick={toggleMobileMenu}
-            aria-label="Abrir menu mobile"
+            aria-label="Abrir menu"
             aria-expanded={isMobileMenuOpen}
           >
             <span className="line"></span>
@@ -76,43 +92,64 @@ function Navbar() {
 
           <Link to="/" className="logo-link logo-text-container">
             <img src={logo} alt="Planets Burguer Logo" className="logotipo" />
-            <span className="logo-text">Planet's <strong>Burguer</strong></span>
+            <span className="logo-text">
+              Planet's <strong>Burguer</strong>
+            </span>
           </Link>
         </div>
 
-        {/* Menu Desktop fixo */}
-        <ul className="menu desktop-menu">
+
+        {/* Menu Desktop */}
+        <ul className="desktop-menu">
           {categoriasFixas.map(({ nome, rota }) => (
             <li key={nome}>
-              <Link
-                to={rota}
+              <button
                 className={`menu-link ${location.pathname === rota ? "ativo" : ""}`}
+                onClick={() => handleMenuClick(rota)}
               >
                 {nome}
-              </Link>
+              </button>
             </li>
           ))}
         </ul>
 
-        {/* Botão Sacola */}
+        {/* Botão sacola */}
         <div className="right-buttons">
           <button onClick={openSidebar} className="sacola-button" aria-label="Abrir sacola">
             <div className="sacola-icon">🛍️</div>
             <span className="sacola-text">
-              Sacola <strong>{totalCart && !isNaN(totalCart) ? totalCart.toFixed(2) : "0.00"}</strong>
+              Sacola{" "}
+              <strong>
+                {typeof totalCart === "number" && !isNaN(totalCart)
+                  ? totalCart.toFixed(2)
+                  : "0.00"}
+              </strong>
             </span>
           </button>
         </div>
 
-        {/* Menu Mobile lateral */}
+        {/* Menu mobile lateral */}
         {isMobileMenuOpen && (
           <div className="mobile-sidebar" ref={menuRef}>
             <ul className="mobile-menu">
               {categoriasFixas.map(({ nome, rota }) => (
                 <li key={nome}>
-                  <Link to={rota} onClick={toggleMobileMenu}>
+                  <button
+                    className="menu-link"
+                    onClick={() => {
+                      if ("vibrate" in navigator) {
+                        navigator.vibrate(100);
+                      }
+                      setMotinhaAtiva(true);
+                      setTimeout(() => {
+                        setMotinhaAtiva(false);
+                        setMobileMenuOpen(false);
+                        navigate(rota);
+                      }, 1000);
+                    }}
+                  >
                     {nome}
-                  </Link>
+                  </button>
                 </li>
               ))}
             </ul>
@@ -121,6 +158,22 @@ function Navbar() {
 
         {isMobileMenuOpen && <div className="mobile-overlay" />}
         <Cart id="cart" />
+
+        {/* Motinha centralizada */}
+        <AnimatePresence>
+          {motinhaAtiva && (
+            <motion.div
+              key="motinha"
+              initial={{ x: "-100%", opacity: 0 }}
+              animate={{ x: "120%", opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1, ease: "easeOut" }}
+              className="motinha-entrega"
+            >
+              🛵💨
+            </motion.div>
+          )}
+        </AnimatePresence>
       </nav>
 
       <div className="navbar-space"></div>

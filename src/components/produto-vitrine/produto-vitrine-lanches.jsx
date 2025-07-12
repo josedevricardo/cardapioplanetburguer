@@ -1,9 +1,10 @@
-import React, { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useContext, useEffect } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+
 import "./produto-vitrine2.css";
 
 import { CartContext } from "../../contexts/cart-context";
-import { ProdutoContext } from "../../contexts/categoria-context"; // importado contexto
+import { ProdutoContext } from "../../contexts/categoria-context"; // importado
 
 const ProdutoSlider = ({ busca }) => {
   const [showMessage, setShowMessage] = useState(false);
@@ -12,11 +13,35 @@ const ProdutoSlider = ({ busca }) => {
   const [quantidadeExibida, setQuantidadeExibida] = useState(10);
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
 
-  const { addToCart, cartItems } = useContext(CartContext);
-  const { categorias } = useContext(ProdutoContext); // pega categorias do Firebase
+   const { addToCart, cartItems } = useContext(CartContext);
+  const { categorias } = useContext(ProdutoContext); // dados do Firebase
   const navigate = useNavigate();
+  const location = useLocation();
 
-  // Unifica produtos convertendo objeto em array, adicionando categoria
+  // 👉 Função para normalizar nomes (remover acentos, espaços, etc.)
+  const normalizar = (texto) =>
+    texto
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/\s+/g, "-");
+
+  // 👉 Atualiza categoria com base na URL
+  useEffect(() => {
+    const path = normalizar(location.pathname.replace("/", ""));
+
+    const categoriaEncontrada = categorias.find(
+      (cat) => normalizar(cat.nome) === path
+    );
+
+    if (categoriaEncontrada) {
+      setCategoriaFiltro(categoriaEncontrada.nome);
+      setQuantidadeExibida(10);
+    } else {
+      setCategoriaFiltro("Todas");
+    }
+  }, [location.pathname, categorias]);
+
   const produtosUnificados = categorias.flatMap((cat) =>
     Object.entries(cat.produtos || {}).map(([id, p]) => ({
       id,
@@ -25,13 +50,14 @@ const ProdutoSlider = ({ busca }) => {
     }))
   );
 
+
   const categoriasNomes = ["Início", "Todas", ...categorias.map((c) => c.nome)];
   const buscaLower = (busca || "").toLowerCase();
 
   const produtosFiltradosPorCategoria =
     categoriaFiltro === "Todas"
       ? produtosUnificados
-      : produtosUnificados.filter((p) => p.categoria === categoriaFiltro);
+      : produtosUnificados.filter((p) => normalizar(p.categoria) === normalizar(categoriaFiltro));
 
   const produtosFiltradosPorBusca = produtosFiltradosPorCategoria.filter(
     (p) =>

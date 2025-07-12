@@ -1,43 +1,58 @@
-// src/components/produto-slider/ProdutoVitrine.jsx
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+
 import "./produto-vitrine2.css";
+
 import { CartContext } from "../../contexts/cart-context";
-import { ProdutoContext } from "../../contexts/categoria-context";
+import { ProdutoContext } from "../../contexts/categoria-context"; // importado
+
 
 const ProdutoVitrine = ({ busca }) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const { categorias, produtosUnificados } = useContext(ProdutoContext);
-  const { addToCart, cartItems } = useContext(CartContext);
-
+  
+  
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
   const [categoriaFiltro, setCategoriaFiltro] = useState("Todas");
   const [quantidadeExibida, setQuantidadeExibida] = useState(10);
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
 
-  // Mapeia o nome da URL para o nome real da categoria
+ const { addToCart, cartItems } = useContext(CartContext);
+  const { categorias } = useContext(ProdutoContext); // dados do Firebase
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  // 👉 Função para normalizar nomes (remover acentos, espaços, etc.)
+  const normalizar = (texto) =>
+    texto
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/\s+/g, "-");
+
+  // 👉 Atualiza categoria com base na URL
   useEffect(() => {
-    const path = location.pathname.replace("/", "").toLowerCase();
+    const path = normalizar(location.pathname.replace("/", ""));
 
-    const mapeamentoCategoria = {
-      "produto2": "Produto2",
-      "lanches": "Lanches",
-      "omeletes": "Omeletes",
-      "artesanal": "Artesanal",
-      "bebidas": "Bebidas",
-      "sucos": "Sucos",
-      "acresimos": "Acresimos",
-      "acai": "Acai",
-    };
+    const categoriaEncontrada = categorias.find(
+      (cat) => normalizar(cat.nome) === path
+    );
 
-    const nomeCategoria = mapeamentoCategoria[path] || "Todas";
+    if (categoriaEncontrada) {
+      setCategoriaFiltro(categoriaEncontrada.nome);
+      setQuantidadeExibida(10);
+    } else {
+      setCategoriaFiltro("Todas");
+    }
+  }, [location.pathname, categorias]);
 
-    setCategoriaFiltro(nomeCategoria);
-    setQuantidadeExibida(10);
-  }, [location.pathname]);
+  const produtosUnificados = categorias.flatMap((cat) =>
+    Object.entries(cat.produtos || {}).map(([id, p]) => ({
+      id,
+      ...p,
+      categoria: cat.nome,
+    }))
+  );
+
 
   const categoriasNomes = ["Início", "Todas", ...categorias.map((c) => c.nome)];
   const buscaLower = (busca || "").toLowerCase();
@@ -95,8 +110,7 @@ const ProdutoVitrine = ({ busca }) => {
               if (cat === "Início") {
                 navigate("/");
               } else {
-                setCategoriaFiltro(cat);
-                setQuantidadeExibida(10);
+                navigate(`/categoria/${normalizar(cat)}`);
               }
             }}
           >
@@ -125,17 +139,14 @@ const ProdutoVitrine = ({ busca }) => {
             {categoriasNomes.map((cat) => (
               <button
                 key={cat}
-                className={`floating-item ${
-                  cat === categoriaFiltro ? "ativo" : ""
-                }`}
+                className={`floating-item ${cat === categoriaFiltro ? "ativo" : ""}`}
                 onClick={() => {
                   if (cat === "Início") {
                     navigate("/");
                   } else {
-                    setCategoriaFiltro(cat);
-                    setQuantidadeExibida(10);
-                    setShowFloatingMenu(false);
+                    navigate(`/categoria/${normalizar(cat)}`);
                   }
+                  setShowFloatingMenu(false);
                 }}
               >
                 {cat}
@@ -172,13 +183,8 @@ const ProdutoVitrine = ({ busca }) => {
                     __html: destacarTexto(produto.descricao),
                   }}
                 />
-                <p className="prod-vitrine-preco">
-                  {formatarPreco(produto.preco)}
-                </p>
-                <button
-                  className="botao-adicionar"
-                  onClick={() => handleClick(produto)}
-                >
+                <p className="prod-vitrine-preco">{formatarPreco(produto.preco)}</p>
+                <button className="botao-adicionar" onClick={() => handleClick(produto)}>
                   {qtd > 0 ? `Adicionar mais (${qtd}x)` : "Adicionar à Sacola"}
                 </button>
               </div>

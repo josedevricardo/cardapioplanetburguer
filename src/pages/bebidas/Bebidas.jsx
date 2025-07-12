@@ -10,17 +10,6 @@ function Bebidas() {
     <>
       <Navbar showMenu={true} />
 
-  
-      <div className="container">
-        <div className="titulo text-center">
-          <h1>Bebidas Geladas</h1>
-          <p className="subtitulo">
-            Adicione seu pedido na sacola de comprar e ao finalizar será
-            redirecionado seu pedido para whatsapp e só aguardar...
-          </p>
-          
-        </div>
-      </div>
 
     <BebidasVitrine/>
 

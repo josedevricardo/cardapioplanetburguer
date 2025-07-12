@@ -1,4 +1,4 @@
-const { lanches } = require("./artesanal");
+const { lanches } = require("./lanches");
 const { bebidas } = require("./bebidas");
 const { sucos } = require("./sucos");
 const { omeletes } = require("./omeletes");

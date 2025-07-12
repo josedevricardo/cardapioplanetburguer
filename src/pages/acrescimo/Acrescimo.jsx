@@ -9,16 +9,7 @@ function Acrescimo() {
     <>
       <Navbar showMenu={true} />
 
-      <div className="container">
-        <div className="titulo text-center">
-          <h1>Faça seu pedido ao gosto!</h1>
-          <p className="subtitulo">
-            Adicione seu pedido na sacola de compras e, ao finalizar,
-            seu pedido será redirecionado para o WhatsApp. Só aguardar!
-          </p>
-        </div>
-      </div>
-
+  
      <AcrescimoVitrine/>
 
       <footer className="footer text-center">
