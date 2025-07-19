@@ -1,6 +1,20 @@
 .smooth-scroll-wrapper {
-    overflow-y: scroll;
-    scroll-behavior: smooth; /* Adiciona o efeito de rolagem suave */
-    height: 100vh; /* Ajuste a altura conforme necessário */
-  }
-  
+  overflow-y: auto;                /* Melhor que scroll fixo */
+  scroll-behavior: smooth;         /* Rolagem suave */
+  height: 100vh;                   /* Ocupa toda a altura da tela */
+  padding-right: 8px;              /* Previne corte de conteúdo com scrollbar */
+}
+
+/* Estiliza a barra de rolagem no Chrome/Edge */
+.smooth-scroll-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.smooth-scroll-wrapper::-webkit-scrollbar-thumb {
+  background-color: rgba(150, 150, 150, 0.2); /* cor leve e moderna */
+  border-radius: 8px;
+}
+
+.smooth-scroll-wrapper::-webkit-scrollbar-track {
+  background: transparent;
+}

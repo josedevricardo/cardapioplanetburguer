@@ -1,89 +1,121 @@
 body {
-  padding-top: 75px; /* Ajuste conforme o tamanho da sua navbar */
-  max-width: 100vw; /* Impede que o body ultrapasse a largura da tela */
-  overflow-x: hidden; /* Remove a rolagem horizontal */
+  padding-top: 75px;
+  max-width: 100vw;
+  overflow-x: hidden;
+  background-color: #f9f9f9;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
 .produto-box {
-    border: 3px solid #e9e9e9;
-    border-radius: 18px;
-    max-width: 230px;
-    padding: 10px 10px 20px 10px;
-    display: inline-block;
-    margin: 24px;
-    position: relative; /* Adiciona posicionamento relativo para coordenadas da animação */
-    
-    
+  border: 2px solid #e0e0e0;
+  border-radius: 18px;
+  max-width: 230px;
+  padding: 14px 12px 20px;
+  display: inline-block;
+  margin: 20px;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  position: relative;
+}
+
+.produto-box:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.produto-box img {
+  max-width: 100%;
+  border-radius: 12px;
+  margin-bottom: 10px;
+}
+
+.produto-box h2 {
+  font-size: 1rem;
+  margin: 5px 0 8px;
+  color: #222;
+  font-weight: 600;
 }
 
 .prod-vitrine-descricao-props {
-    padding: 0.5px;
-    font-size:0.18rem;
-    margin-bottom: 20px;
+  font-size: 0.8rem;
+  color: #555;
+  margin-bottom: 10px;
+  min-height: 36px;
 }
 
 .prod-vitrine-preco {
-
-    color: #7FFF00;
-    font-size: 1.2rem;
-    font-weight: bold;
-    line-height: 1rem;
-
+  color: #228B22;
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 10px;
 }
 
-
-
-.back-to-top {
-    position: fixed;
-    bottom: 20px;
-    top: 90%;
-    left: 0;
-    z-index: 999;
-    background-color: #006400;
-    color: #fff;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    transform: translateY(-50%);
-     transition: right 0.3s ease; 
-    cursor: pointer;
-  }
-  
-  .back-to-top:hover {
-    background-color: #0056b3;
-  }
-  
-  .message-hover-slider {
-    position: absolute; /* Posiciona a mensagem em relação ao container pai */
-    top: 20%; /* Ajusta a posição verticalmente */
-    left: 15%; /* Ajusta a posição horizontalmente */
-    transform: translate(-50%, -50%); /* Centraliza a mensagem */
-    background-color: rgba(0, 0, 0, 0.7); /* Cor de fundo com transparência */
-    color: #fff; /* Cor do texto */
-    padding: 10px 20px; /* Espaçamento interno */
-    border-radius: 30px; /* Borda arredondada */
-    font-size: 14px; /* Tamanho da fonte */
-    opacity: 0; /* Inicialmente invisível */
-    animation: slideIn 0.3s ease forwards; /* Animação de entrada */
-  }
-  
-
-/* Estilo de hover para a mensagem */
-.btn-cart:hover .message-hover {
-  opacity: 1; /* Torna a mensagem visível ao passar o mouse sobre o botão */
+.btn-cart {
+  background-color: #006400;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
 }
 
-/* Animação de entrada */
+.btn-cart:hover {
+  background-color: #004d00;
+}
+
+.btn-cart .icon {
+  width: 18px;
+  height: 18px;
+}
+
+.message-hover-slider {
+  position: absolute;
+  top: 14%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: rgba(0, 128, 0, 0.85);
+  color: #fff;
+  padding: 8px 16px;
+  border-radius: 30px;
+  font-size: 13px;
+  animation: slideIn 0.3s ease forwards;
+  z-index: 10;
+}
+
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(-10px); /* Inicia 10 pixels acima da posição normal */
+    transform: translate(-50%, -10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0); /* Termina na posição normal */
+    transform: translate(-50%, 0);
   }
 }
 
+.back-to-top {
+  position: fixed;
+  bottom: 25px;
+  right: 25px;
+  z-index: 999;
+  background-color: #006400;
+  color: #fff;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  transition: background-color 0.3s ease;
+}
 
-
+.back-to-top:hover {
+  background-color: #004d00;
+}

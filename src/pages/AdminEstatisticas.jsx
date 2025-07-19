@@ -59,6 +59,7 @@ function AdminEstatisticas() {
     signOut(auth)
       .then(() => {
         localStorage.removeItem("adminLogado");
+        localStorage.removeItem("token");
         navigate("/login-admin", { replace: true });
       })
       .catch((error) => {
@@ -68,22 +69,21 @@ function AdminEstatisticas() {
   };
 
   return (
-    <div className="navpai">
-    <div style={{ padding: 10 }}>
-      <div className="navbar2" style={{ marginBottom: 20 }}>
+    <div className="navpai" style={{ padding: 20, fontFamily: "Arial, sans-serif" }}>
+      <header className="navbar2" style={{ marginBottom: 20, display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <h2 style={{ margin: 0 }}>📊 Estatísticas do Dia</h2>
         <div>
           <button onClick={() => navigate("/admin")} className="btn">
             ← Voltar
           </button>
-          <button onClick={handleLogout} className="logoutBtn2">
+          <button onClick={handleLogout} className="logoutBtn2" style={{ marginLeft: 10 }}>
             Sair
           </button>
         </div>
-      </div>
+      </header>
 
-      <div style={{ display: "flex", gap: 30, flexWrap: "wrap" }}>
-        <div style={{ flex: 1, minWidth: 300 }}>
+      <main style={{ display: "flex", gap: 30, flexWrap: "wrap", justifyContent: "center" }}>
+        <section style={{ flex: "1 1 320px", maxWidth: 600 }}>
           <h4>Pedidos por Hora</h4>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={dadosHora}>
@@ -95,10 +95,9 @@ function AdminEstatisticas() {
               <Line type="monotone" dataKey="pedidos" stroke="#8884d8" />
             </LineChart>
           </ResponsiveContainer>
-        </div>
-        </div>
+        </section>
 
-        <div style={{ flex: 1, minWidth: 300 }}>
+        <section style={{ flex: "1 1 320px", maxWidth: 600 }}>
           <h4>Valor Faturado por Hora (R$)</h4>
           <ResponsiveContainer width="100%" height={300}>
             <LineChart data={dadosHora}>
@@ -110,8 +109,8 @@ function AdminEstatisticas() {
               <Line type="monotone" dataKey="total" stroke="#82ca9d" />
             </LineChart>
           </ResponsiveContainer>
-        </div>
-      </div>
+        </section>
+      </main>
     </div>
   );
 }

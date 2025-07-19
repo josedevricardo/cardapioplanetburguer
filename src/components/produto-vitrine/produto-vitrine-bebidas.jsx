@@ -17,7 +17,6 @@ const ProdutoVitrine = ({ busca }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 👉 Função para normalizar nomes (remover acentos, espaços, etc.)
   const normalizar = (texto) =>
     texto
       .normalize("NFD")
@@ -25,7 +24,6 @@ const ProdutoVitrine = ({ busca }) => {
       .toLowerCase()
       .replace(/\s+/g, "-");
 
-  // 👉 Atualiza categoria com base na URL
   useEffect(() => {
     const path = normalizar(location.pathname.replace("/", ""));
 
@@ -80,7 +78,7 @@ const ProdutoVitrine = ({ busca }) => {
       qtd: 1,
     };
     addToCart(item);
-    setMessage(`🍔 "${produto.nome}" adicionado à sacola!`);
+    setMessage(`"${produto.nome}" adicionado à sacola!`);
     setShowMessage(true);
     setTimeout(() => setShowMessage(false), 3000);
   };
@@ -212,8 +210,15 @@ const ProdutoVitrine = ({ busca }) => {
           </div>
         )}
 
-      {/* Mensagem de confirmação */}
-      {showMessage && <div className="message-fixed">{message}</div>}
+      {/* Mensagem ajustada */}
+      {showMessage && (
+        <div className="message-fixed">
+          <span role="img" aria-label="ícone">
+            🍔
+          </span>
+          <span className="message-texto">{message.replace("🍔", "").trim()}</span>
+        </div>
+      )}
     </div>
   );
 };

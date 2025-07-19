@@ -4,7 +4,6 @@ import "./sucos-vitrine.css";
 import bag from "../../assets/bag-black.png";
 import { CartContext } from "../../contexts/cart-context";
 import { ProdutoContext } from "../../contexts/categoria-context";
-import AlertaAviso from "../produto-vitrine/AlertaAviso"; 
 
 function SucosVitrine(props) {
   const { categorias } = useContext(ProdutoContext);
@@ -63,10 +62,9 @@ function SucosVitrine(props) {
       </div>
 
       {showMessage && (
-        <AlertaAviso
-          tipo="sucesso"
-          mensagem="Produto adicionado à sacola com sucesso!"
-        />
+        <div className="message-hover-slider">
+          Produto adicionado à sacola!
+        </div>
       )}
     </div>
   );

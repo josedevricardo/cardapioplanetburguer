@@ -1,19 +1,25 @@
-/* Barra superior do menu admin */
 .menu-admin-bar {
-  background-color: #1f2937; /* bg-gray-800 */
+  background-color: #1f2937;
   color: #fff;
   padding: 1rem;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+  user-select: none;
 }
 
-/* Logo e título */
 .menu-admin-logo {
   display: flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
+}
+
+.menu-admin-logo:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(255, 165, 0, 0.7); /* laranja suave para foco */
+  border-radius: 4px;
 }
 
 .logo-pequeno {
@@ -22,15 +28,13 @@
   object-fit: contain;
 }
 
-/* Título ao lado do logo */
 .menu-admin-title {
-  font-size: 1.125rem; /* text-lg */
+  font-size: 1.125rem;
   font-weight: 600;
 }
 
-/* Botão Sair */
 .menu-admin-sair {
-  background-color: #dc2626; /* bg-red-600 */
+  background-color: #dc2626;
   padding: 6px 12px;
   border-radius: 6px;
   color: white;
@@ -39,6 +43,9 @@
   transition: background 0.2s;
 }
 
-.menu-admin-sair:hover {
-  background-color: #b91c1c; /* hover:bg-red-700 */
+.menu-admin-sair:hover,
+.menu-admin-sair:focus-visible {
+  background-color: #b91c1c;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(185,28,28,0.5);
 }

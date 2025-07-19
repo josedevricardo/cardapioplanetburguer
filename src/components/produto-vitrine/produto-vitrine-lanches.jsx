@@ -4,7 +4,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "./produto-vitrine2.css";
 
 import { CartContext } from "../../contexts/cart-context";
-import { ProdutoContext } from "../../contexts/categoria-context"; // importado
+import { ProdutoContext } from "../../contexts/categoria-context";
 
 const ProdutoSlider = ({ busca }) => {
   const [showMessage, setShowMessage] = useState(false);
@@ -13,12 +13,11 @@ const ProdutoSlider = ({ busca }) => {
   const [quantidadeExibida, setQuantidadeExibida] = useState(10);
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
 
-   const { addToCart, cartItems } = useContext(CartContext);
-  const { categorias } = useContext(ProdutoContext); // dados do Firebase
+  const { addToCart, cartItems } = useContext(CartContext);
+  const { categorias } = useContext(ProdutoContext);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 👉 Função para normalizar nomes (remover acentos, espaços, etc.)
   const normalizar = (texto) =>
     texto
       .normalize("NFD")
@@ -26,7 +25,6 @@ const ProdutoSlider = ({ busca }) => {
       .toLowerCase()
       .replace(/\s+/g, "-");
 
-  // 👉 Atualiza categoria com base na URL
   useEffect(() => {
     const path = normalizar(location.pathname.replace("/", ""));
 
@@ -50,14 +48,15 @@ const ProdutoSlider = ({ busca }) => {
     }))
   );
 
-
   const categoriasNomes = ["Início", "Todas", ...categorias.map((c) => c.nome)];
   const buscaLower = (busca || "").toLowerCase();
 
   const produtosFiltradosPorCategoria =
     categoriaFiltro === "Todas"
       ? produtosUnificados
-      : produtosUnificados.filter((p) => normalizar(p.categoria) === normalizar(categoriaFiltro));
+      : produtosUnificados.filter(
+          (p) => normalizar(p.categoria) === normalizar(categoriaFiltro)
+        );
 
   const produtosFiltradosPorBusca = produtosFiltradosPorCategoria.filter(
     (p) =>
@@ -82,7 +81,7 @@ const ProdutoSlider = ({ busca }) => {
       qtd: 1,
     };
     addToCart(item);
-    setMessage(`🍔 "${produto.nome}" adicionado à sacola!`);
+    setMessage(`"${produto.nome}" adicionado à sacola!`);
     setShowMessage(true);
     setTimeout(() => setShowMessage(false), 3000);
   };
@@ -209,8 +208,15 @@ const ProdutoSlider = ({ busca }) => {
           </div>
         )}
 
-      {/* Mensagem de adicionado */}
-      {showMessage && <div className="message-fixed">{message}</div>}
+      {/* Mensagem ajustada */}
+      {showMessage && (
+        <div className="message-fixed">
+          <span role="img" aria-label="ícone">
+            🍔
+          </span>
+          <span className="message-texto">{message.replace("🍔", "").trim()}</span>
+        </div>
+      )}
     </div>
   );
 };

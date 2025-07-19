@@ -35,7 +35,7 @@ const ProdutoSlider = ({ busca }) => {
         .filter(Boolean);
 
       setCategorias(categoriasOrdenadas);
-      setLoading(false); // só mostra botão depois que carregar
+      setLoading(false);
     });
 
     return () => unsubscribe();
@@ -57,8 +57,9 @@ const ProdutoSlider = ({ busca }) => {
   const produtosFiltrados = produtosUnificados
     .filter((p) => categoriaFiltro === "Todas" || p.categoria === categoriaFiltro)
     .filter((p) =>
-      p.nome.toLowerCase().includes(buscaLower) ||
-      p.descricao.toLowerCase().includes(buscaLower)
+      (p.nome || "").toLowerCase().includes(buscaLower) ||
+      (p.descricao || "").toLowerCase().includes(buscaLower) ||
+      (p.categoria || "").toLowerCase().includes(buscaLower)
     );
 
   const produtosExibidos = produtosFiltrados.slice(0, quantidadeExibida);
@@ -117,7 +118,6 @@ const ProdutoSlider = ({ busca }) => {
         {categoriaFiltro === "Todas" ? "Todos os Produtos" : `Categoria: ${categoriaFiltro}`}
       </h2>
 
-      {/* Botão e menu flutuante só aparecem após carregamento */}
       {!loading && (
         <>
           <button
@@ -155,12 +155,10 @@ const ProdutoSlider = ({ busca }) => {
         </>
       )}
 
-      {/* Mensagem de pedido */}
       {!loading && mostrarMensagemPedido && !showFloatingMenu && (
         <div className="mensagem-pedido">🍔 Já fez seu pedido?</div>
       )}
 
-      {/* Lista de produtos */}
       <div className="produto-slider">
         {produtosExibidos.length === 0 ? (
           <p>Nenhum produto encontrado.</p>
@@ -173,8 +171,12 @@ const ProdutoSlider = ({ busca }) => {
               <div key={produto.id} className="produto-item">
                 <img
                   src={produto.imagem || "https://via.placeholder.com/150"}
-                  alt={produto.nome}
+                  alt={`Imagem do produto ${produto.nome}`}
                   className="produto-imagem"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://via.placeholder.com/150";
+                  }}
                 />
                 <h3
                   dangerouslySetInnerHTML={{
@@ -200,14 +202,12 @@ const ProdutoSlider = ({ busca }) => {
         )}
       </div>
 
-      {/* Botão mostrar mais */}
       {quantidadeExibida < produtosFiltrados.length && produtosExibidos.length > 0 && (
         <div className="mostrar-mais-container">
           <button onClick={mostrarMais}>Mostrar mais</button>
         </div>
       )}
 
-      {/* Mensagem de item adicionado */}
       {showMessage && (
         <div className="message-fixed">
           <span>{message}</span>

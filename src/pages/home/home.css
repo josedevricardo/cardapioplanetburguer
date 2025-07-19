@@ -12,14 +12,14 @@
 
 /* ---------- TIPOGRAFIA ---------- */
 h1 {
-  font-size: 2.3rem;
+  font-size: 2.8rem;
   color: #D2691E;
 }
 
-.logo-container .logo-text {
+.logo-container .logo-text{
   font-size: 2.5rem;
   font-weight: 900;
-  color: #16a34a;
+  color: #D2691E;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   transition: all 0.4s ease-in-out;
@@ -28,12 +28,15 @@ h1 {
   transform: translateY(-10px);
   margin: 0.5rem 0;
   cursor: pointer;
+  
+  
 }
 
-.logo-text2 {
+
+.logo-container .logo-text2 {
   font-size: 1rem;
   font-weight: 500;
-  color: #101a14;
+  color: #D2691E;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   transition: all 0.4s ease-in-out;
@@ -163,14 +166,14 @@ h1 {
 
 .buscar-desktop-container {
   max-width: 1200px;
-  margin: 2rem auto;
+  margin: 0 auto; /* centralizado, sem margem superior */
   padding: 1.5rem;
   background-color: #ffffff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.07);
   border-radius: 16px;
   text-align: center;
-  margin-top: -3rem;
 }
+
 
 .dark .buscar-desktop-container {
   background-color: #18181b;

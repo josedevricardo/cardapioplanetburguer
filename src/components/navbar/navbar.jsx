@@ -92,7 +92,7 @@ function Navbar() {
 
           <Link to="/" className="logo-link logo-text-container">
             <img src={logo} alt="Planets Burguer Logo" className="logotipo" />
-            <span className="logo-text">
+            <span className="logotext">
               Planet's <strong>Burguer</strong>
             </span>
           </Link>

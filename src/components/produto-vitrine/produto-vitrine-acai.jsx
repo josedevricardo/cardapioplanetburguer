@@ -1,6 +1,8 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+
 import "./produto-vitrine2.css";
+
 import { CartContext } from "../../contexts/cart-context";
 import { ProdutoContext } from "../../contexts/categoria-context";
 
@@ -17,8 +19,8 @@ const ProdutoVitrine = ({ busca }) => {
   const [quantidadeExibida, setQuantidadeExibida] = useState(10);
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
 
-  // Atualiza categoria com base na URL
   useEffect(() => {
+    // Extrai caminho da URL para filtrar categoria
     const path = location.pathname.replace("/", "").toLowerCase();
 
     const categoriaEncontrada = categorias.find(
@@ -33,6 +35,7 @@ const ProdutoVitrine = ({ busca }) => {
     }
   }, [location.pathname, categorias]);
 
+  // Unifica produtos de todas categorias em um array único
   const produtosUnificados = categorias.flatMap((cat) =>
     Object.entries(cat.produtos || {}).map(([id, p]) => ({
       id,
@@ -44,11 +47,13 @@ const ProdutoVitrine = ({ busca }) => {
   const categoriasNomes = ["Início", "Todas", ...categorias.map((c) => c.nome)];
   const buscaLower = (busca || "").toLowerCase();
 
+  // Filtra produtos conforme categoria selecionada
   const produtosFiltradosPorCategoria =
     categoriaFiltro === "Todas"
       ? produtosUnificados
       : produtosUnificados.filter((p) => p.categoria === categoriaFiltro);
 
+  // Filtra produtos conforme busca
   const produtosFiltradosPorBusca = produtosFiltradosPorCategoria.filter(
     (p) =>
       p.nome.toLowerCase().includes(buscaLower) ||
@@ -57,12 +62,14 @@ const ProdutoVitrine = ({ busca }) => {
 
   const produtosExibidos = produtosFiltradosPorBusca.slice(0, quantidadeExibida);
 
+  // Formata preço em Real brasileiro
   const formatarPreco = (preco) =>
     new Intl.NumberFormat("pt-BR", {
       style: "currency",
       currency: "BRL",
     }).format(preco);
 
+  // Adiciona produto ao carrinho e exibe mensagem temporária
   const handleClick = (produto) => {
     const item = {
       id: produto.id,
@@ -77,8 +84,10 @@ const ProdutoVitrine = ({ busca }) => {
     setTimeout(() => setShowMessage(false), 3000);
   };
 
+  // Aumenta quantidade exibida para mostrar mais produtos
   const mostrarMais = () => setQuantidadeExibida((prev) => prev + 10);
 
+  // Destaca o texto da busca nos nomes e descrições
   const destacarTexto = (texto) => {
     if (!buscaLower) return texto;
     const regex = new RegExp(`(${buscaLower})`, "gi");
@@ -87,7 +96,6 @@ const ProdutoVitrine = ({ busca }) => {
 
   return (
     <div className="produto-slider-container">
-      {/* Filtro de categorias */}
       <div className="filtro-categorias">
         {categoriasNomes.map((cat) => (
           <button
@@ -113,7 +121,6 @@ const ProdutoVitrine = ({ busca }) => {
           : `Categoria: ${categoriaFiltro}`}
       </h2>
 
-      {/* Botão flutuante mobile */}
       <div className="floating-categorias-wrapper">
         <button
           className="botao-flutuante"
@@ -127,9 +134,7 @@ const ProdutoVitrine = ({ busca }) => {
             {categoriasNomes.map((cat) => (
               <button
                 key={cat}
-                className={`floating-item ${
-                  cat === categoriaFiltro ? "ativo" : ""
-                }`}
+                className={`floating-item ${cat === categoriaFiltro ? "ativo" : ""}`}
                 onClick={() => {
                   if (cat === "Início") {
                     navigate("/");
@@ -147,7 +152,6 @@ const ProdutoVitrine = ({ busca }) => {
         )}
       </div>
 
-      {/* Lista de produtos */}
       <div className="produto-slider">
         {produtosExibidos.length === 0 ? (
           <p>Nenhum produto encontrado.</p>
@@ -174,13 +178,8 @@ const ProdutoVitrine = ({ busca }) => {
                     __html: destacarTexto(produto.descricao),
                   }}
                 />
-                <p className="prod-vitrine-preco">
-                  {formatarPreco(produto.preco)}
-                </p>
-                <button
-                  className="botao-adicionar"
-                  onClick={() => handleClick(produto)}
-                >
+                <p className="prod-vitrine-preco">{formatarPreco(produto.preco)}</p>
+                <button className="botao-adicionar" onClick={() => handleClick(produto)}>
                   {qtd > 0 ? `Adicionar mais (${qtd}x)` : "Adicionar à Sacola"}
                 </button>
               </div>
@@ -189,6 +188,7 @@ const ProdutoVitrine = ({ busca }) => {
         )}
       </div>
 
+      {/* Botão mostrar mais */}
       {quantidadeExibida < produtosFiltradosPorBusca.length &&
         produtosExibidos.length > 0 && (
           <div className="mostrar-mais-container">
@@ -196,7 +196,13 @@ const ProdutoVitrine = ({ busca }) => {
           </div>
         )}
 
-      {showMessage && <div className="message-fixed">{message}</div>}
+      {/* Mensagem flutuante */}
+      {showMessage && (
+        <div className="message-fixed">
+          <span role="img" aria-label="ícone">🍔</span>{" "}
+          <span className="message-texto">{message.replace("🍔", "").trim()}</span>
+        </div>
+      )}
     </div>
   );
 };

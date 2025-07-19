@@ -1,7 +1,7 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
-import logo from "../assets/logo.png"; // ajuste se estiver em outro caminho
-import "./menuadmin.css"; // importe seu CSS externo
+import logo from "../assets/logo.png";
+import "./menuadmin.css";
 
 export default function MenuAdmin() {
   const navigate = useNavigate();
@@ -13,15 +13,27 @@ export default function MenuAdmin() {
   }
 
   return (
-    <nav className="menu-admin-bar">
+    <nav className="menu-admin-bar" role="navigation" aria-label="Menu Administrativo">
       <div
         className="menu-admin-logo"
         onClick={() => navigate("/admin")}
+        role="button"
+        tabIndex={0}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" || e.key === " ") {
+            navigate("/admin");
+          }
+        }}
+        aria-label="Ir para a página inicial do painel"
       >
         <img src={logo} alt="Logo" className="logo-pequeno" />
         <span className="menu-admin-title">Painel Delivery</span>
       </div>
-      <button onClick={handleLogout} className="menu-admin-sair">
+      <button
+        onClick={handleLogout}
+        className="menu-admin-sair"
+        aria-label="Sair do painel administrativo"
+      >
         Sair
       </button>
     </nav>

@@ -17,7 +17,7 @@ const ProdutoVitrine = ({ busca }) => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 👉 Função para normalizar nomes (remover acentos, espaços, etc.)
+  // Função para normalizar nomes (remover acentos, espaços, etc.)
   const normalizar = (texto) =>
     texto
       .normalize("NFD")
@@ -25,7 +25,7 @@ const ProdutoVitrine = ({ busca }) => {
       .toLowerCase()
       .replace(/\s+/g, "-");
 
-  // 👉 Atualiza categoria com base na URL
+  // Atualiza categoria com base na URL
   useEffect(() => {
     const path = normalizar(location.pathname.replace("/", ""));
 
@@ -48,7 +48,6 @@ const ProdutoVitrine = ({ busca }) => {
       categoria: cat.nome,
     }))
   );
-
 
   const categoriasNomes = ["Início", "Todas", ...categorias.map((c) => c.nome)];
   const buscaLower = (busca || "").toLowerCase();
@@ -104,7 +103,7 @@ const ProdutoVitrine = ({ busca }) => {
             className={cat === categoriaFiltro ? "ativo" : ""}
             onClick={() => {
               if (cat === "Início") {
-                navigate("categoria/omeletes");
+                navigate("/");
               } else {
                 setCategoriaFiltro(cat);
                 setQuantidadeExibida(10);
@@ -208,8 +207,15 @@ const ProdutoVitrine = ({ busca }) => {
           </div>
         )}
 
-      {/* Mensagem de adicionado */}
-      {showMessage && <div className="message-fixed">{message}</div>}
+      {/* Mensagem ajustada */}
+      {showMessage && (
+        <div className="message-fixed">
+          <span role="img" aria-label="ícone">
+            🍔
+          </span>
+          <span className="message-texto">{message.replace("🍔", "").trim()}</span>
+        </div>
+      )}
     </div>
   );
 };

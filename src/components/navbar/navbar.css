@@ -10,8 +10,7 @@
   width: 100%;
   z-index: 100;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-  
-  
+   
 }
 
 .navbar.sticky {
@@ -21,20 +20,17 @@
 
 .gif-background {
   position: absolute;
-  top: 70px; /* altura da navbar */
+  top: 70px; 
   left: 0;
   right: 0;
   height: 300px;
-  background-image: url("../../assets/planetburguer.gif");
   background-repeat: no-repeat;
-
   background-size: contain;
   opacity: 0.12;
   z-index: 0;
   pointer-events: none;
+  margin-top: 1rem;
 }
-
-
 
 /* -------- Logo com texto -------- */
 .logo-link {
@@ -52,10 +48,10 @@
   height: auto;
 }
 
-.logo-text {
+.logotext {
   font-size: 22px;
   font-weight: 700;
-  color: #006400;
+  color: #e65500;
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   transition: all 0.4s ease-in-out;
@@ -67,7 +63,7 @@
   animation: fadeSlideIn 0.8s ease forwards, pulse 3s ease-in-out infinite;
 }
 
-.logo-text:hover {
+.logotext:hover {
   background: linear-gradient(90deg, #e53935, #ff7043);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -82,6 +78,8 @@
 .logo-link:hover .logo-text {
   transform: scale(1.05);
 }
+
+
 
 /* -------- Menu Desktop -------- */
 .desktop-menu {
@@ -111,7 +109,7 @@
   user-select: none;
 }
 
-/* Hover e foco com sombra verde */
+
 .menu-link:hover,
 .menu-link:focus {
   color: #004d00; /* verde escuro */
@@ -122,7 +120,7 @@
 
 /* Link ativo */
 .menu-link.ativo {
-  color: #e60000;
+  color: #e65500;
   font-weight: 700;
   
 }
@@ -133,7 +131,6 @@
   align-items: center;
   margin-left: 12px;
 }
-
 
 
 .sacola-button {
@@ -222,7 +219,7 @@
   transition: transform 0.3s ease-in-out;
 }
 
-/* Menu mobile: usar botões com reset de estilos para remover bordas */
+/* reset de estilos remover bordas */
 .mobile-menu {
   list-style: none;
   padding: 0;

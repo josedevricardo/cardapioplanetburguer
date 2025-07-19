@@ -1,14 +1,12 @@
-/* src/components/alerta-aviso.css */
-
 .alerta-aviso {
   position: fixed;
   bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 999;
+  z-index: 9999;
   width: 100%;
-  max-width: 90%;
-  background-color: #fef3c7;
+  max-width: 480px;
+  background-color: #fef3c7; /* padrão aviso */
   color: #92400e;
   border-left: 6px solid #f59e0b;
   padding: 16px 20px;
@@ -17,30 +15,58 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  word-break: break-word;
+  line-height: 1.4;
+}
+
+/* Estilos por tipo */
+.alerta-aviso.sucesso {
+  background-color: #d1fae5;
+  color: #065f46;
+  border-left-color: #10b981;
+}
+
+.alerta-aviso.erro {
+  background-color: #fee2e2;
+  color: #991b1b;
+  border-left-color: #ef4444;
+}
+
+.alerta-aviso.info {
+  background-color: #e0f2fe;
+  color: #1e40af;
+  border-left-color: #3b82f6;
+}
+
+.alerta-aviso.aviso {
+  background-color: #fef3c7;
+  color: #92400e;
+  border-left-color: #f59e0b;
 }
 
 .icone-alerta {
   width: 24px;
   height: 24px;
   flex-shrink: 0;
-  color: #f59e0b;
+  color: inherit;
 }
 
 .texto-alerta {
   font-size: 0.95rem;
   font-weight: 500;
   flex: 1;
-  word-wrap: break-word;
+  word-break: break-word;
 }
 
 .fechar-alerta {
   background: transparent;
   border: none;
-  color: #f59e0b;
+  color: inherit;
   cursor: pointer;
   position: absolute;
-  top: 8px;
+  top: 10px;
   right: 12px;
+  padding: 4px;
 }
 
 .icone-fechar {

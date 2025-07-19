@@ -52,7 +52,9 @@ function Home() {
             </div>
 
             <div className="logo-container text-center">
-              <span className="logo-text2">O sabor de outro planeta te espera!</span>
+              <span className="logo-text2">
+                O sabor de outro planeta te espera!
+              </span>
 
               <div className="avaliacao-container">
                 <div className="estrelas">
@@ -86,7 +88,6 @@ function Home() {
           {/* DESKTOP */}
           <div className="hidden md:block mt-10">
             <div className="buscar-desktop-container">
-              <h2>Buscar...</h2>
               <SearchBar busca={busca} setBusca={setBusca} />
             </div>
           </div>
@@ -129,7 +130,8 @@ function Home() {
           >
             @Desenvolvidor Ricardo
           </a>
-          <strong> Planet´s Burguer</strong> R. das Bromélias, 280 Residencial Vitória
+          <strong> Planet´s Burguer</strong> R. das Bromélias, 280 Residencial
+          Vitória
         </p>
       </footer>
     </>

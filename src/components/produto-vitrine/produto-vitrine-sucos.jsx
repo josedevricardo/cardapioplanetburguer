@@ -95,7 +95,7 @@ const ProdutoVitrine = ({ busca }) => {
     ) {
       // Nenhuma mensagem para esses produtos
     } else {
-      setMessage(`🍔 "${produto.nome}" adicionado à sacola!`);
+      setMessage(`"${produto.nome}" adicionado à sacola!`);
     }
 
     setShowMessage(true);
@@ -236,8 +236,15 @@ const ProdutoVitrine = ({ busca }) => {
           </div>
         )}
 
-      {/* Mensagem fixa ao adicionar */}
-      {showMessage && <div className="message-fixed">{message}</div>}
+      {/* Mensagem ajustada */}
+      {showMessage && (
+        <div className="message-fixed">
+          <span role="img" aria-label="ícone">
+            🍔
+          </span>
+          <span className="message-texto">{message.trim()}</span>
+        </div>
+      )}
     </div>
   );
 };

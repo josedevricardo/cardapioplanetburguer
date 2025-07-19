@@ -1,16 +1,20 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebaseConfig";
-import "./LoginAdmin.css"
+import { auth } from '../firebaseConfig'; 
 
 
+
+import ResetPasswordModal from "../components/ResetPasswordModal/ResetPasswordModal";
+import "./LoginAdmin.css";
 
 export default function LoginAdmin() {
   const [usuario, setUsuario] = useState("");
   const [senha, setSenha] = useState("");
   const [erro, setErro] = useState("");
   const [sucesso, setSucesso] = useState(false);
+  const [mostrarModal, setMostrarModal] = useState(false);
+
   const navigate = useNavigate();
 
   async function handleSubmit(e) {
@@ -47,11 +51,26 @@ export default function LoginAdmin() {
             onChange={(e) => setSenha(e.target.value)}
             required
           />
+
           {erro && <p className="error-message">{erro}</p>}
           {sucesso && <p className="success-message">✅ Logado com sucesso!</p>}
-          <button type="submit">Entrar</button>
+
+          <div className="button-group">
+            <button type="submit">Entrar</button>
+            <button
+              type="button"
+              className="esqueceu-senha"
+              onClick={() => setMostrarModal(true)}
+            >
+              Esqueceu a senha?
+            </button>
+          </div>
         </form>
       </div>
+
+      {mostrarModal && (
+        <ResetPasswordModal onClose={() => setMostrarModal(false)} />
+      )}
     </div>
   );
 }

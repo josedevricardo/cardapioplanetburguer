@@ -1,55 +1,40 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ArrowUp } from "lucide-react";
+import "./botao-topo.css";
 
-const ScrollToTopButton = () => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  const toggleVisibility = () => {
-    if (window.pageYOffset > 100) {
-      setIsVisible(true);
-    } else {
-      setIsVisible(false);
-    }
-  };
-
-  const scrollToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth',
-    });
-  };
+function BotaoTopo() {
+  const [mostrar, setMostrar] = useState(false);
 
   useEffect(() => {
-    window.addEventListener('scroll', toggleVisibility);
-    return () => {
-      window.removeEventListener('scroll', toggleVisibility);
+    const handleScroll = () => {
+      setMostrar(window.scrollY > 150);
     };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
+  const subir = () => {
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   return (
-    <button
-      onClick={scrollToTop}
-      style={{ ...buttonStyle, display: isVisible ? 'block' : 'none' }}
-    >
-      Subir
-    </button>
+    <AnimatePresence>
+      {mostrar && (
+        <motion.div
+          className="botao-topo-minimal"
+          onClick={subir}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 30 }}
+          transition={{ duration: 0.3 }}
+        >
+          <ArrowUp size={18} strokeWidth={2} />
+          <span className="texto-topo">Topo</span>
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
-};
+}
 
-const buttonStyle = {
-  position: 'fixed',
-  bottom: '20px',
-  right: '20px',
-  padding: '10px 20px',
-  fontSize: '10px',
-  cursor: 'pointer',
-  backgroundColor: '#6f40d4',
-  backgroundImage: 'url("https://i.ibb.co/Pg8R7GM/seta-subir.png")',
-  backgroundSize: 'contain',
-  backgroundRepeat: 'no-repeat',
-  color: '#fff',
-  border: 'none',
-  borderRadius: '5px',
-  textAlign: 'center'
-};
-
-export default ScrollToTopButton;
+export default BotaoTopo;

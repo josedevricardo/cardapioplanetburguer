@@ -7,10 +7,16 @@ export default function LogoutAdmin() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    signOut(auth).then(() => {
-      localStorage.removeItem("adminLogado");
-      navigate("/login-admin");
-    });
+    signOut(auth)
+      .then(() => {
+        localStorage.removeItem("adminLogado");
+        navigate("/login-admin");
+      })
+      .catch((error) => {
+        console.error("Erro ao sair:", error);
+        // Opcional: mostrar mensagem de erro ao usuário ou tentar redirecionar mesmo assim
+        navigate("/login-admin");
+      });
   }, [navigate]);
 
   return <p>Saindo...</p>;

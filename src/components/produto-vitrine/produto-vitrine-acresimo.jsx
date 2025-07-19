@@ -4,24 +4,20 @@ import { useNavigate, useLocation } from "react-router-dom";
 import "./produto-vitrine2.css";
 
 import { CartContext } from "../../contexts/cart-context";
-import { ProdutoContext } from "../../contexts/categoria-context"; // importado
-
+import { ProdutoContext } from "../../contexts/categoria-context";
 
 const ProdutoVitrine = ({ busca }) => {
-  
-  
   const [showMessage, setShowMessage] = useState(false);
   const [message, setMessage] = useState("");
   const [categoriaFiltro, setCategoriaFiltro] = useState("Todas");
   const [quantidadeExibida, setQuantidadeExibida] = useState(10);
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
 
- const { addToCart, cartItems } = useContext(CartContext);
-  const { categorias } = useContext(ProdutoContext); // dados do Firebase
+  const { addToCart, cartItems } = useContext(CartContext);
+  const { categorias } = useContext(ProdutoContext);
   const navigate = useNavigate();
   const location = useLocation();
 
-  // 👉 Função para normalizar nomes (remover acentos, espaços, etc.)
   const normalizar = (texto) =>
     texto
       .normalize("NFD")
@@ -29,10 +25,8 @@ const ProdutoVitrine = ({ busca }) => {
       .toLowerCase()
       .replace(/\s+/g, "-");
 
-  // 👉 Atualiza categoria com base na URL
   useEffect(() => {
-    const path = normalizar(location.pathname.replace("/", ""));
-
+    const path = normalizar(location.pathname.replace("/categoria/", "").replace("/", ""));
     const categoriaEncontrada = categorias.find(
       (cat) => normalizar(cat.nome) === path
     );
@@ -52,7 +46,6 @@ const ProdutoVitrine = ({ busca }) => {
       categoria: cat.nome,
     }))
   );
-
 
   const categoriasNomes = ["Início", "Todas", ...categorias.map((c) => c.nome)];
   const buscaLower = (busca || "").toLowerCase();
@@ -200,7 +193,13 @@ const ProdutoVitrine = ({ busca }) => {
           </div>
         )}
 
-      {showMessage && <div className="message-fixed">{message}</div>}
+      {/* Mensagem ajustada */}
+      {showMessage && (
+        <div className="message-fixed">
+          <span role="img" aria-label="ícone">🍔</span>
+          <span className="message-texto">{message.replace("🍔", "").trim()}</span>
+        </div>
+      )}
     </div>
   );
 };

@@ -15,15 +15,8 @@ const SearchBar = ({ busca, setBusca }) => {
   return (
     <div className="search-bar-wrapper">
       <div className="search-bar">
-        <input
-          type="text"
-          placeholder="Buscar aqui seu pedido..."
-          value={busca}
-          onChange={handleInputChange}
-          onKeyPress={handleKeyPress}
-        />
         <svg
-          className="search-icon"
+          className={`search-icon ${busca ? "active" : ""}`}
           xmlns="http://www.w3.org/2000/svg"
           fill="none"
           viewBox="0 0 24 24"
@@ -31,12 +24,29 @@ const SearchBar = ({ busca, setBusca }) => {
           strokeWidth={2}
           aria-hidden="true"
         >
-          <path
+          <circle
+            cx="11"
+            cy="11"
+            r="7"
             strokeLinecap="round"
             strokeLinejoin="round"
-            d="M21 21l-4.35-4.35m0 0a7 7 0 1110-10 7 7 0 01-10 10z"
+          />
+          <line
+            x1="21"
+            y1="21"
+            x2="16.65"
+            y2="16.65"
+            strokeLinecap="round"
+            strokeLinejoin="round"
           />
         </svg>
+        <input
+          type="text"
+          placeholder="Buscar seu preferido..."
+          value={busca}
+          onChange={handleInputChange}
+          onKeyPress={handleKeyPress}
+        />
       </div>
     </div>
   );

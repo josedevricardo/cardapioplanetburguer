@@ -53,37 +53,29 @@ body {
     background-color: #0056b3;
   }
   
-/* Adicione este estilo para a mensagem hover */
-.message-hover-slider6 {
-  position: absolute; /* Posiciona a mensagem em relação ao container pai */
-  top: 20%; /* Ajusta a posição verticalmente */
-  left: 15%; /* Ajusta a posição horizontalmente */
-  transform: translate(-50%, -50%); /* Centraliza a mensagem */
-  background-color: rgba(0, 0, 0, 0.7); /* Cor de fundo com transparência */
-  color: #fff; /* Cor do texto */
-  padding: 10px 20px; /* Espaçamento interno */
-  border-radius: 30px; /* Borda arredondada */
-  font-size: 14px; /* Tamanho da fonte */
-  opacity: 0; /* Inicialmente invisível */
-  animation: slideIn 0.3s ease forwards; /* Animação de entrada */
+.message-hover-slider {
+  position: absolute;
+  top: 20%;
+  left: 15%;
+  transform: translate(-50%, -50%);
+  background-color: rgba(0, 0, 0, 0.7);
+  color: #fff;
+  padding: 10px 20px;
+  border-radius: 30px;
+  font-size: 14px;
+  opacity: 0;
+  animation: slideIn 0.3s ease forwards;
 }
 
-/* Estilo de hover para a mensagem */
-.btn-cart:hover .message-hover {
-  opacity: 1; /* Torna a mensagem visível ao passar o mouse sobre o botão */
-}
-
-/* Animação de entrada */
 @keyframes slideIn {
   from {
     opacity: 0;
-    transform: translateY(-10px); /* Inicia 10 pixels acima da posição normal */
+    transform: translateY(-10px);
   }
   to {
     opacity: 1;
-    transform: translateY(0); /* Termina na posição normal */
+    transform: translateY(0);
   }
 }
-
 
 

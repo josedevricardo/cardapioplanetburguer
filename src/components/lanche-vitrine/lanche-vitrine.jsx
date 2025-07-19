@@ -1,17 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import "./lanche-vitrine.css";
 import bag from "../../assets/bag-black.png";
 import { CartContext } from "../../contexts/cart-context";
-import { useContext } from "react";
 import { ProdutoContext } from "../../contexts/categoria-context";
 
-
 function LancheVitrine(props) {
-  const { categorias } = useContext(ProdutoContext); // usa dados do contexto atualizado via Firebase
+  const { categorias } = useContext(ProdutoContext); // dados do contexto Firebase
   const { addToCart } = useContext(CartContext);
-  
+
   const [showBackToTop, setShowBackToTop] = useState(false);
-  const [showMessage, setShowMessage] = useState(false); // Estado para controlar a exibição da mensagem
+  const [showMessage, setShowMessage] = useState(false);
 
   useEffect(() => {
     function handleScroll() {
@@ -30,8 +28,6 @@ function LancheVitrine(props) {
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-
-
   function AddItem() {
     const item = {
       id: props.id,
@@ -42,20 +38,15 @@ function LancheVitrine(props) {
     };
 
     addToCart(item);
-    setShowMessage(true); // Exibir mensagem ao clicar no botão
-  }
-
-  // Oculta a mensagem após 2 segundos
+    setShowMessage(true);
     setTimeout(() => setShowMessage(false), 2000);
   }
 
-  // Verificação opcional para segurança
   if (!props || !props.nome || !props.preco) return null;
 
   return (
     <div className="produto-box text-center">
-    
-      <img src={props.foto} alt="foto" />
+      <img src={props.foto} alt={`Foto de ${props.nome}`} />
       <div>
         <h2>{props.nome}</h2>
         <p className="prod-vitrine-descricao-props">{props.descricao}</p>
@@ -72,15 +63,22 @@ function LancheVitrine(props) {
           type="button"
           onClick={AddItem}
           className="btn btn-cart"
-
         >
-          <img src={bag} className="icon" alt="bag" />
+          <img src={bag} className="icon" alt="Ícone sacola" />
           Comprar
         </button>
-        {showMessage && <div className="message-hover-slider4 ">Adicionado à sacola</div>} {/* Exibir a mensagem quando showMessage for true */}
+        {showMessage && (
+          <div className="message-hover-slider4">Adicionado à sacola</div>
+        )}
       </div>
+
+      {showBackToTop && (
+        <button className="back-to-top" onClick={scrollToTop}>
+          Voltar ao Topo
+        </button>
+      )}
     </div>
   );
-
+}
 
 export default LancheVitrine;
