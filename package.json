@@ -20,7 +20,7 @@
     "dotenv": "^16.6.1",
     "express": "^5.1.0",
     "file-saver": "^2.0.5",
-    "firebase": "^11.9.1",
+    "firebase": "^11.10.0",
     "firebase-admin": "^13.4.0",
     "framer-motion": "^12.19.2",
     "jspdf": "^3.0.1",
