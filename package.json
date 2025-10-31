@@ -21,7 +21,7 @@
     "express": "^5.1.0",
     "file-saver": "^2.0.5",
     "firebase": "^11.10.0",
-    "firebase-admin": "^13.4.0",
+    "firebase-admin": "^13.5.0",
     "framer-motion": "^12.19.2",
     "jspdf": "^3.0.1",
     "jspdf-autotable": "^5.0.2",
@@ -33,6 +33,7 @@
     "react-dock": "^0.6.0",
     "react-dom": "^18.3.1",
     "react-hot-toast": "^2.5.2",
+    "react-icons": "^5.5.0",
     "react-input-mask": "^2.0.4",
     "react-responsive-carousel": "^3.2.23",
     "react-router-dom": "^6.30.1",
@@ -71,6 +72,7 @@
   },
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "env-cmd": "^11.0.0",
     "netlify-cli": "^22.2.1",
     "tailwindcss": "^4.1.10"
   }

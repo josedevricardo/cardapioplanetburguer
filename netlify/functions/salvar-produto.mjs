@@ -1,55 +1,70 @@
-import { neon } from "@neondatabase/serverless";
-import dotenv from "dotenv";
-dotenv.config();
+const admin = require("firebase-admin");
 
-const sql = neon(process.env.DATABASE_URL);
+// Inicializa Firebase Admin apenas uma vez
+if (!admin.apps.length) {
+  try {
+    admin.initializeApp({
+      credential: admin.credential.cert({
+        projectId: process.env.FIREBASE_PROJECT_ID,
+        clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+        privateKey: process.env.FIREBASE_PRIVATE_KEY
+          ? process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n")
+          : undefined,
+      }),
+      databaseURL: process.env.FIREBASE_DATABASE_URL,
+    });
+    console.log("✅ Firebase Admin inicializado com sucesso!");
+  } catch (err) {
+    console.error("❌ Erro ao inicializar Firebase Admin:", err);
+  }
+}
+
+const db = admin.database();
 
 export async function handler(event) {
+
   if (event.httpMethod !== "POST") {
     return {
       statusCode: 405,
-      body: "Método não permitido",
+      body: JSON.stringify({ erro: "Método não permitido" }),
     };
   }
 
   try {
-    const data = JSON.parse(event.body);
-    const { id, nome, descricao, preco, foto } = data;
+    const secretEnviado = event.headers["x-firebase-secret"];
+    const secretServidor = process.env.FIREBASE_SECRET;
 
-    if (!nome || !descricao || !preco) {
+    if (!secretEnviado || secretEnviado !== secretServidor) {
       return {
-        statusCode: 400,
-        body: JSON.stringify({ erro: "Campos obrigatórios ausentes" }),
+        statusCode: 403,
+        body: JSON.stringify({ erro: "PERMISSION_DENIED: Secret inválido" }),
       };
     }
 
-    let result;
+    const dados = JSON.parse(event.body);
 
-    if (id) {
-      // Atualizar produto existente
-      result = await sql`
-        UPDATE produtos
-        SET nome = ${nome}, descricao = ${descricao}, preco = ${preco}, foto = ${foto}
-        WHERE id = ${id}
-        RETURNING *;
-      `;
-    } else {
-      // Inserir novo produto
-      result = await sql`
-        INSERT INTO produtos (nome, descricao, preco, foto)
-        VALUES (${nome}, ${descricao}, ${preco}, ${foto})
-        RETURNING *;
-      `;
-    }
+    const numeroPedido =
+      dados.numeroPedido || `#${Math.floor(10000 + Math.random() * 90000)}`;
+
+    const novoPedido = {
+      ...dados,
+      numeroPedido,
+      data: new Date().toISOString(),
+      status: "pendente",
+      informacoes_adicionais: dados.informacoes_adicionais || "",
+    };
+
+    await db.ref("pedidos").push(novoPedido);
 
     return {
       statusCode: 200,
-      body: JSON.stringify(result[0]),
+      body: JSON.stringify({ sucesso: true, numeroPedido }),
     };
   } catch (error) {
+    console.error("Erro ao salvar pedido:", error);
     return {
       statusCode: 500,
       body: JSON.stringify({ erro: error.message }),
     };
   }
-}
+};

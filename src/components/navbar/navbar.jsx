@@ -6,32 +6,31 @@ import { categoriasFixas } from "../../rotas2";
 import Cart from "../Cart/cart";
 import logo from "../../assets/mascote.png";
 import "./navbar.css";
+import "../../components/SearchBar/SearchBar.css"; // estilo da SearchBar
 
 function Navbar() {
   const [isSticky, setSticky] = useState(false);
   const [isMobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [motinhaAtiva, setMotinhaAtiva] = useState(false);
+  const [busca, setBusca] = useState(""); // 🔍 estado da busca
 
   const { totalCart } = useContext(CartContext);
   const menuRef = useRef(null);
   const location = useLocation();
   const navigate = useNavigate();
 
-  const openSidebar = () => {
-    window.dispatchEvent(new CustomEvent("openSidebar"));
-  };
+  const openSidebar = () => window.dispatchEvent(new CustomEvent("openSidebar"));
+  const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
 
-  const toggleMobileMenu = () => {
-    setMobileMenuOpen((prev) => !prev);
-  };
+  // 🔍 Atualiza busca global
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent("buscaAtualizada", { detail: busca }));
+  }, [busca]);
 
-  // Motinha + vibração + navegação
+  // Motinha + vibração
   const handleMenuClick = (rota) => {
-    if ("vibrate" in navigator) {
-      navigator.vibrate(100);
-    }
-
+    if ("vibrate" in navigator) navigator.vibrate(100);
     setMotinhaAtiva(true);
     setTimeout(() => {
       setMotinhaAtiva(false);
@@ -39,6 +38,7 @@ function Navbar() {
     }, 1000);
   };
 
+  // Fechar menu ao clicar fora
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (isMobileMenuOpen && menuRef.current && !menuRef.current.contains(event.target)) {
@@ -49,13 +49,12 @@ function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isMobileMenuOpen]);
 
+  // Sticky + Loader
   useEffect(() => {
     const handleScroll = () => setSticky(window.pageYOffset > 80);
     window.addEventListener("scroll", handleScroll);
-
     setLoading(true);
     const timer = setTimeout(() => setLoading(false), 2000);
-
     return () => {
       window.removeEventListener("scroll", handleScroll);
       clearTimeout(timer);
@@ -98,6 +97,30 @@ function Navbar() {
           </Link>
         </div>
 
+        {/* 🔍 Barra de busca central (desktop) */}
+        <div className="searchbar-desktop">
+          <div className="search-input-wrapper">
+            <input
+              type="text"
+              className="search-bar"
+              placeholder="Buscar pedido..."
+              value={busca}
+              onChange={(e) => setBusca(e.target.value)}
+            />
+            <svg
+              className={`search-icon ${busca ? "active" : ""}`}
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+              aria-hidden="true"
+            >
+              <circle cx="11" cy="11" r="7" strokeLinecap="round" strokeLinejoin="round"/>
+              <line x1="21" y1="21" x2="16.65" y2="16.65" strokeLinecap="round" strokeLinejoin="round"/>
+            </svg>
+          </div>
+        </div>
 
         {/* Menu Desktop */}
         <ul className="desktop-menu">
@@ -113,7 +136,7 @@ function Navbar() {
           ))}
         </ul>
 
-        {/* Botão sacola */}
+        {/* Botão Sacola */}
         <div className="right-buttons">
           <button onClick={openSidebar} className="sacola-button" aria-label="Abrir sacola">
             <div className="sacola-icon">🛍️</div>
@@ -128,18 +151,41 @@ function Navbar() {
           </button>
         </div>
 
-        {/* Menu mobile lateral */}
+        {/* Menu Mobile lateral */}
         {isMobileMenuOpen && (
           <div className="mobile-sidebar" ref={menuRef}>
+            {/* 🔍 Busca Mobile */}
+            <div className="searchbar-mobile">
+              <div className="search-input-wrapper">
+                <input
+                  type="text"
+                  className="search-bar"
+                  placeholder="Buscar produto..."
+                  value={busca}
+                  onChange={(e) => setBusca(e.target.value)}
+                />
+                <svg
+                  className={`search-icon ${busca ? "active" : ""}`}
+                  xmlns="http://www.w3.org/2000/svg"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  strokeWidth={2}
+                  aria-hidden="true"
+                >
+                  <circle cx="11" cy="11" r="7" strokeLinecap="round" strokeLinejoin="round"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </div>
+            </div>
+
             <ul className="mobile-menu">
               {categoriasFixas.map(({ nome, rota }) => (
                 <li key={nome}>
                   <button
                     className="menu-link"
                     onClick={() => {
-                      if ("vibrate" in navigator) {
-                        navigator.vibrate(100);
-                      }
+                      if ("vibrate" in navigator) navigator.vibrate(100);
                       setMotinhaAtiva(true);
                       setTimeout(() => {
                         setMotinhaAtiva(false);

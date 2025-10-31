@@ -1,30 +1,27 @@
-import React, { useState, useContext, useEffect } from "react";
+// src/components/produto-slider/ProdutoSlider.jsx
+import React, { useState, useEffect, useContext } from "react";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../firebaseConfig";
-import "./produto-slider.css";
 import { CartContext } from "../../contexts/cart-context";
-import { useParams } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
+import "./produto-slider.css";
 
 const ProdutoSlider = ({ busca }) => {
   const [categorias, setCategorias] = useState([]);
-  const [showMessage, setShowMessage] = useState(false);
-  const [message, setMessage] = useState("");
   const [categoriaFiltro, setCategoriaFiltro] = useState("Todas");
   const [quantidadeExibida, setQuantidadeExibida] = useState(10);
   const [showFloatingMenu, setShowFloatingMenu] = useState(false);
-  const [mostrarMensagemPedido, setMostrarMensagemPedido] = useState(false);
   const [loading, setLoading] = useState(true);
   const { addToCart, cartItems } = useContext(CartContext);
-  const { nome } = useParams();
 
+  // Carrega categorias e produtos do Firebase
   useEffect(() => {
     const categoriasRef = ref(db, "categorias");
     const unsubscribe = onValue(categoriasRef, (snapshot) => {
       const data = snapshot.val() || {};
-      const categoriasFormatadas = Object.entries(data).map(([chave, categoria]) => ({
-        nome: categoria.nome || chave,
-        produtos: Object.entries(categoria.produtos || {})
+      const categoriasFormatadas = Object.entries(data).map(([chave, cat]) => ({
+        nome: cat.nome || chave,
+        produtos: Object.entries(cat.produtos || {})
           .map(([id, p]) => ({ id, ...p }))
           .filter((p) => p.ativo === undefined || p.ativo === true),
       }));
@@ -41,12 +38,7 @@ const ProdutoSlider = ({ busca }) => {
     return () => unsubscribe();
   }, []);
 
-  useEffect(() => {
-    if (nome) {
-      setCategoriaFiltro(nome);
-    }
-  }, [nome]);
-
+  // Produtos unificados
   const produtosUnificados = categorias.flatMap((cat) =>
     cat.produtos.map((p) => ({ ...p, categoria: cat.nome }))
   );
@@ -56,10 +48,11 @@ const ProdutoSlider = ({ busca }) => {
 
   const produtosFiltrados = produtosUnificados
     .filter((p) => categoriaFiltro === "Todas" || p.categoria === categoriaFiltro)
-    .filter((p) =>
-      (p.nome || "").toLowerCase().includes(buscaLower) ||
-      (p.descricao || "").toLowerCase().includes(buscaLower) ||
-      (p.categoria || "").toLowerCase().includes(buscaLower)
+    .filter(
+      (p) =>
+        (p.nome || "").toLowerCase().includes(buscaLower) ||
+        (p.descricao || "").toLowerCase().includes(buscaLower) ||
+        (p.categoria || "").toLowerCase().includes(buscaLower)
     );
 
   const produtosExibidos = produtosFiltrados.slice(0, quantidadeExibida);
@@ -76,50 +69,15 @@ const ProdutoSlider = ({ busca }) => {
       qtd: 1,
     };
     addToCart(item);
-    setMessage(`🍔 "${produto.nome}" adicionado à sacola!`);
-    setShowMessage(true);
-    setTimeout(() => setShowMessage(false), 3000);
   };
 
   const mostrarMais = () => setQuantidadeExibida((prev) => prev + 10);
 
-  const destacarTexto = (texto) => {
-    if (!buscaLower) return texto;
-    const regex = new RegExp(`(${buscaLower})`, "gi");
-    return texto.replace(regex, "<mark>$1</mark>");
-  };
-
-  useEffect(() => {
-    const intervalo = setInterval(() => {
-      setMostrarMensagemPedido(true);
-      setTimeout(() => setMostrarMensagemPedido(false), 2000);
-    }, 15000);
-    return () => clearInterval(intervalo);
-  }, []);
-
   return (
     <div className="produto-slider-container">
-      <div className="filtro-categorias">
-        {categoriasNomes.map((cat) => (
-          <button
-            key={cat}
-            className={cat === categoriaFiltro ? "ativo" : ""}
-            onClick={() => {
-              setCategoriaFiltro(cat);
-              setQuantidadeExibida(10);
-            }}
-          >
-            {cat}
-          </button>
-        ))}
-      </div>
-
-      <h2 className="titulo-categoria">
-        {categoriaFiltro === "Todas" ? "Todos os Produtos" : `Categoria: ${categoriaFiltro}`}
-      </h2>
-
       {!loading && (
         <>
+          {/* Menu flutuante de categorias */}
           <button
             className="botao-flutuante"
             onClick={() => setShowFloatingMenu((prev) => !prev)}
@@ -155,10 +113,6 @@ const ProdutoSlider = ({ busca }) => {
         </>
       )}
 
-      {!loading && mostrarMensagemPedido && !showFloatingMenu && (
-        <div className="mensagem-pedido">🍔 Já fez seu pedido?</div>
-      )}
-
       <div className="produto-slider">
         {produtosExibidos.length === 0 ? (
           <p>Nenhum produto encontrado.</p>
@@ -171,29 +125,17 @@ const ProdutoSlider = ({ busca }) => {
               <div key={produto.id} className="produto-item">
                 <img
                   src={produto.imagem || "https://via.placeholder.com/150"}
-                  alt={`Imagem do produto ${produto.nome}`}
+                  alt={produto.nome}
                   className="produto-imagem"
                   onError={(e) => {
                     e.target.onerror = null;
                     e.target.src = "https://via.placeholder.com/150";
                   }}
                 />
-                <h3
-                  dangerouslySetInnerHTML={{
-                    __html: destacarTexto(produto.nome || ""),
-                  }}
-                />
-                <p
-                  className="text-descricao"
-                  dangerouslySetInnerHTML={{
-                    __html: destacarTexto(produto.descricao || ""),
-                  }}
-                />
+                <h3>{produto.nome}</h3>
+                <p className="text-descricao">{produto.descricao}</p>
                 <p className="prod-vitrine-preco">{formatarPreco(produto.preco)}</p>
-                <button
-                  className="botao-adicionar"
-                  onClick={() => handleClick(produto)}
-                >
+                <button className="botao-adicionar" onClick={() => handleClick(produto)}>
                   {qtd > 0 ? `Adicionar mais (${qtd}x)` : "Adicionar à Sacola"}
                 </button>
               </div>
@@ -205,12 +147,6 @@ const ProdutoSlider = ({ busca }) => {
       {quantidadeExibida < produtosFiltrados.length && produtosExibidos.length > 0 && (
         <div className="mostrar-mais-container">
           <button onClick={mostrarMais}>Mostrar mais</button>
-        </div>
-      )}
-
-      {showMessage && (
-        <div className="message-fixed">
-          <span>{message}</span>
         </div>
       )}
     </div>

@@ -42,7 +42,7 @@ const SearchBar = ({ busca, setBusca }) => {
         </svg>
         <input
           type="text"
-          placeholder="Buscar seu preferido..."
+          placeholder="Buscar pedido..."
           value={busca}
           onChange={handleInputChange}
           onKeyPress={handleKeyPress}

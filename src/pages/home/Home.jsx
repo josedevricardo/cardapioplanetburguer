@@ -2,13 +2,11 @@ import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import Navbar from "../../components/navbar/navbar";
 import ProdutoSlider from "../../components/produto-slider/produto-slider";
-import SearchBar from "../../components/SearchBar/SearchBar";
 import ScrollToTopButton from "../../components/ScrollToTopButton/ScrollToTopButton";
-
+import CategoriaSlider from "../../components/CategoriaSlider/CategoriaSlider";
 import "../home/home.css";
 
 function Home() {
-  const [busca, setBusca] = useState("");
   const [horaAtual, setHoraAtual] = useState(new Date());
 
   useEffect(() => {
@@ -85,21 +83,27 @@ function Home() {
             </div>
           </div>
 
-          {/* DESKTOP */}
-          <div className="hidden md:block mt-10">
-            <div className="buscar-desktop-container">
-              <SearchBar busca={busca} setBusca={setBusca} />
-            </div>
-          </div>
+          {/* 🔹 CATEGORIAS */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            className="mt-6 mb-6"
+          >
+            <h3 className="text-lg font-semibold text-center text-zinc-800 dark:text-zinc-200 mb-3">
+              JÁ FEZ SEU PEDIDO 
+            </h3>
+            <CategoriaSlider />
+          </motion.div>
 
-          {/* PRODUTOS */}
+          {/* 🔹 PRODUTOS */}
           {pedidosDisponiveis ? (
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6 }}
             >
-              <ProdutoSlider busca={busca} />
+              <ProdutoSlider />
             </motion.div>
           ) : (
             <motion.div

@@ -1,0 +1,241 @@
+.categoria-slider-container {
+  width: 100%;
+  overflow: hidden;
+  margin: 10px 0 25px;
+}
+
+.categoria-slider {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  padding: 6px;
+  scrollbar-width: none;
+}
+
+.categoria-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.categoria-item {
+  flex: 0 0 auto;
+  text-align: center;
+  background: #ffffff;
+  border-radius: 14px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  padding: 8px;
+  width: 90px;
+  transition: all 0.3s ease;
+  cursor: grab;
+}
+
+.categoria-item:active {
+  cursor: grabbing;
+}
+
+.categoria-img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin: 0 auto 5px;
+  display: block;
+}
+
+.categoria-item span {
+  font-size: 0.8rem;
+  color: #222;
+  font-weight: 500;
+}
+
+@media (prefers-color-scheme: dark) {
+  .categoria-item {
+    background: #1e1e1e;
+    color: #fff;
+  }
+  .categoria-item span {
+    color: #fff;
+  }
+}
+
+.categoria-slider-container {
+  width: 100%;
+  overflow: hidden;
+  padding: 1rem 0;
+  background: #fff;
+}
+
+.categoria-slider {
+  display: flex;
+  gap: 1.5rem;
+  cursor: grab;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.categoria-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.categoria-item {
+  min-width: 100px;
+  text-align: center;
+  user-select: none;
+}
+
+.categoria-img {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+  margin-bottom: 0.5rem;
+}
+
+.categoria-slider-container {
+  width: 100%;
+  overflow: hidden;
+  padding: 1rem 0;
+  background: #fff;
+}
+
+.categoria-slider {
+  display: flex;
+  gap: 1.5rem;
+  cursor: grab;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+}
+
+.categoria-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.categoria-item {
+  min-width: 120px;
+  text-align: center;
+  user-select: none;
+}
+
+.categoria-img {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 0.5rem;
+}
+.categoria-slider-container {
+  width: 100%;
+  overflow: hidden;
+  padding: 1rem 0;
+  background: #fff;
+}
+
+.categoria-slider {
+  display: flex;
+  gap: 1rem;
+  cursor: grab;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  scrollbar-width: none;
+  padding-left: 0.5rem;
+}
+
+.categoria-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.categoria-item {
+  min-width: 140px;
+  text-align: center;
+  user-select: none;
+  transition: all 0.3s ease;
+}
+
+.categoria-img {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+/* Botão moderno "Adicionar" menor */
+.btn-adicionar {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.4rem 1.2rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(90deg, #34d399, #10b981, #6ee7b7);
+  border: none;
+  border-radius: 1.5rem;
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+  cursor: pointer;
+  overflow: hidden;
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-adicionar:hover {
+  transform: scale(1.05);
+  box-shadow: 0 8px 16px rgba(16, 185, 129, 0.6);
+}
+
+.btn-adicionar:active {
+  transform: scale(0.95);
+}
+
+/* Brilho animado do botão */
+.btn-adicionar::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  background: rgba(255, 255, 255, 0.15);
+  transform: rotate(45deg) translate(-100%, -100%);
+  transition: all 0.5s ease-in-out;
+}
+
+.btn-adicionar:hover::before {
+  transform: rotate(45deg) translate(100%, 100%);
+}
+
+/* Emoji dentro do botão */
+.btn-adicionar span.emoji {
+  margin-right: 0.3rem;
+  font-size: 0.9rem;
+  transition: transform 0.3s ease;
+}
+
+.btn-adicionar:hover span.emoji {
+  transform: scale(1.2) rotate(-10deg);
+}
+
+/* ===== RESPONSIVO: botões menores em telas pequenas ===== */
+@media (max-width: 768px) {
+  .btn-adicionar {
+    padding: 0.3rem 0.8rem;
+    font-size: 0.7rem;
+    border-radius: 1.2rem;
+  }
+
+  .btn-adicionar span.emoji {
+    font-size: 0.8rem;
+    margin-right: 0.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .btn-adicionar {
+    padding: 0.25rem 0.6rem;
+    font-size: 0.65rem;
+    border-radius: 1rem;
+  }
+
+  .btn-adicionar span.emoji {
+    font-size: 0.7rem;
+    margin-right: 0.15rem;
+  }
+}

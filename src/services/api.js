@@ -1,9 +1,13 @@
 import axios from "axios";
 
 const api = axios.create({
-  baseURL: "https://SEU_BACKEND/render_ou_netlify_functions/api", // Troque aqui
+  // 👇 Coloque aqui o domínio público do seu site Netlify
+  baseURL: "https://cardapioplanetburguer.netlify.app",
+
   headers: {
-    Authorization: `Bearer SEU_TOKEN_AQUI`, // Troque pelo mesmo token usado no backend (.env)
+    // 🔒 Este token deve ser o mesmo que você definiu no backend (arquivo .env ou função serverless)
+    Authorization: `Bearer ${process.env.REACT_APP_API_TOKEN}`,
+    "Content-Type": "application/json",
   },
 });
 

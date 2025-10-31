@@ -1,3 +1,4 @@
+// src/contexts/cart-context.jsx
 import { createContext, useEffect, useState } from "react";
 
 export const CartContext = createContext();
@@ -19,17 +20,21 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  // Adicionar item
+  // ✅ Adicionar item — garantindo preço numérico
   const addToCart = (item) => {
+    const precoNumerico = parseFloat(item.preco.toString().replace(",", "."));
+
     const exists = cart.find((p) => p.id === item.id);
     if (exists) {
       setCart(
         cart.map((p) =>
-          p.id === item.id ? { ...p, qtd: p.qtd + 1 } : p
+          p.id === item.id
+            ? { ...p, qtd: p.qtd + 1 }
+            : p
         )
       );
     } else {
-      setCart([...cart, { ...item, qtd: 1 }]);
+      setCart([...cart, { ...item, preco: precoNumerico, qtd: 1 }]);
     }
   };
 
@@ -44,11 +49,11 @@ export const CartProvider = ({ children }) => {
     setCart([]);
   };
 
-  // Total
-  const total = cart.reduce(
-    (acc, item) => acc + item.preco * item.qtd,
-    0
-  );
+  // ✅ Total corrigido (conversão garantida)
+  const total = cart.reduce((acc, item) => {
+    const preco = parseFloat(item.preco.toString().replace(",", "."));
+    return acc + preco * (item.qtd || 1);
+  }, 0);
 
   // Enviar pedido
   const enviarPedido = (dadosCliente) => {
@@ -60,7 +65,7 @@ export const CartProvider = ({ children }) => {
 🧑 Cliente: ${dadosCliente.nome}
 📍 Endereço: ${dadosCliente.endereco}
 📝 Itens: ${textoItens}
-💰 Total: R$ ${total.toFixed(2)}
+💰 Total: R$ ${total.toFixed(2).replace(".", ",")}
 ✅ Pedido realizado via site.`;
 
     // WhatsApp

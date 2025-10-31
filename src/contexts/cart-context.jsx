@@ -1,6 +1,30 @@
-import { createContext, useState, useEffect } from 'react';
+// src/contexts/cart-context.jsx
+import { createContext, useState, useEffect } from "react";
 
 export const CartContext = createContext();
+
+// --- Função para limpar e converter preços ---
+const sanitizePrice = (raw) => {
+  if (raw === null || raw === undefined) return 0;
+  if (typeof raw === "number") return raw;
+  if (typeof raw === "string") {
+    // remove R$, espaços e vírgulas
+    const cleaned = raw.replace(/[^\d,.-]/g, "").replace(",", ".");
+    const num = parseFloat(cleaned);
+    return isNaN(num) ? 0 : num;
+  }
+  return 0;
+};
+
+// --- Função para limpar item do carrinho ---
+const sanitizeCartItem = (item) => {
+  if (!item) return null;
+  const preco = sanitizePrice(item.preco ?? item.price ?? 0);
+  const qtd = Number.isInteger(item.qtd) ? item.qtd : parseInt(item.qtd) || 1;
+  const nome = item.nome || item.name || "";
+  const id = item.id || nome; // fallback seguro
+  return { ...item, id, nome, preco, qtd };
+};
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
@@ -9,57 +33,68 @@ export const CartProvider = ({ children }) => {
 
   // Carrega do localStorage
   useEffect(() => {
-    const carrinhoSalvo = localStorage.getItem("carrinho");
-    const pedidosSalvos = localStorage.getItem("pedidos");
+    try {
+      const carrinhoSalvo = localStorage.getItem("carrinho");
+      const pedidosSalvos = localStorage.getItem("pedidos");
 
-    if (carrinhoSalvo) {
-      setCartItems(JSON.parse(carrinhoSalvo));
-    }
+      if (carrinhoSalvo) {
+        const parsed = JSON.parse(carrinhoSalvo);
+        if (Array.isArray(parsed)) {
+          setCartItems(parsed.map(sanitizeCartItem).filter(Boolean));
+        }
+      }
 
-    if (pedidosSalvos) {
-      setPedidos(JSON.parse(pedidosSalvos));
+      if (pedidosSalvos) {
+        const parsedP = JSON.parse(pedidosSalvos);
+        if (Array.isArray(parsedP)) setPedidos(parsedP);
+      }
+    } catch (err) {
+      console.error("Erro ao carregar carrinho/pedidos:", err);
+      localStorage.removeItem("carrinho");
+      localStorage.removeItem("pedidos");
     }
   }, []);
 
   // Atualiza total e salva carrinho
   useEffect(() => {
-  localStorage.setItem("carrinho", JSON.stringify(cartItems));
+    const sanitized = cartItems.map(sanitizeCartItem);
+    localStorage.setItem("carrinho", JSON.stringify(sanitized));
 
-  const total = cartItems.reduce((acc, item) => {
-    let preco = item.preco;
-    if (typeof preco === "string") {
-      preco = parseFloat(preco.replace(",", "."));
-    }
-    const qtd = parseInt(item.qtd) || 0;
-    return acc + (preco || 0) * qtd;
-  }, 0);
+    // cálculo preciso do total
+    const total = sanitized.reduce((acc, item) => {
+      const preco = sanitizePrice(item.preco);
+      const qtd = parseInt(item.qtd) || 0;
+      return acc + preco * qtd;
+    }, 0);
 
-  setTotalCart(total);
-}, [cartItems]);
+    setTotalCart(Number(total.toFixed(2)));
+  }, [cartItems]);
 
-
-  // Atualiza pedidos
+  // Persistir pedidos
   useEffect(() => {
     localStorage.setItem("pedidos", JSON.stringify(pedidos));
   }, [pedidos]);
 
+  // Adiciona item (usa nome ou id como chave)
   const addToCart = (item) => {
-    let preco = item.preco;
-
-    if (typeof preco === "string") {
-      preco = parseFloat(preco.replace(",", "."));
-    }
+    const precoSan = sanitizePrice(item.preco ?? item.price ?? 0);
+    const nome = item.nome || item.name || "";
+    const id = item.id || nome;
 
     setCartItems((prev) => {
-      const existente = prev.find((p) => p.id === item.id);
+      const prevSan = prev.map(sanitizeCartItem);
+      const existente = prevSan.find((p) => p.id === id);
 
       if (existente) {
-        return prev.map((p) =>
-          p.id === item.id ? { ...p, qtd: p.qtd + 1 } : p
+        // Atualiza quantidade
+        return prevSan.map((p) =>
+          p.id === id ? { ...p, qtd: (parseInt(p.qtd) || 1) + 1 } : p
         );
       }
 
-      return [...prev, { ...item, preco: preco || 0, qtd: 1 }];
+      // Novo item
+      const novo = sanitizeCartItem({ ...item, id, nome, preco: precoSan, qtd: 1 });
+      return [...prevSan, novo];
     });
   };
 
@@ -71,9 +106,10 @@ export const CartProvider = ({ children }) => {
     setCartItems((prev) =>
       prev
         .map((item) =>
-          item.id === id ? { ...item, qtd: item.qtd - 1 } : item
+          item.id === id ? { ...item, qtd: (parseInt(item.qtd) || 1) - 1 } : item
         )
-        .filter((item) => item.qtd > 0)
+        .map(sanitizeCartItem)
+        .filter((item) => item && item.qtd > 0)
     );
   };
 
