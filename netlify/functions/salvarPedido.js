@@ -1,35 +1,41 @@
 // salvarPedido.js
 
-// 1. Instale o Admin SDK: npm install firebase-admin
 const admin = require("firebase-admin");
 
-// 2. IMPORTANTE: Configure esta Variável de Ambiente no Netlify
-// Esta variável deve conter o JSON da sua Service Account Key do Firebase.
-// Por segurança, é recomendado carregar o JSON do ambiente.
+// 1. Obtém a Service Account Key do Netlify
 const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT;
 
-// Verifica se a Service Account Key existe
-if (!serviceAccountKey) {
-    console.error("ERRO: Variável de ambiente FIREBASE_SERVICE_ACCOUNT não configurada.");
-    // Para evitar que a função falhe antes de ser chamada, 
-    // faremos uma checagem de erro mais clara dentro do handler.
-}
-
-// Inicializa o Admin SDK apenas se ainda não foi inicializado
-// O Netlify pode reutilizar instâncias, então essa checagem é importante.
+// Verifica e inicializa o Admin SDK apenas uma vez
 if (!admin.apps.length) {
     try {
-        const serviceAccount = JSON.parse(serviceAccountKey);
+        // --- INÍCIO DA CORREÇÃO DE VARIAVEIS DE AMBIENTE ---
         
+        // CORREÇÃO: Cria uma cópia da chave para manipulação.
+        let safeServiceAccountKey = serviceAccountKey;
+
+        // Substitui as sequências de "\\n" (quebra de linha literal) por quebras de linha reais.
+        // Isso é essencial para que o JSON.parse() interprete corretamente a private_key.
+        safeServiceAccountKey = safeServiceAccountKey.replace(/\\n/g, '\n');
+        
+        // Remove as aspas externas se o Netlify as tiver adicionado (ex: "{"type": ...}")
+        if (safeServiceAccountKey.startsWith('"') && safeServiceAccountKey.endsWith('"')) {
+            safeServiceAccountKey = safeServiceAccountKey.substring(1, safeServiceAccountKey.length - 1);
+        }
+
+        const serviceAccount = JSON.parse(safeServiceAccountKey);
+        
+        // --- FIM DA CORREÇÃO DE VARIAVEIS DE AMBIENTE ---
+
+        // Inicializa o Admin SDK
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount),
-            // Use a URL do seu Realtime Database
+            // Usa a URL do seu Realtime Database
             databaseURL: "https://cardapioplanetsburguer-default-rtdb.firebaseio.com",
         });
         console.log("Firebase Admin SDK inicializado com sucesso.");
     } catch (e) {
-        console.error("Falha ao inicializar o Firebase Admin SDK:", e.message);
-        // Não lançar erro aqui, apenas logar. A falha será capturada no handler.
+        console.error("Falha ao inicializar o Firebase Admin SDK. Verifique a variável FIREBASE_SERVICE_ACCOUNT.", e.message);
+        // O erro será tratado dentro do exports.handler
     }
 }
 
@@ -37,7 +43,7 @@ if (!admin.apps.length) {
 const db = admin.database();
 
 exports.handler = async (event) => {
-    // 1. Checagem de Método HTTP
+    // Checagem de Método HTTP
     if (event.httpMethod !== "POST") {
         return {
             statusCode: 405,
@@ -45,11 +51,11 @@ exports.handler = async (event) => {
         };
     }
 
-    // 2. Checagem de Inicialização do Admin SDK
+    // Checagem de Inicialização do Admin SDK
     if (!admin.apps.length) {
         return {
             statusCode: 500,
-            body: JSON.stringify({ erro: "Configuração do Firebase Admin SDK falhou." }),
+            body: JSON.stringify({ erro: "Configuração do Firebase Admin SDK falhou. Verifique os logs do Netlify." }),
         };
     }
 
@@ -63,24 +69,24 @@ exports.handler = async (event) => {
             ...dados,
             numeroPedido: numeroPedido,
             informacoes_adicionais: dados.informacoes_adicionais || "",
-            data: new Date().toISOString(), // Data e hora do pedido
-            status: "pendente", // Status inicial para o Admin Panel
+            data: new Date().toISOString(),
+            status: "pendente",
         };
 
-        // 3. Salvando no Firebase Realtime Database
-        // Usa db.ref() para Realtime Database e .push() para criar um ID único
+        // Salvando no Firebase Realtime Database usando a sintaxe correta do Admin SDK
         await db.ref("pedidos").push(novoPedido);
 
-        // 4. Retorno de Sucesso para o Frontend
+        // Retorno de Sucesso para o Frontend
         return {
             statusCode: 200,
             body: JSON.stringify({ sucesso: true, numeroPedido }),
         };
     } catch (error) {
-        // 5. Tratamento de Erro na Escrita ou Parse
+        // Tratamento de Erro na Escrita ou Parse
         console.error("Erro ao salvar pedido:", error);
         return {
             statusCode: 500,
+            // Retorna o erro exato para ajudar no debug no console do frontend
             body: JSON.stringify({ erro: error.message || "Erro interno do servidor ao salvar no banco." }),
         };
     }
