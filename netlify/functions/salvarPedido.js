@@ -2,48 +2,56 @@
 
 const admin = require("firebase-admin");
 
-// 1. Obtém a Service Account Key do Netlify
 const serviceAccountKey = process.env.FIREBASE_SERVICE_ACCOUNT;
+const databaseUrl = "https://cardapioplanetsburguer-default-rtdb.firebaseio.com";
 
-// Verifica e inicializa o Admin SDK apenas uma vez
-if (!admin.apps.length) {
+let db; // Variável para armazenar a instância do Realtime Database
+
+// Função para garantir a inicialização segura do Firebase Admin SDK
+function initializeFirebase() {
+    if (admin.apps.length) {
+        // Se já estiver inicializado (reuso de instância do Netlify), retorna a instância do database
+        return admin.database();
+    }
+
     try {
-        // --- INÍCIO DA CORREÇÃO DE VARIAVEIS DE AMBIENTE ---
-        
-        // CORREÇÃO: Cria uma cópia da chave para manipulação.
+        if (!serviceAccountKey) {
+            throw new Error("FIREBASE_SERVICE_ACCOUNT variável de ambiente não configurada.");
+        }
+
+        // --- CORREÇÃO DE QUEBRAS DE LINHA ---
+        // 1. Cria uma cópia da chave para manipulação.
         let safeServiceAccountKey = serviceAccountKey;
 
-        // Substitui as sequências de "\\n" (quebra de linha literal) por quebras de linha reais.
-        // Isso é essencial para que o JSON.parse() interprete corretamente a private_key.
+        // 2. Substitui as sequências de "\\n" (quebra de linha literal) por quebras de linha reais.
         safeServiceAccountKey = safeServiceAccountKey.replace(/\\n/g, '\n');
         
-        // Remove as aspas externas se o Netlify as tiver adicionado (ex: "{"type": ...}")
+        // 3. Remove as aspas externas se existirem (comum no Netlify).
         if (safeServiceAccountKey.startsWith('"') && safeServiceAccountKey.endsWith('"')) {
             safeServiceAccountKey = safeServiceAccountKey.substring(1, safeServiceAccountKey.length - 1);
         }
 
         const serviceAccount = JSON.parse(safeServiceAccountKey);
-        
-        // --- FIM DA CORREÇÃO DE VARIAVEIS DE AMBIENTE ---
+        // --- FIM DA CORREÇÃO ---
 
         // Inicializa o Admin SDK
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount),
-            // Usa a URL do seu Realtime Database
-            databaseURL: "https://cardapioplanetsburguer-default-rtdb.firebaseio.com",
+            databaseURL: databaseUrl,
         });
+        
         console.log("Firebase Admin SDK inicializado com sucesso.");
+        return admin.database();
+
     } catch (e) {
-        console.error("Falha ao inicializar o Firebase Admin SDK. Verifique a variável FIREBASE_SERVICE_ACCOUNT.", e.message);
-        // O erro será tratado dentro do exports.handler
+        console.error("Falha fatal na inicialização do Firebase Admin SDK:", e.message);
+        // Retorna null ou lança um erro para ser tratado no handler principal
+        return null; 
     }
 }
 
-// Obtém a referência do Realtime Database
-const db = admin.database();
-
 exports.handler = async (event) => {
-    // Checagem de Método HTTP
+    // 1. Checagem de Método HTTP
     if (event.httpMethod !== "POST") {
         return {
             statusCode: 405,
@@ -51,11 +59,14 @@ exports.handler = async (event) => {
         };
     }
 
-    // Checagem de Inicialização do Admin SDK
-    if (!admin.apps.length) {
+    // 2. Inicializa ou obtém a instância do Database
+    db = initializeFirebase();
+
+    // 3. Checagem de Inicialização bem-sucedida
+    if (!db) {
         return {
             statusCode: 500,
-            body: JSON.stringify({ erro: "Configuração do Firebase Admin SDK falhou. Verifique os logs do Netlify." }),
+            body: JSON.stringify({ erro: "Erro de configuração do servidor. Contate o suporte." }),
         };
     }
 
@@ -73,20 +84,19 @@ exports.handler = async (event) => {
             status: "pendente",
         };
 
-        // Salvando no Firebase Realtime Database usando a sintaxe correta do Admin SDK
+        // 4. Salvando no Firebase Realtime Database
         await db.ref("pedidos").push(novoPedido);
 
-        // Retorno de Sucesso para o Frontend
+        // 5. Retorno de Sucesso para o Frontend
         return {
             statusCode: 200,
             body: JSON.stringify({ sucesso: true, numeroPedido }),
         };
     } catch (error) {
-        // Tratamento de Erro na Escrita ou Parse
-        console.error("Erro ao salvar pedido:", error);
+        // 6. Tratamento de Erro na Escrita ou Parse
+        console.error("Erro ao salvar pedido (provavelmente regra de segurança ou dados):", error);
         return {
             statusCode: 500,
-            // Retorna o erro exato para ajudar no debug no console do frontend
             body: JSON.stringify({ erro: error.message || "Erro interno do servidor ao salvar no banco." }),
         };
     }
