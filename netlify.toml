@@ -1,6 +1,6 @@
 [build]
-  functions = "netlify/functions"   # pasta das Netlify Functions (backend)
-  publish = "build"                 # pasta do build do React (frontend)
+  functions = "netlify/functions"
+  publish = "build"
 
 [functions]
-  directory = "netlify/functions"   # redundante, mas reforça onde estão as funções
+  directory = "netlify/functions"

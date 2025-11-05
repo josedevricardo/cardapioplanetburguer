@@ -25,7 +25,6 @@ function Cart() {
   const pagamentoRef = useRef(null);
   const informacoesAdicionaisRef = useRef(null);
 
-  // Adicionar event listener corretamente e limpar no unmount
   useEffect(() => {
     const handleOpenSidebar = () => setShow(true);
     window.addEventListener("openSidebar", handleOpenSidebar);
@@ -37,7 +36,7 @@ function Cart() {
   const bairrosSemFrete = ["vitoria", "vitoria 2"];
   const bairroFormatado = bairro.trim().toLowerCase();
 
-  let frete = 4; // padrão frete
+  let frete = 4; // padrão
   if (bairrosSemFrete.includes(bairroFormatado)) frete = 0;
   else if (bairroFormatado === "industrial") frete = 2;
   else if (
@@ -106,56 +105,60 @@ function Cart() {
         body: JSON.stringify(pedidoParaSalvar),
       });
 
-      const dadosResposta = await resposta.json();
+      let dadosResposta;
+      try {
+        dadosResposta = await resposta.json();
+      } catch {
+        dadosResposta = { erro: "Resposta inválida do servidor" };
+      }
 
       if (resposta.ok) {
         setSuccessMessage("✅ Pedido enviado e salvo com sucesso!");
-
-        // Limpar campos de forma segura
-        setNome("");
-        setQuemRecebe("");
-        setTelefone("");
-        setRua("");
-        setNumero("");
-        setBairro("");
-        if (pagamentoRef.current) pagamentoRef.current.value = "";
-        if (informacoesAdicionaisRef.current) informacoesAdicionaisRef.current.value = "";
-        clearCart();
-
-        // Montar mensagem para WhatsApp
-        const listaProdutos = cartItems
-          .map(
-            (item) =>
-              `- ${item.qtd}x ${item.nome}${item.descricao ? ` (Obs: ${item.descricao})` : ""}`
-          )
-          .join("\n");
-
-        const mensagem = `Olá, gostaria de finalizar meu pedido.\n\n` +
-          `📌 Número do Pedido: ${numeroPedido}\n` +
-          `👤 Nome: ${nome.trim()}\n` +
-          `🙋 Quem vai receber: ${quemRecebe.trim()}\n` +
-          `📞 Telefone: ${telefone.trim()}\n` +
-          `📍 Endereço: Rua ${rua.trim()}, Nº ${numero.trim()}, Bairro ${bairro.trim()}\n` +
-          `💳 Forma de Pagamento: ${pagamento}\n\n` +
-          `🛒 Meu pedido:\n${listaProdutos}\n\n` +
-          `💰 Total com frete: R$ ${totalComFrete.replace(".", ",")}\n` +
-          `📝 Informações adicionais: ${informacoesAdicionais}`;
-
-        const numeroWhatsApp = "5538998017215";
-        const whatsappUrl = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
-
-        setTimeout(() => {
-          window.open(whatsappUrl, "_blank");
-          setIsSending(false);
-        }, 1200);
       } else {
-        setErrorMessage("❌ Erro ao salvar pedido!");
-        console.error(dadosResposta);
-        setIsSending(false);
+        setErrorMessage("⚠️ Pedido enviado, mas não foi salvo no servidor.");
+        console.warn(dadosResposta);
       }
+
+      // Limpar campos
+      setNome("");
+      setQuemRecebe("");
+      setTelefone("");
+      setRua("");
+      setNumero("");
+      setBairro("");
+      if (pagamentoRef.current) pagamentoRef.current.value = "";
+      if (informacoesAdicionaisRef.current) informacoesAdicionaisRef.current.value = "";
+      clearCart();
+
+      // Montar mensagem WhatsApp
+      const listaProdutos = cartItems
+        .map(
+          (item) =>
+            `- ${item.qtd}x ${item.nome}${item.descricao ? ` (Obs: ${item.descricao})` : ""}`
+        )
+        .join("\n");
+
+      const mensagem = `Olá, gostaria de finalizar meu pedido.\n\n` +
+        `📌 Número do Pedido: ${numeroPedido}\n` +
+        `👤 Nome: ${nome.trim()}\n` +
+        `🙋 Quem vai receber: ${quemRecebe.trim()}\n` +
+        `📞 Telefone: ${telefone.trim()}\n` +
+        `📍 Endereço: Rua ${rua.trim()}, Nº ${numero.trim()}, Bairro ${bairro.trim()}\n` +
+        `💳 Forma de Pagamento: ${pagamento}\n\n` +
+        `🛒 Meu pedido:\n${listaProdutos}\n\n` +
+        `💰 Total com frete: R$ ${totalComFrete.replace(".", ",")}\n` +
+        `📝 Informações adicionais: ${informacoesAdicionais}`;
+
+      const numeroWhatsApp = "5538998017215";
+      const whatsappUrl = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
+
+      setTimeout(() => {
+        window.open(whatsappUrl, "_blank");
+        setIsSending(false);
+      }, 1200);
     } catch (erro) {
       setErrorMessage("Erro na conexão com o servidor");
-      console.error("Erro:", erro);
+      console.error("Erro inesperado:", erro);
       setIsSending(false);
     }
   }
