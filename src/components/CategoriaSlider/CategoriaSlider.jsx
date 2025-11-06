@@ -1,6 +1,7 @@
 // src/components/CategoriaSlider/ProdutoSliderHorizontal.jsx
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import "./CategoriaSlider.css";
 import { useNavigate } from "react-router-dom";
 import { ref, onValue } from "firebase/database";
@@ -13,70 +14,94 @@ const ProdutoSliderHorizontal = () => {
   const [produtos, setProdutos] = useState([]);
   const [clicked, setClicked] = useState(null);
   const [toast, setToast] = useState(null);
+  const [showArrows, setShowArrows] = useState(false);
   const sliderRef = useRef(null);
   const isUserInteracting = useRef(false);
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
 
-  // Carrega produtos do Firebase
+  // 🔹 Carrega produtos do Firebase
   useEffect(() => {
     const produtosRef = ref(db, "categorias/lanches/produtos");
-    onValue(produtosRef, (snapshot) => {
+    const unsubscribe = onValue(produtosRef, (snapshot) => {
       const data = snapshot.val();
       if (data) setProdutos(Object.values(data));
     });
+    return () => unsubscribe();
   }, []);
 
-  // Rolagem automática
+  // 🔹 Rolagem automática com pausa durante interação
   useEffect(() => {
     const slider = sliderRef.current;
+    if (!slider) return;
+
     let scrollInterval;
+    let pauseTimeout;
 
-    if (slider) {
-      const startAutoScroll = () => {
-        if (scrollInterval) clearInterval(scrollInterval);
-        scrollInterval = setInterval(() => {
-          if (!isUserInteracting.current) {
-            if (slider.scrollLeft + slider.clientWidth >= slider.scrollWidth) {
-              slider.scrollTo({ left: 0, behavior: "smooth" });
-            } else {
-              slider.scrollBy({ left: 1, behavior: "smooth" });
-            }
+    const startAutoScroll = () => {
+      clearInterval(scrollInterval);
+      scrollInterval = setInterval(() => {
+        if (!isUserInteracting.current) {
+          const maxScroll = slider.scrollWidth - slider.clientWidth;
+          if (slider.scrollLeft >= maxScroll - 2) {
+            slider.scrollTo({ left: 0, behavior: "smooth" });
+          } else {
+            slider.scrollBy({ left: 1, behavior: "smooth" });
           }
-        }, 20);
-      };
+        }
+      }, 20);
+    };
 
-      startAutoScroll();
-
-      const handleStart = () => (isUserInteracting.current = true);
-      const handleEnd = () => {
+    const pauseAutoScroll = () => {
+      isUserInteracting.current = true;
+      clearTimeout(pauseTimeout);
+      pauseTimeout = setTimeout(() => {
         isUserInteracting.current = false;
-        startAutoScroll();
-      };
+      }, 2500);
+    };
 
-      slider.addEventListener("mousedown", handleStart);
-      slider.addEventListener("mouseup", handleEnd);
-      slider.addEventListener("touchstart", handleStart);
-      slider.addEventListener("touchend", handleEnd);
+    slider.addEventListener("mousedown", pauseAutoScroll);
+    slider.addEventListener("mouseup", pauseAutoScroll);
+    slider.addEventListener("touchstart", pauseAutoScroll);
+    slider.addEventListener("touchend", pauseAutoScroll);
+    slider.addEventListener("wheel", pauseAutoScroll);
 
-      return () => {
-        clearInterval(scrollInterval);
-        slider.removeEventListener("mousedown", handleStart);
-        slider.removeEventListener("mouseup", handleEnd);
-        slider.removeEventListener("touchstart", handleStart);
-        slider.removeEventListener("touchend", handleEnd);
-      };
-    }
+    startAutoScroll();
+
+    return () => {
+      clearInterval(scrollInterval);
+      clearTimeout(pauseTimeout);
+      slider.removeEventListener("mousedown", pauseAutoScroll);
+      slider.removeEventListener("mouseup", pauseAutoScroll);
+      slider.removeEventListener("touchstart", pauseAutoScroll);
+      slider.removeEventListener("touchend", pauseAutoScroll);
+      slider.removeEventListener("wheel", pauseAutoScroll);
+    };
   }, []);
 
-  // ✅ Corrigido: converte preço para número antes de adicionar ao carrinho
+  // 🔹 Funções de rolagem manual pelas setas
+  const scrollLeft = () => {
+    const slider = sliderRef.current;
+    if (slider) {
+      slider.scrollBy({ left: -250, behavior: "smooth" });
+      isUserInteracting.current = true;
+      setTimeout(() => (isUserInteracting.current = false), 1500);
+    }
+  };
+
+  const scrollRight = () => {
+    const slider = sliderRef.current;
+    if (slider) {
+      slider.scrollBy({ left: 250, behavior: "smooth" });
+      isUserInteracting.current = true;
+      setTimeout(() => (isUserInteracting.current = false), 1500);
+    }
+  };
+
+  // 🔹 Adiciona produto ao carrinho
   const handleAdd = (produto, index) => {
-    const precoNumerico = parseFloat(
-      produto.preco.toString().replace(",", ".")
-    );
-
+    const precoNumerico = parseFloat(produto.preco.toString().replace(",", "."));
     addToCart({ ...produto, preco: precoNumerico });
-
     setClicked(index);
     setToast(`🍔 ${produto.nome} adicionado à sacola!`);
 
@@ -106,8 +131,14 @@ const ProdutoSliderHorizontal = () => {
   };
 
   return (
-    <div className="categoria-slider-container relative">
-      {/* Toast central com confete */}
+    <div
+      className="categoria-slider-container relative"
+      onMouseEnter={() => setShowArrows(true)}
+      onMouseLeave={() => setShowArrows(false)}
+      onTouchStart={() => setShowArrows(true)}
+      onTouchEnd={() => setTimeout(() => setShowArrows(false), 2000)}
+    >
+      {/* ✅ Toast central com confete */}
       <AnimatePresence>
         {toast && (
           <motion.div
@@ -139,22 +170,50 @@ const ProdutoSliderHorizontal = () => {
         )}
       </AnimatePresence>
 
+      {/* 🔹 Setas laterais com estilo moderno */}
+      <AnimatePresence>
+        {showArrows && (
+          <>
+            <motion.button
+              onClick={scrollLeft}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="arrow-btn arrow-left"
+            >
+              <ChevronLeft size={28} />
+            </motion.button>
+
+            <motion.button
+              onClick={scrollRight}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              className="arrow-btn arrow-right"
+            >
+              <ChevronRight size={28} />
+            </motion.button>
+          </>
+        )}
+      </AnimatePresence>
+
+      {/* 🔹 Slider principal */}
       <motion.div
         ref={sliderRef}
-        className="categoria-slider"
-        drag="x"
-        dragConstraints={{ left: -500, right: 0 }}
+        className="categoria-slider overflow-x-auto flex gap-3 scroll-smooth no-scrollbar"
         whileTap={{ cursor: "grabbing" }}
       >
         {produtos.map((produto, index) => (
           <motion.div
             key={index}
-            className="categoria-item bg-white shadow-md rounded-xl p-3 flex flex-col items-center justify-between"
+            className="categoria-item bg-white shadow-md rounded-xl p-3 flex flex-col items-center justify-between min-w-[160px]"
             whileHover={{ scale: 1.05 }}
           >
             <div
               className="cursor-pointer"
-              onClick={() => navigate("/produto2")}
+              onClick={() => navigate("/lanches")}
             >
               <img
                 src={produto.imagem}
@@ -170,7 +229,6 @@ const ProdutoSliderHorizontal = () => {
               R$ {parseFloat(produto.preco).toFixed(2).replace(".", ",")}
             </span>
 
-            {/* Botão moderno com CSS */}
             <button
               className="btn-adicionar"
               onClick={() => handleAdd(produto, index)}

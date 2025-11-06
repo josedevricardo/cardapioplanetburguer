@@ -213,6 +213,47 @@
   transform: scale(1.2) rotate(-10deg);
 }
 
+/* === Estilo moderno das setas === */
+.arrow-btn {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  backdrop-filter: blur(6px);
+  color: #fff;
+  box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
+  border-radius: 50%;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.25s ease-in-out;
+  z-index: 50;
+}
+
+.arrow-btn:hover {
+  background: rgba(255, 255, 255, 0.35);
+  transform: translateY(-50%) scale(1.1);
+}
+
+.arrow-left {
+  left: 10px;
+}
+
+.arrow-right {
+  right: 10px;
+}
+
+/* Oculta setas em telas pequenas */
+@media (max-width: 640px) {
+  .arrow-btn {
+    display: none;
+  }
+}
+
+
 /* ===== RESPONSIVO: botões menores em telas pequenas ===== */
 @media (max-width: 768px) {
   .btn-adicionar {
