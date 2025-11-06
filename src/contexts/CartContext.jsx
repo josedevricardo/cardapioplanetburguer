@@ -20,9 +20,10 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem("cart", JSON.stringify(cart));
   }, [cart]);
 
-  // ✅ Adicionar item — garantindo preço numérico
+  // ✅ Adicionar item — garante imagem e preço numérico
   const addToCart = (item) => {
     const precoNumerico = parseFloat(item.preco.toString().replace(",", "."));
+    const imagemFinal = item.foto || item.imagem || "/img/default.png";
 
     const exists = cart.find((p) => p.id === item.id);
     if (exists) {
@@ -34,7 +35,10 @@ export const CartProvider = ({ children }) => {
         )
       );
     } else {
-      setCart([...cart, { ...item, preco: precoNumerico, qtd: 1 }]);
+      setCart([
+        ...cart,
+        { ...item, foto: imagemFinal, preco: precoNumerico, qtd: 1 },
+      ]);
     }
   };
 

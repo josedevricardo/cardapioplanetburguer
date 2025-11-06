@@ -33,12 +33,12 @@ function Cart() {
     };
   }, []);
 
-  const bairrosSemFrete = ["vitoria", "vitoria 2"];
+  const bairrosSemFrete = ["vitoria", "vitoria 1", "vitoria 2", "Vitoria 1", "Vitoria 2", "Vitória 1", "Vitória 2", "vitoria2", "Vitoria2", "vitoria1", "Vitoria1"];
   const bairroFormatado = bairro.trim().toLowerCase();
 
-  let frete = 4; // padrão
+  let frete = 5; // padrão
   if (bairrosSemFrete.includes(bairroFormatado)) frete = 0;
-  else if (bairroFormatado === "industrial") frete = 2;
+  else if (bairroFormatado === "industrial" ) frete = 2;
   else if (
     bairroFormatado.includes("industrial") ||
     bairroFormatado.includes("cidade industrial")

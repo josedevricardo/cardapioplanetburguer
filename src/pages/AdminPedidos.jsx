@@ -1,16 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom"; 
-import { db } from "../firebaseConfig";
+import { Link, useNavigate } from "react-router-dom";
+import { db, auth } from "../firebaseConfig";
 import { ref, onValue, update, set } from "firebase/database";
 import { jsPDF } from "jspdf";
 import autoTable from "jspdf-autotable";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { AnimatePresence, motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
-import "./stiloPedido.css";
 import { signOut } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import "./stiloPedido.css";
 import "./AdminPedidosFooter.css";
 
 const AVISO_ANTIGO_MS = 1000 * 60 * 60 * 10; // 10 horas
@@ -30,7 +28,7 @@ Pagamento: ${pedido.pagamento}
 Informações: ${pedido.informacoes_adicionais || "Nenhuma"}
 
 Itens:
-${(pedido.itens || []).map(i => `${i.qtd}x ${i.produto}`).join("\n")}
+${(pedido.itens || []).map((i) => `${i.qtd}x ${i.produto}`).join("\n")}
 
 Total: R$ ${pedido.total}
 Data: ${formatarDataLocal(pedido.data)}
@@ -38,6 +36,82 @@ Status: ${pedido.status}
 `;
 }
 
+// ======== FUNÇÃO DE IMPRESSÃO EM 88MM ========
+function imprimirPedido(pedido) {
+  const janela = window.open("", "PRINT", "width=400,height=600");
+  if (!janela) return alert("Bloqueador de pop-up ativado!");
+
+  janela.document.write(`
+    <html>
+      <head>
+        <title>Imprimir Pedido</title>
+        <style>
+          @page {
+            size: 88mm auto;
+            margin: 5mm;
+          }
+          body {
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            width: 88mm;
+            margin: 0 auto;
+          }
+          h2, h3 { text-align: center; margin: 4px 0; }
+          p { margin: 3px 0; }
+          ul { padding-left: 10px; list-style: none; margin: 0; }
+          li { margin: 2px 0; }
+          .total {
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            border-top: 1px dashed #000;
+            margin-top: 6px;
+            padding-top: 4px;
+          }
+          .logo {
+            text-align: center;
+            margin-bottom: 4px;
+          }
+          .logo img {
+            width: 60px;
+            height: auto;
+          }
+        </style>
+      </head>
+      <body>
+        <div class="logo">
+          <img src="https://i.imgur.com/kXJkLZV.png" alt="Logo" />
+        </div>
+        <h2>Planet's Burguer</h2>
+        <h3>Pedido #${pedido.numeroPedido || pedido.id}</h3>
+        <p><strong>Cliente:</strong> ${pedido.nome}</p>
+        <p><strong>Telefone:</strong> ${pedido.telefone}</p>
+        <p><strong>Endereço:</strong> ${pedido.rua}, Nº ${pedido.numero}, ${pedido.bairro}</p>
+        <p><strong>Pagamento:</strong> ${pedido.pagamento}</p>
+        <p><strong>Obs:</strong> ${pedido.informacoes_adicionais || "Nenhuma"}</p>
+        <hr />
+        <h4>Itens:</h4>
+        <ul>
+          ${(pedido.itens || [])
+            .map((item) => `<li>${item.qtd}x ${item.produto}</li>`)
+            .join("")}
+        </ul>
+        <p class="total">TOTAL: R$ ${pedido.total}</p>
+        <p style="text-align:center;">${new Date(pedido.data).toLocaleString("pt-BR")}</p>
+        <script>
+          window.onload = () => {
+            window.print();
+            setTimeout(() => window.close(), 600);
+          };
+        </script>
+      </body>
+    </html>
+  `);
+
+  janela.document.close();
+}
+
+// ==================================================
 export default function AdminPedidos() {
   const [pedidos, setPedidos] = useState([]);
   const [carregando, setCarregando] = useState(true);
@@ -48,6 +122,7 @@ export default function AdminPedidos() {
   const [notificacao, setNotificacao] = useState(false);
   const navigate = useNavigate();
 
+  // === MONITORA OS PEDIDOS ===
   useEffect(() => {
     const pedidosRef = ref(db, "pedidos");
     const unsubscribe = onValue(
@@ -69,7 +144,7 @@ export default function AdminPedidos() {
     return () => unsubscribe();
   }, []);
 
-  // Impressão automática do último pedido ao chegar
+  // === IMPRESSÃO AUTOMÁTICA ===
   useEffect(() => {
     if (pedidos.length === 0) return;
 
@@ -77,51 +152,16 @@ export default function AdminPedidos() {
     if (!localStorage.getItem(`impresso-${ultimo.id}`)) {
       localStorage.setItem(`impresso-${ultimo.id}`, "true");
       setNotificacao(true);
-      imprimirPedido(ultimo);
-      setTimeout(() => setNotificacao(false), 4000);
+
+      setTimeout(() => {
+        imprimirPedido(ultimo);
+      }, 800);
+
+      setTimeout(() => setNotificacao(false), 3500);
     }
   }, [pedidos]);
 
-  function imprimirPedido(pedido) {
-    const janela = window.open("", "PRINT", "width=600,height=600");
-    if (!janela) return alert("Bloqueador de pop-up ativado!");
-
-    janela.document.write(`
-      <html>
-        <head>
-          <title>Imprimir Pedido</title>
-          <style>
-            body { font-family: Arial, sans-serif; padding: 20px; }
-            h1 { text-align: center; }
-            p { font-size: 14px; margin: 5px 0; }
-            ul { margin-top: 10px; }
-          </style>
-        </head>
-        <body>
-          <h1>Pedido #${pedido.numeroPedido || pedido.id}</h1>
-          <p><strong>Cliente:</strong> ${pedido.nome}</p>
-          <p><strong>Telefone:</strong> ${pedido.telefone}</p>
-          <p><strong>Endereço:</strong> ${pedido.rua}, Nº ${pedido.numero}, ${pedido.bairro}</p>
-          <p><strong>Pagamento:</strong> ${pedido.pagamento}</p>
-          <p><strong>Informações adicionais:</strong> ${pedido.informacoes_adicionais || "Nenhuma"}</p>
-          <h3>Itens:</h3>
-          <ul>
-            ${(pedido.itens || [])
-              .map((item) => `<li>${item.qtd}x ${item.produto}</li>`)
-              .join("")}
-          </ul>
-          <p><strong>Total:</strong> R$ ${pedido.total}</p>
-          <p><strong>Data:</strong> ${new Date(pedido.data).toLocaleString("pt-BR")}</p>
-        </body>
-      </html>
-    `);
-
-    janela.document.close();
-    janela.focus();
-    janela.print();
-    //janela.close();
-  }
-
+  // === FUNÇÕES DE EDIÇÃO / SALVAR / EXPORTAR ===
   const marcarComoEntregue = async (id) => {
     try {
       await update(ref(db, `pedidos/${id}`), { status: "entregue" });
@@ -287,7 +327,7 @@ export default function AdminPedidos() {
     signOut(auth)
       .then(() => {
         localStorage.removeItem("adminLogado");
-        navigate("/admin-estatisticas", { replace: true });
+        navigate("/login-admin", { replace: true });
       })
       .catch((error) => {
         console.error("Erro ao fazer logout:", error);
@@ -300,27 +340,20 @@ export default function AdminPedidos() {
 
   return (
     <div className="stiloPedido">
-    <nav className="navbar2">
-      <div className="logoTitulo">
-        <div className="logo-pequeno" />
-        <span className="tituloPainel">Painel Pedidos Delivery</span>
-      </div>
-
-      <div className="navRight">
-        <div className="navbar-buttons">
-          <Link to="/admin-estatisticas" className="menu-btn">
-            📊 Estatísticas
-          </Link>
-          <Link to="/admin-produtos" className="menu-btn">
-            🛒 Produtos
-          </Link>
+      <nav className="navbar2">
+        <div className="logoTitulo">
+          <div className="logo-pequeno" />
+          <span className="tituloPainel">Painel Pedidos Delivery</span>
         </div>
-        <button className="logoutBtn2" onClick={handleLogout}>
-          Sair
-        </button>
-        
-      </div>
-    </nav>
+
+        <div className="navRight">
+          <div className="navbar-buttons">
+            <Link to="/admin-estatisticas" className="menu-btn">📊 Estatísticas</Link>
+            <Link to="/admin-produtos" className="menu-btn">🛒 Produtos</Link>
+          </div>
+          <button className="logoutBtn2" onClick={handleLogout}>Sair</button>
+        </div>
+      </nav>
 
       <div className="container">
         <select
@@ -333,9 +366,28 @@ export default function AdminPedidos() {
           <option value="entregue">Entregue</option>
         </select>
 
-        {notificacao && (
-          <div className="notification-btn">📦 Novo pedido recebido! 🔔</div>
-        )}
+        {/* MODAL AUTOMÁTICA DE NOVO PEDIDO */}
+        <AnimatePresence>
+          {notificacao && (
+            <motion.div
+              className="modal-overlay"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+            >
+              <motion.div
+                className="modal-impressao"
+                initial={{ scale: 0.9 }}
+                animate={{ scale: 1 }}
+                exit={{ scale: 0.9 }}
+                transition={{ duration: 0.3 }}
+              >
+                <h2>🖨️ Novo Pedido Recebido!</h2>
+                <p>Enviando automaticamente para impressora...</p>
+              </motion.div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         <div className="estatisticas">
           <strong>Total pedidos: </strong> {totalPedidos} <br />
@@ -345,12 +397,8 @@ export default function AdminPedidos() {
         </div>
 
         <div className="botoesExportar">
-          <button className="btn" onClick={exportarPDF}>
-            Exportar PDF
-          </button>
-          <button className="btn" onClick={exportarXLSX}>
-            Exportar XLSX
-          </button>
+          <button className="btn" onClick={exportarPDF}>Exportar PDF</button>
+          <button className="btn" onClick={exportarXLSX}>Exportar XLSX</button>
         </div>
 
         <div className="pedidosGrid">
@@ -359,56 +407,26 @@ export default function AdminPedidos() {
             const antigo = Date.now() - dataPedido.getTime() > AVISO_ANTIGO_MS;
             return (
               <div key={pedido.id} className="pedidoCard">
-                <p>
-                  <strong>{pedido.nome}</strong> - {pedido.telefone}
-                </p>
-                <p>
-                  {pedido.rua}, Nº {pedido.numero}, {pedido.bairro}
-                </p>
+                <p><strong>{pedido.nome}</strong> - {pedido.telefone}</p>
+                <p>{pedido.rua}, Nº {pedido.numero}, {pedido.bairro}</p>
                 <p>Pagamento: {pedido.pagamento}</p>
-                <p>
-                  Informações adicionais:{" "}
-                  {pedido.informacoes_adicionais || "Nenhuma"}
-                </p>
+                <p>Obs: {pedido.informacoes_adicionais || "Nenhuma"}</p>
                 <ul>
                   {(pedido.itens || []).map((item, i) => (
-                    <li key={i}>
-                      {item.qtd}x {item.produto}
-                    </li>
+                    <li key={i}>{item.qtd}x {item.produto}</li>
                   ))}
                 </ul>
                 <p>Total: R$ {pedido.total}</p>
-                <p>
-                  {formatarDataLocal(pedido.data)}{" "}
-                  {antigo && (
-                    <span className="avisoAntigo">⚠️ Pedido antigo</span>
-                  )}
+                <p>{formatarDataLocal(pedido.data)}{" "}
+                  {antigo && (<span className="avisoAntigo">⚠️ Pedido antigo</span>)}
                 </p>
-                <p>
-                  <strong>Número do pedido:</strong>{" "}
-                  {pedido.numeroPedido || pedido.id}
-                </p>
+                <p><strong>Número do pedido:</strong> {pedido.numeroPedido || pedido.id}</p>
                 <p className={`status-${pedido.status}`}>Status: {pedido.status}</p>
                 <div className="actions">
-                  <button
-                    className="btn"
-                    onClick={() => salvarComoTxt(pedido)}
-                  >
-                    💾 .TXT
-                  </button>
-                  <button
-                    className="btnEditar"
-                    onClick={() => abrirEdicao(pedido)}
-                  >
-                    ✏️ Editar
-                  </button>
+                  <button className="btn" onClick={() => salvarComoTxt(pedido)}>💾 .TXT</button>
+                  <button className="btnEditar" onClick={() => abrirEdicao(pedido)}>✏️ Editar</button>
                   {pedido.status === "pendente" && (
-                    <button
-                      className="btnEntregue"
-                      onClick={() => marcarComoEntregue(pedido.id)}
-                    >
-                      ✅ Entregue
-                    </button>
+                    <button className="btnEntregue" onClick={() => marcarComoEntregue(pedido.id)}>✅ Entregue</button>
                   )}
                 </div>
               </div>
@@ -416,6 +434,7 @@ export default function AdminPedidos() {
           })}
         </div>
 
+        {/* MODAL DE EDIÇÃO DE PEDIDO */}
         <AnimatePresence>
           {pedidoEmEdicao && (
             <motion.div
@@ -431,110 +450,63 @@ export default function AdminPedidos() {
                 exit={{ scale: 0.9, opacity: 0 }}
                 transition={{ duration: 0.3 }}
               >
-                <h3>
-                  Editar Pedido #{pedidoEmEdicao.numeroPedido || pedidoEmEdicao.id}
-                </h3>
+                <h3>Editar Pedido #{pedidoEmEdicao.numeroPedido || pedidoEmEdicao.id}</h3>
 
                 <div className="modal-content">
                   <label>Nome:</label>
-                  <input
-                    type="text"
-                    value={pedidoEmEdicao.nome}
-                    onChange={(e) => alterarCampo("nome", e.target.value)}
-                  />
+                  <input type="text" value={pedidoEmEdicao.nome}
+                    onChange={(e) => alterarCampo("nome", e.target.value)} />
 
                   <label>Telefone:</label>
-                  <input
-                    type="text"
-                    value={pedidoEmEdicao.telefone}
-                    onChange={(e) => alterarCampo("telefone", e.target.value)}
-                  />
+                  <input type="text" value={pedidoEmEdicao.telefone}
+                    onChange={(e) => alterarCampo("telefone", e.target.value)} />
 
                   <label>Rua:</label>
-                  <input
-                    type="text"
-                    value={pedidoEmEdicao.rua}
-                    onChange={(e) => alterarCampo("rua", e.target.value)}
-                  />
+                  <input type="text" value={pedidoEmEdicao.rua}
+                    onChange={(e) => alterarCampo("rua", e.target.value)} />
 
                   <label>Número:</label>
-                  <input
-                    type="text"
-                    value={pedidoEmEdicao.numero}
-                    onChange={(e) => alterarCampo("numero", e.target.value)}
-                  />
+                  <input type="text" value={pedidoEmEdicao.numero}
+                    onChange={(e) => alterarCampo("numero", e.target.value)} />
 
                   <label>Bairro:</label>
-                  <input
-                    type="text"
-                    value={pedidoEmEdicao.bairro}
-                    onChange={(e) => alterarCampo("bairro", e.target.value)}
-                  />
+                  <input type="text" value={pedidoEmEdicao.bairro}
+                    onChange={(e) => alterarCampo("bairro", e.target.value)} />
 
                   <label>Pagamento:</label>
-                  <input
-                    type="text"
-                    value={pedidoEmEdicao.pagamento}
-                    onChange={(e) => alterarCampo("pagamento", e.target.value)}
-                  />
+                  <input type="text" value={pedidoEmEdicao.pagamento}
+                    onChange={(e) => alterarCampo("pagamento", e.target.value)} />
 
                   <label>Informações adicionais:</label>
-                  <input
-                    type="text"
-                    value={pedidoEmEdicao.informacoes_adicionais}
-                    onChange={(e) =>
-                      alterarCampo("informacoes_adicionais", e.target.value)
-                    }
-                  />
+                  <textarea value={pedidoEmEdicao.informacoes_adicionais}
+                    onChange={(e) => alterarCampo("informacoes_adicionais", e.target.value)} />
 
-                  <h4>Itens</h4>
-                  {(pedidoEmEdicao.itens || []).map((item, i) => (
-                    <div key={i} className="itemEditar">
-                      <input
-                        type="text"
-                        value={item.produto}
-                        onChange={(e) => alterarItem(i, "produto", e.target.value)}
-                        placeholder="Produto"
-                      />
-                      <input
-                        type="number"
-                        min={1}
-                        value={item.qtd}
-                        onChange={(e) => alterarItem(i, "qtd", e.target.value)}
-                        placeholder="Qtd"
-                      />
-                      <button
-                        className="btnRemover"
-                        onClick={() => removerItem(i)}
-                      >
-                        ❌
-                      </button>
+                  <label>Status:</label>
+                  <select value={pedidoEmEdicao.status}
+                    onChange={(e) => alterarCampo("status", e.target.value)}>
+                    <option value="pendente">Pendente</option>
+                    <option value="entregue">Entregue</option>
+                  </select>
+
+                  <h4>Itens:</h4>
+                  {pedidoEmEdicao.itens.map((item, i) => (
+                    <div key={i} className="itemEdit">
+                      <input type="text" value={item.produto}
+                        onChange={(e) => alterarItem(i, "produto", e.target.value)} />
+                      <input type="number" value={item.qtd}
+                        onChange={(e) => alterarItem(i, "qtd", e.target.value)} />
+                      <button onClick={() => removerItem(i)}>❌</button>
                     </div>
                   ))}
-                  <button className="btnAdicionar" onClick={adicionarItem}>
-                    + Adicionar Item
-                  </button>
+                  <button onClick={adicionarItem}>➕ Adicionar Item</button>
 
                   <label>Total:</label>
-                  <input
-                    type="number"
-                    value={pedidoEmEdicao.total}
-                    onChange={(e) =>
-                      alterarCampo("total", parseFloat(e.target.value) || 0)
-                    }
-                  />
+                  <input type="number" value={pedidoEmEdicao.total}
+                    onChange={(e) => alterarCampo("total", e.target.value)} />
 
                   <div className="modal-actions">
-                    <button className="btnCancelar" onClick={fecharEdicao}>
-                      Cancelar
-                    </button>
-                    <button
-                      className="btnSalvar"
-                      onClick={salvarEdicao}
-                      disabled={loadingEditar}
-                    >
-                      {loadingEditar ? "Salvando..." : "Salvar"}
-                    </button>
+                    <button onClick={salvarEdicao} disabled={loadingEditar}>💾 Salvar</button>
+                    <button onClick={fecharEdicao}>❌ Fechar</button>
                   </div>
                 </div>
               </motion.div>
@@ -542,21 +514,6 @@ export default function AdminPedidos() {
           )}
         </AnimatePresence>
       </div>
-
-      {/* Rodapé */}
-      <footer className="footer text-center">
-        <p>
-          <a
-            className="direitos"
-            href="https://portfoliojosericardo.netlify.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            @Desenvolvidor Ricardo
-          </a>{" "}
-          <strong>Planet´s Burguer</strong> R. das Bromélias, 280 Residencial Vitória
-        </p>
-      </footer>
     </div>
   );
 }
