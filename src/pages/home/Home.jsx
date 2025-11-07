@@ -8,6 +8,7 @@ import "../home/home.css";
 
 function Home() {
   const [horaAtual, setHoraAtual] = useState(new Date());
+  const [busca, setBusca] = useState("");
 
   useEffect(() => {
     const intervalo = setInterval(() => {
@@ -16,9 +17,15 @@ function Home() {
     return () => clearInterval(intervalo);
   }, []);
 
+  // 🔹 Escuta evento da Navbar
+  useEffect(() => {
+    const handler = (e) => setBusca(e.detail);
+    window.addEventListener("buscaAtualizada", handler);
+    return () => window.removeEventListener("buscaAtualizada", handler);
+  }, []);
+
   const hora = horaAtual.getHours();
   const minuto = horaAtual.getMinutes();
-
   const horarioAtualEmMinutos = hora * 60 + minuto;
   const inicioEmMinutos = 18 * 60;
   const fimEmMinutos = 23 * 60 + 59;
@@ -103,7 +110,8 @@ function Home() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6 }}
             >
-              <ProdutoSlider />
+              {/* 👇 passa o termo de busca */}
+              <ProdutoSlider busca={busca} />
             </motion.div>
           ) : (
             <motion.div

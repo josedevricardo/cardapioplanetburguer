@@ -24,9 +24,6 @@ function Navbar() {
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
 
   // 🔍 Atualiza busca global
-  useEffect(() => {
-    window.dispatchEvent(new CustomEvent("buscaAtualizada", { detail: busca }));
-  }, [busca]);
 
   // Motinha + vibração
   const handleMenuClick = (rota) => {

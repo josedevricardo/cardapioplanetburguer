@@ -19,12 +19,21 @@ const sanitizePrice = (raw) => {
 // --- Função para limpar item do carrinho ---
 const sanitizeCartItem = (item) => {
   if (!item) return null;
+
   const preco = sanitizePrice(item.preco ?? item.price ?? 0);
   const qtd = Number.isInteger(item.qtd) ? item.qtd : parseInt(item.qtd) || 1;
   const nome = item.nome || item.name || "";
-  const id = item.id || nome; // fallback seguro
-  return { ...item, id, nome, preco, qtd };
+  const id = item.id || nome;
+  const foto =
+    item.foto ||
+    item.imagem ||
+    item.url ||
+    item.image ||
+    "/img/default.png"; // fallback automático
+
+  return { ...item, id, nome, preco, qtd, foto };
 };
+
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
