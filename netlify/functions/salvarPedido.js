@@ -5,22 +5,26 @@ const {
   FIREBASE_PROJECT_ID,
   FIREBASE_CLIENT_EMAIL,
   FIREBASE_PRIVATE_KEY,
+  FIREBASE_DATABASE_URL,
 } = process.env;
-
-const databaseUrl = "https://cardapioplanetsburguer-default-rtdb.firebaseio.com";
 
 let db;
 
 function initializeFirebase() {
   if (admin.apps.length) return admin.database();
 
-  if (!FIREBASE_PROJECT_ID || !FIREBASE_CLIENT_EMAIL || !FIREBASE_PRIVATE_KEY) {
-    console.error("❌ ERRO: Variáveis do Firebase ausentes ou inválidas.");
+  if (
+    !FIREBASE_PROJECT_ID ||
+    !FIREBASE_CLIENT_EMAIL ||
+    !FIREBASE_PRIVATE_KEY ||
+    !FIREBASE_DATABASE_URL
+  ) {
+    console.error("❌ Variáveis do Firebase ausentes ou incorretas.");
     return null;
   }
 
   try {
-    // Corrige quebras de linha na chave privada
+    // Corrige as quebras de linha da chave privada (Netlify remove os \n)
     const privateKey = FIREBASE_PRIVATE_KEY.replace(/\\n/g, "\n");
 
     admin.initializeApp({
@@ -29,13 +33,13 @@ function initializeFirebase() {
         client_email: FIREBASE_CLIENT_EMAIL,
         private_key: privateKey,
       }),
-      databaseURL: databaseUrl,
+      databaseURL: FIREBASE_DATABASE_URL,
     });
 
-    console.log(`✅ Firebase Admin inicializado (${FIREBASE_PROJECT_ID}).`);
+    console.log("✅ Firebase Admin inicializado com sucesso.");
     return admin.database();
   } catch (e) {
-    console.error("❌ ERRO de inicialização do Firebase:", e.message);
+    console.error("❌ Erro ao inicializar Firebase:", e.message);
     return null;
   }
 }
@@ -72,18 +76,18 @@ exports.handler = async (event) => {
 
     await db.ref("pedidos").push(novoPedido);
 
-    console.log(`✅ Pedido salvo com sucesso: ${numeroPedido}`);
+    console.log(`✅ Pedido salvo: ${numeroPedido}`);
 
     return {
       statusCode: 200,
       body: JSON.stringify({ sucesso: true, numeroPedido }),
     };
   } catch (error) {
-    console.error("❌ Erro ao salvar pedido:", error);
+    console.error("❌ Erro ao salvar pedido:", error.message);
     return {
       statusCode: 500,
       body: JSON.stringify({
-        erro: error.message || "Erro interno ao salvar no banco.",
+        erro: error.message || "Erro interno ao salvar o pedido.",
       }),
     };
   }
