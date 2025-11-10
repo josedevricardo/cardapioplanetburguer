@@ -20,7 +20,6 @@ const ProdutoSliderHorizontal = () => {
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
 
-  // 🔹 Carrega produtos do Firebase
   useEffect(() => {
     const produtosRef = ref(db, "categorias/lanches/produtos");
     const unsubscribe = onValue(produtosRef, (snapshot) => {
@@ -30,7 +29,6 @@ const ProdutoSliderHorizontal = () => {
     return () => unsubscribe();
   }, []);
 
-  // 🔹 Rolagem automática com pausa durante interação
   useEffect(() => {
     const slider = sliderRef.current;
     if (!slider) return;
@@ -79,7 +77,6 @@ const ProdutoSliderHorizontal = () => {
     };
   }, []);
 
-  // 🔹 Funções de rolagem manual pelas setas
   const scrollLeft = () => {
     const slider = sliderRef.current;
     if (slider) {
@@ -98,7 +95,6 @@ const ProdutoSliderHorizontal = () => {
     }
   };
 
-  // 🔹 Adiciona produto ao carrinho
   const handleAdd = (produto, index) => {
     const precoNumerico = parseFloat(produto.preco.toString().replace(",", "."));
     addToCart({ ...produto, preco: precoNumerico });
@@ -132,13 +128,13 @@ const ProdutoSliderHorizontal = () => {
 
   return (
     <div
-      className="categoria-slider-container relative"
+      className="categoria-slider-container relative bg-white text-gray-800"
       onMouseEnter={() => setShowArrows(true)}
       onMouseLeave={() => setShowArrows(false)}
       onTouchStart={() => setShowArrows(true)}
       onTouchEnd={() => setTimeout(() => setShowArrows(false), 2000)}
     >
-      {/* ✅ Toast central com confete */}
+      {/* ✅ Toast */}
       <AnimatePresence>
         {toast && (
           <motion.div
@@ -148,7 +144,7 @@ const ProdutoSliderHorizontal = () => {
             exit="exit"
             transition={{ duration: 0.3, type: "spring", stiffness: 300 }}
             className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2
-                       bg-green-600 text-white px-6 py-3 rounded-xl shadow-xl z-50
+                       bg-green-500 text-white px-6 py-3 rounded-xl shadow-xl z-50
                        text-center font-semibold text-sm"
           >
             {toast}
@@ -170,7 +166,7 @@ const ProdutoSliderHorizontal = () => {
         )}
       </AnimatePresence>
 
-      {/* 🔹 Setas laterais com estilo moderno */}
+      {/* 🔹 Setas laterais */}
       <AnimatePresence>
         {showArrows && (
           <>
@@ -180,7 +176,7 @@ const ProdutoSliderHorizontal = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="arrow-btn arrow-left"
+              className="arrow-btn arrow-left bg-white shadow-lg text-gray-800 hover:bg-gray-100"
             >
               <ChevronLeft size={28} />
             </motion.button>
@@ -191,7 +187,7 @@ const ProdutoSliderHorizontal = () => {
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
               transition={{ duration: 0.3 }}
-              className="arrow-btn arrow-right"
+              className="arrow-btn arrow-right bg-white shadow-lg text-gray-800 hover:bg-gray-100"
             >
               <ChevronRight size={28} />
             </motion.button>
@@ -202,13 +198,13 @@ const ProdutoSliderHorizontal = () => {
       {/* 🔹 Slider principal */}
       <motion.div
         ref={sliderRef}
-        className="categoria-slider overflow-x-auto flex gap-3 scroll-smooth no-scrollbar"
+        className="categoria-slider overflow-x-auto flex gap-3 scroll-smooth no-scrollbar bg-white"
         whileTap={{ cursor: "grabbing" }}
       >
         {produtos.map((produto, index) => (
           <motion.div
             key={index}
-            className="categoria-item bg-white shadow-md rounded-xl p-3 flex flex-col items-center justify-between min-w-[160px]"
+            className="categoria-item bg-white shadow-md rounded-xl p-3 flex flex-col items-center justify-between min-w-[160px] border border-gray-200"
             whileHover={{ scale: 1.05 }}
           >
             <div
@@ -220,7 +216,7 @@ const ProdutoSliderHorizontal = () => {
                 alt={produto.nome}
                 className="categoria-img rounded-lg"
               />
-              <span className="block mt-2 font-semibold text-sm text-zinc-800">
+              <span className="block mt-2 font-semibold text-sm text-gray-800">
                 {produto.nome}
               </span>
             </div>
@@ -230,10 +226,10 @@ const ProdutoSliderHorizontal = () => {
             </span>
 
             <button
-              className="btn-adicionar"
+              className="btn-adicionar bg-green-500 hover:bg-green-600 text-white px-3 py-1 rounded-lg mt-2 transition"
               onClick={() => handleAdd(produto, index)}
             >
-              <span className="emoji">🍔</span>
+              <span className="emoji">🍔</span>{" "}
               {clicked === index ? "Adicionado!" : "Adicionar"}
             </button>
           </motion.div>
