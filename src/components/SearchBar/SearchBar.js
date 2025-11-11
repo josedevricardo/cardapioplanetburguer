@@ -1,16 +1,44 @@
-import React from "react";
+// src/components/SearchBar.jsx
+import React, { useEffect, useRef } from "react";
 import "./SearchBar.css";
 
 const SearchBar = ({ busca, setBusca }) => {
+  const inputRef = useRef(null);
+
   const handleInputChange = (event) => {
     setBusca(event.target.value);
   };
 
-  const handleKeyPress = (event) => {
+  const handleKeyDown = (event) => {
     if (event.key === "Enter") {
-      event.target.blur();
+      // Delay pequeno para garantir que o teclado móvel feche
+      setTimeout(() => {
+        if (inputRef.current) inputRef.current.blur();
+      }, 100);
+
+      // Rola a tela para o primeiro produto encontrado
+      setTimeout(() => {
+        const firstProduto = document.querySelector(".produto-card"); // ajuste para sua classe real
+        if (firstProduto) {
+          firstProduto.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }, 150);
     }
   };
+
+  useEffect(() => {
+    // Fecha o teclado se clicar fora do input
+    const handleClickOutside = (event) => {
+      if (inputRef.current && !inputRef.current.contains(event.target)) {
+        inputRef.current.blur();
+      }
+    };
+
+    document.addEventListener("click", handleClickOutside);
+    return () => {
+      document.removeEventListener("click", handleClickOutside);
+    };
+  }, []);
 
   return (
     <div className="search-bar-wrapper">
@@ -41,11 +69,12 @@ const SearchBar = ({ busca, setBusca }) => {
           />
         </svg>
         <input
+          ref={inputRef}
           type="text"
           placeholder="Buscar pedido..."
           value={busca}
           onChange={handleInputChange}
-          onKeyPress={handleKeyPress}
+          onKeyDown={handleKeyDown} // <-- mudou de onKeyPress para onKeyDown
         />
       </div>
     </div>

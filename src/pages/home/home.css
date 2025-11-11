@@ -1,4 +1,4 @@
-/* Centralização e organização do bloco inicial */
+/* ---------- BLOCO INICIAL ---------- */
 .hero-centralizado {
   display: flex;
   flex-direction: column;
@@ -7,7 +7,7 @@
   padding: 2rem 1rem;
   text-align: center;
   gap: 1rem;
-  margin-top: -6rem;
+  margin-top: -4rem;
 }
 
 /* ---------- TIPOGRAFIA ---------- */
@@ -16,7 +16,7 @@ h1 {
   color: #D2691E;
 }
 
-.logo-container .logo-text{
+.logo-container .logo-text {
   font-size: 2.1rem;
   font-weight: 900;
   color: #D2691E;
@@ -28,11 +28,8 @@ h1 {
   transform: translateY(-10px);
   margin: 0.5rem 0;
   cursor: pointer;
- 
-  
-  
+  margin-top: 5rem;
 }
-
 
 .logo-container .logo-text2 {
   font-size: 1rem;
@@ -107,7 +104,14 @@ h1 {
   gap: 10px;
   color: #333;
   font-size: 14px;
+  user-select: none;
+  text-decoration: none; /* remove sublinhado */
+  font-weight: normal;   /* remove negrito, se houver */
+  color: inherit;        /* mantém a cor do texto do parágrafo */
 }
+
+
+
 
 /* ---------- HORÁRIO ---------- */
 .text-pedidos {
@@ -131,14 +135,6 @@ h1 {
     0 0 15px rgba(255, 105, 180, 0.5),
     0 0 20px rgba(255, 105, 180, 0.4);
 }
-
-.dark .glow-text {
-  text-shadow:
-    0 0 10px rgba(253, 224, 71, 0.9),
-    0 0 20px rgba(253, 224, 71, 0.7),
-    0 0 30px rgba(253, 224, 71, 0.5);
-}
-
 
 /* ---------- ANIMAÇÕES ---------- */
 @keyframes fadeSlideIn {
@@ -165,20 +161,16 @@ h1 {
   }
 }
 
+/* ---------- BUSCAR DESKTOP ---------- */
 .buscar-desktop-container {
   max-width: 1200px;
-  margin: 0 auto; /* centralizado, sem margem superior */
+  margin: 0 auto;
   padding: 1.5rem;
   background-color: #ffffff;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.07);
   border-radius: 16px;
   text-align: center;
-}
-
-
-.dark .buscar-desktop-container {
-  background-color: #18181b;
-  color: #e5e7eb;
+  color: #1f2937;
 }
 
 .buscar-desktop-container h2 {
@@ -187,8 +179,3 @@ h1 {
   color: #1f2937;
   margin-bottom: 1rem;
 }
-
-.dark .buscar-desktop-container h2 {
-  color: #f3f4f6;
-}
-

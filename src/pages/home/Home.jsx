@@ -6,6 +6,7 @@ import ScrollToTopButton from "../../components/ScrollToTopButton/ScrollToTopBut
 import CategoriaSlider from "../../components/CategoriaSlider/CategoriaSlider";
 import "../home/home.css";
 
+
 function Home() {
   const [horaAtual, setHoraAtual] = useState(new Date());
   const [busca, setBusca] = useState("");
@@ -17,7 +18,6 @@ function Home() {
     return () => clearInterval(intervalo);
   }, []);
 
-  // 🔹 Escuta evento da Navbar
   useEffect(() => {
     const handler = (e) => setBusca(e.detail);
     window.addEventListener("buscaAtualizada", handler);
@@ -45,7 +45,7 @@ function Home() {
       <Navbar />
 
       <main
-        className="min-h-screen px-4 md:px-10 pb-20 bg-white dark:bg-zinc-900"
+        className="min-h-screen px-4 md:px-10 pb-20 bg-white"
         style={{ paddingTop: "60px" }}
       >
         <div className="max-w-6xl mx-auto">
@@ -97,8 +97,8 @@ function Home() {
             transition={{ duration: 0.6 }}
             className="mt-6 mb-6"
           >
-            <h3 className="text-lg font-semibold text-center text-zinc-800 dark:text-zinc-200 mb-3">
-              JÁ FEZ SEU PEDIDO 
+            <h3 className="text-lg font-semibold text-center text-zinc-800 mb-3">
+              JÁ FEZ SEU PEDIDO
             </h3>
             <CategoriaSlider />
           </motion.div>
@@ -110,12 +110,11 @@ function Home() {
               animate={{ opacity: 1 }}
               transition={{ duration: 0.6 }}
             >
-              {/* 👇 passa o termo de busca */}
               <ProdutoSlider busca={busca} />
             </motion.div>
           ) : (
             <motion.div
-              className="text-center text-zinc-700 dark:text-zinc-300 mt-10"
+              className="text-center text-zinc-700 mt-10"
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
@@ -140,7 +139,7 @@ function Home() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            @Desenvolvidor Ricardo
+            @Desenvolvedor Ricardo
           </a>
           <strong> Planet´s Burguer</strong> R. das Bromélias, 280 Residencial
           Vitória

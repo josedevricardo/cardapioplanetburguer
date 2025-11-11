@@ -12,21 +12,21 @@
 
 /* -------- GIF transparente de fundo -------- */
 .gif-background {
-  position: absolute;
-  top: 70px; /* altura da navbar */
+  position: fixed;
+  top: 0;
   left: 0;
-  right: 0;
-  height: 120px; 
+  width: 100%;
+  height: 80vh;
   background-image: url("../../assets/planetburguer.gif");
   background-repeat: no-repeat;
-  background-size: cover; 
-  background-position: top center;
-  opacity: 0.08;
+  background-size: cover;
+  background-position: center top;
+  opacity: 0.12;
   z-index: 0;
   pointer-events: none;
-  margin: 0 auto;
+  transform: translateY(0);
+  transition: transform 0.2s ease-out;
 }
-
 /* -------- Espaço para navbar fixa -------- */
 .navbar-space {
   height: 100px; 
@@ -337,6 +337,37 @@
   100% {
     opacity: 0;
     transform: translate(-50%, -50%) scale(0.9);
+  }
+}
+
+/* Aumenta ainda mais o GIF em telas grandes */
+/* Telas pequenas */
+@media (max-width: 767px) {
+  .gif-background {
+    top: 50px;
+    height: 200px;
+    background-size: contain;
+    opacity: 0.2;
+  }
+}
+
+/* Telas médias */
+@media (min-width: 768px) and (max-width: 1023px) {
+  .gif-background {
+    top: 70px;
+    height: 350px;
+    opacity: 0.15;
+    background-size: cover;
+  }
+}
+
+/* Telas grandes */
+@media (min-width: 1024px) {
+  .gif-background {
+    top: 0;
+    height: 80vh;
+    opacity: 0.08;
+    background-size: cover;
   }
 }
 

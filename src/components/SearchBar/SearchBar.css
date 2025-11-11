@@ -56,12 +56,12 @@
 /* 🌙 Modo escuro */
 @media (prefers-color-scheme: dark) {
   .search-bar {
-    background-color: #27272a;
-    box-shadow: 0 1px 4px rgba(255, 255, 255, 0.05);
+    background-color: hsl(240, 5%, 96%);
+    box-shadow: 0 1px 4px rgba(214, 208, 208, 0.05);
   }
 
   .search-bar:hover {
-    background-color: #323236;
+    background-color: #e9e9f3;
   }
 
   .search-bar input {
@@ -69,7 +69,7 @@
   }
 
   .search-bar input::placeholder {
-    color: #9ca3af;
+    color: #f0f2f5;
   }
 
   .search-icon {

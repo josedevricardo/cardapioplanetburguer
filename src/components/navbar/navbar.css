@@ -61,6 +61,7 @@
   opacity: 0;
   transform: translateY(-10px);
   animation: fadeSlideIn 0.8s ease forwards, pulse 3s ease-in-out infinite;
+  
 }
 
 .logotext:hover {
@@ -212,8 +213,8 @@
   left: 0;
   width: 240px;
   height: 100%;
-  background-color: white;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  background-color: rgb(240, 242, 243);
+  box-shadow: 2px 0 10px rgba(241, 241, 241, 0.1);
   padding: 2rem 1rem;
   z-index: 150;
   transition: transform 0.3s ease-in-out;
@@ -384,7 +385,7 @@
   width: 100%;
   padding: 8px 40px 8px 12px; /* espaço para o ícone */
   border-radius: 8px;
-  border: 1px solid #ccc;
+  border: 1px solid #bfd30e;
   font-size: 14px;
 }
 

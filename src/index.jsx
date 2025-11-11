@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./style/global.css";
+import "./style/global.css"; // ✅ garante modo claro fixo e Tailwind
 import Rotas from "./rotas";
 
 import { CartProvider } from "./contexts/cart-context.jsx";
@@ -10,13 +10,15 @@ import { ProdutoProvider } from "./contexts/categoria-context";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
-  <BrowserRouter>
-    <CartProvider>
-      <ProductProvider>
-        <ProdutoProvider>
-          <Rotas />
-        </ProdutoProvider>
-      </ProductProvider>
-    </CartProvider>
-  </BrowserRouter>
+  <React.StrictMode>
+    <BrowserRouter>
+      <CartProvider>
+        <ProductProvider>
+          <ProdutoProvider>
+            <Rotas />
+          </ProdutoProvider>
+        </ProductProvider>
+      </CartProvider>
+    </BrowserRouter>
+  </React.StrictMode>
 );
