@@ -6,6 +6,8 @@ import { CartContext } from "../../contexts/cart-context";
 import { motion, AnimatePresence } from "framer-motion";
 
 
+
+
 const ProdutoSlider = ({ categoriaSelecionada, produtosFiltrados }) => {
   const { adicionarAoCarrinho } = useContext(CartContext);
   const [produtos, setProdutos] = useState([]);
@@ -14,16 +16,22 @@ const ProdutoSlider = ({ categoriaSelecionada, produtosFiltrados }) => {
   const [, setLoading] = useState(true); // ✅ Ajustado para não gerar warning
 
   useEffect(() => {
-    const produtosRef = ref(db, "produtos");
-    onValue(produtosRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const lista = Object.values(data);
-        setProdutos(lista);
-        setLoading(false);
-      }
-    });
-  }, []);
+  const categoriasRef = ref(db, "categorias");
+  onValue(categoriasRef, (snapshot) => {
+    const data = snapshot.val();
+    if (data) {
+      const lista = Object.values(data).flatMap((cat) =>
+        Object.values(cat.produtos || {}).map((p) => ({
+          ...p,
+          categoria: cat.nome,
+        }))
+      );
+      setProdutos(lista);
+      setLoading(false);
+    }
+  });
+}, []);
+
 
   // Mostrar botão flutuante só após rolagem e quando página terminar de carregar
   useEffect(() => {

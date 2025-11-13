@@ -18,7 +18,7 @@ body {
   text-align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
-  margin-top: -3rem;
+ 
 }
 
 .produto-box:hover {

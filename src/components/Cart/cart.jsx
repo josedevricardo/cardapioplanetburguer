@@ -1,4 +1,5 @@
-import { useEffect, useState, useContext, useRef } from "react";
+// src/components/cart/Cart.jsx
+import React, { useEffect, useState, useContext, useRef } from "react";
 import { Dock } from "react-dock";
 import { motion } from "framer-motion";
 import ProdutoCart from "../produto-cart/produto-cart.jsx";
@@ -6,7 +7,8 @@ import "./cart.css";
 import { CartContext } from "../../contexts/cart-context.jsx";
 import InputMask from "react-input-mask";
 import back from "../../assets/back.png";
-import pixqrcode from "../../assets/QRCode_planet.jpg"; // imagem estática (opcional), mantém visual
+import pixqrcode from "../../assets/QRCode_planet.jpg"; // fallback estático
+import QRCode from "qrcode"; // npm install qrcode
 
 function Cart() {
   const [show, setShow] = useState(false);
@@ -20,6 +22,9 @@ function Cart() {
   const [successMessage, setSuccessMessage] = useState("");
   const [showModal, setShowModal] = useState(false);
   const [isSending, setIsSending] = useState(false);
+
+  // guarda o HTML do último cupom gerado (para impressão manual)
+  const [ultimoCupomHTML, setUltimoCupomHTML] = useState(null);
 
   const { cartItems, totalCart, clearCart } = useContext(CartContext);
 
@@ -89,45 +94,38 @@ function Cart() {
 
   // Função utilitária: monta o payload EMV Pix e calcula CRC16
   const gerarPayloadPix = (chave, nomeRecebedor, cidade, valorStr, txid) => {
-    // helper: formata TLV (id + length(2) + value)
     const tlv = (id, value) => {
       const v = String(value);
       const len = v.length.toString().padStart(2, "0");
       return id + len + v;
     };
 
-    // Montagens específicas conforme EMV-Pix simplificado
-    // 26 -> merchant account information (contains BR.GOV.BCB.PIX + chave)
     const merchantInfo = "BR.GOV.BCB.PIX" + tlv("01", chave);
-    // monta payload sem CRC
+
     let payload =
       "000201" +
       tlv("26", merchantInfo) +
-      "52040000" + // merchant category code (0000 padrão)
-      "5303986"; // moeda BRL = 986
+      "52040000" +
+      "5303986";
 
-    // se houver valor, campo 54 com valor (usar ponto decimal)
     if (valorStr) {
       payload += tlv("54", valorStr);
     }
 
-    payload += tlv("58", "BR"); // país
-    payload += tlv("59", nomeRecebedor); // nome
-    payload += tlv("60", cidade); // cidade
-    // campos 62 -> additional data field template (05 = txid)
+    payload += tlv("58", "BR");
+    payload += tlv("59", nomeRecebedor);
+    payload += tlv("60", cidade);
     payload += tlv("62", tlv("05", txid));
 
-    // CRC16 (com "6304" + CRC calculado)
     const calcularCRC16 = (str) => {
       const polinomio = 0x1021;
-      let crc = 0xFFFF;
-      // append "6304" as per spec before CRC calculation
+      let crc = 0xffff;
       const data = str + "6304";
       for (let i = 0; i < data.length; i++) {
         crc ^= data.charCodeAt(i) << 8;
         for (let j = 0; j < 8; j++) {
           crc = (crc & 0x8000) ? ((crc << 1) ^ polinomio) : (crc << 1);
-          crc &= 0xFFFF;
+          crc &= 0xffff;
         }
       }
       return crc.toString(16).toUpperCase().padStart(4, "0");
@@ -137,7 +135,35 @@ function Cart() {
     return payload + "6304" + crc;
   };
 
+  // Abre nova janela com o HTML do cupom. Se imprimirForcado=true, chama print() depois do load.
+  const abrirCupomEmJanela = (cupomHTML, imprimirForcado = false) => {
+    try {
+      const janela = window.open("", "_blank", "width=420,height=700");
+      if (!janela) {
+        alert("Não foi possível abrir a janela do cupom. Verifique bloqueadores de pop-up.");
+        return;
+      }
+      janela.document.write(cupomHTML);
+      janela.document.close();
+      janela.focus();
+      if (imprimirForcado) {
+        // aguarda pequeno timeout para garantir renderização antes de chamar print
+        setTimeout(() => {
+          try {
+            janela.print();
+          } catch (e) {
+            console.warn("Erro ao imprimir cupom manual:", e);
+          }
+        }, 500);
+      }
+    } catch (e) {
+      console.warn("Erro ao abrir cupom:", e);
+    }
+  };
+
   async function enviarPedido() {
+    if (!validarCampos()) return;
+
     setIsSending(true);
     setShowModal(false);
     setErrorMessage("");
@@ -147,7 +173,7 @@ function Cart() {
     const pagamento = pagamentoRef.current?.value || "Não informado";
     const informacoesAdicionais =
       informacoesAdicionaisRef.current?.value || "Nenhuma";
-    const totalComFrete = (parseFloat(totalCart) + frete).toFixed(2); // string "12.34"
+    const totalComFrete = (parseFloat(totalCart) + frete).toFixed(2);
 
     const itensFormatados = cartItems.map((item) => ({
       produto: item.nome,
@@ -190,13 +216,11 @@ function Cart() {
         console.warn(dadosResposta);
       }
 
-      // --------- Gerar Pix Copia e Cola dinâmico ----------
       const chavePix = "38998017215";
       const nomeRecebedor = "MARIA MADALENA OLIVEIRA";
       const cidade = "MONTES CLAROS";
-      // totalComFrete já tem formato "12.34" (string). EMV exige ponto como separador.
-      const valorParaPix = totalComFrete; // ex: "25.50"
-      const txid = numeroPedido.replace("#", "PED"); // ex: PED12345
+      const valorParaPix = totalComFrete;
+      const txid = numeroPedido.replace("#", "PED");
 
       const pixPayload = gerarPayloadPix(
         chavePix,
@@ -208,8 +232,16 @@ function Cart() {
 
       console.log("🔹 PIX COPIA E COLA:", pixPayload);
 
-      // ---------- Monta cupom HTML (para impressão) ----------
-      // Inclui a imagem estática (se existir) e o payload "copia e cola" para colar caso o app não reconheça a imagem.
+      // Tenta gerar imagem base64 do QR code; se falhar, usa fallback estático.
+      let pixDataUrl = pixqrcode;
+      try {
+        pixDataUrl = await QRCode.toDataURL(pixPayload);
+      } catch (e) {
+        console.warn("QR generation failed, using static image fallback:", e);
+        pixDataUrl = pixqrcode;
+      }
+
+      // --- Gera HTML do cupom (sem impressão automática) ---
       const cupomHTML = `
         <html>
           <head>
@@ -255,9 +287,8 @@ function Cart() {
             <hr/>
             <div class="center qr">
               <div><strong>💳 Pague com PIX</strong></div>
-              <!-- imagem estática, opcional -->
               <div style="margin:8px 0;">
-                <img src="${pixqrcode}" alt="QR Code PIX" style="width:160px; height:160px; border:2px solid #ccc; border-radius:8px;" />
+                <img src="${pixDataUrl}" alt="QR Code PIX" style="width:160px; height:160px; border:2px solid #ccc; border-radius:8px;" />
               </div>
               <div class="small">Se seu app não reconhecer a imagem, copie o código abaixo e cole no Pix (Copia e Cola)</div>
               <pre class="payload">${pixPayload}</pre>
@@ -269,19 +300,12 @@ function Cart() {
         </html>
       `;
 
-      // abrir nova janela/imprimir apenas o cupom (não altera outras lógicas)
-      try {
-        const janelaCupom = window.open("", "_blank", "width=420,height=700");
-        janelaCupom.document.write(cupomHTML);
-        janelaCupom.document.close();
-        // aguardar fechamento de escrita e então imprimir
-        janelaCupom.focus();
-        janelaCupom.print();
-      } catch (e) {
-        console.warn("Impressão automática falhou:", e);
-      }
+      // salva o HTML do cupom para impressão manual futura
+      setUltimoCupomHTML(cupomHTML);
 
-      // ---------- Mensagem WhatsApp (inclui pixPayload) ----------
+      // NÃO imprimir automaticamente. Se quiser abrir a visualização automaticamente, pode descomentar:
+      // abrirCupomEmJanela(cupomHTML, false);
+
       const listaProdutos = cartItems
         .map(
           (item) =>
@@ -448,7 +472,6 @@ function Cart() {
             </strong>
           </div>
 
-          {/* QR CODE PIX na tela (apenas visual) */}
           <div
             className="pix-qrcode-container"
             style={{ textAlign: "center", marginTop: "20px" }}
@@ -488,20 +511,32 @@ function Cart() {
             </div>
           )}
 
-          <button onClick={abrirModal} className="btn-checkout" disabled={isSending}>
-            {isSending ? "Enviando..." : "Finalizar Pedido"}
-          </button>
+          <div style={{ display: "flex", gap: 8, justifyContent: "center", marginTop: 8 }}>
+            <button onClick={abrirModal} className="btn-checkout" disabled={isSending}>
+              {isSending ? "Enviando..." : "Finalizar Pedido"}
+            </button>
+
+            {/* Botão para imprimir o último cupom gerado (manual) */}
+            <button
+              onClick={() => {
+                if (!ultimoCupomHTML) {
+                  alert("Nenhum cupom gerado ainda. Finalize um pedido primeiro.");
+                  return;
+                }
+                abrirCupomEmJanela(ultimoCupomHTML, true); // abre e imprime
+              }}
+              className="btn-print-cupom"
+              style={{ background: "#2b7a78", color: "#fff", padding: "8px 12px", borderRadius: 6 }}
+            >
+              Imprimir Cupom
+            </button>
+          </div>
         </motion.div>
       </Dock>
 
       {showModal && (
         <div className="modal-overlay">
-          <div
-            className="modal-box"
-            role="dialog"
-            aria-modal="true"
-            aria-labelledby="modal-title"
-          >
+          <div className="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
             <h2 id="modal-title">Confirmar Pedido</h2>
             <p>Você deseja realmente finalizar o pedido?</p>
             <div className="modal-buttons">
