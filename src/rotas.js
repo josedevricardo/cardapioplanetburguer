@@ -2,7 +2,7 @@ import React from "react";
 import { Routes, Route } from "react-router-dom";
 
 // páginas
-import Home from "./pages/Home/home.js";
+import Home from "./pages/home/Home.jsx";
 import Lanches from "./pages/lanches/Lanches.jsx";
 import Omeletes from "./pages/omeletes/Omeletes.jsx";
 import Bebidas from "./pages/bebidas/Bebidas.jsx";
