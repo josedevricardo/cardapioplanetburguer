@@ -7,7 +7,7 @@
   padding: 2rem 1rem;
   text-align: center;
   gap: 1rem;
-  margin-top: 1rem;
+  margin-top: 0,3rem;
 }
 
 /* ---------- TIPOGRAFIA ---------- */
@@ -23,6 +23,7 @@ h1 {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   transition: all 0.4s ease-in-out;
+  /* Aplicando a animação */
   animation: fadeSlideIn 0.8s ease forwards, pulse 3s ease-in-out infinite;
   opacity: 0;
   transform: translateY(-10px);
@@ -38,7 +39,8 @@ h1 {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
   transition: all 0.4s ease-in-out;
-  animation: fadeSlideIn 0.8s ease forwards, pulse 3s ease-in-out infinite;
+  /* Aplicando a animação */
+  animation: fadeSlideIn 0.8s ease forwards; /* Não aplica pulse aqui */
   opacity: 0;
   transform: translateY(-10px);
   margin-bottom: 0.6rem;
@@ -90,23 +92,7 @@ h1 {
   margin-top: -3rem;
 }
 
-/* -------- GIF transparente de fundo -------- */
-.gif-background {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 80vh;
-  background-image: url("../../assets/planetburguer.gif");
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-position: center top;
-  opacity: 0.12;
-  z-index: 0;
-  pointer-events: none;
-  transform: translateY(0);
-  transition: transform 0.2s ease-out;
-}
+
 
 /* ---------- FOOTER ---------- */
 .footer {
@@ -130,22 +116,27 @@ h1 {
 
 /* ---------- HORÁRIO ---------- */
 .text-pedidos {
-  text-align: center;
-  margin-bottom: 10px;
-  color: #fff;
+  /* Fundo de chocolate para o aviso de horário */
+  background-color: #D2691E; 
+  color: white;
   font-size: 20px;
   font-weight: bold;
-  background-color: chocolate;
+  text-align: center;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 10px;
 }
 
 .time {
   text-align: center;
-  font-size: 10px;
+  font-size: 16px; /* Aumentei um pouco para melhor legibilidade */
+  color: #4b5563; /* Cor escura do Tailwind */
 }
 
-/* ---------- GLOW ---------- */
+/* ---------- GLOW (Efeito de Brilho) ---------- */
 .glow-text {
   text-shadow:
+    /* Sombra rosa original */
     0 0 8px rgba(255, 105, 180, 0.7),
     0 0 15px rgba(255, 105, 180, 0.5),
     0 0 20px rgba(255, 105, 180, 0.4);
@@ -163,16 +154,18 @@ h1 {
   }
 }
 
+/* Animação Pulse corrigida para usar cor mais próxima do tema */
 @keyframes pulse {
   0%, 100% {
+    /* Cor Chocolate */
     text-shadow:
-      0 0 2px rgba(34, 197, 94, 0.4),
-      0 0 6px rgba(34, 197, 94, 0.3);
+      0 0 2px rgba(210, 105, 30, 0.6), 
+      0 0 6px rgba(210, 105, 30, 0.4);
   }
   50% {
     text-shadow:
-      0 0 3px rgba(34, 197, 94, 0.6),
-      0 0 8px rgba(34, 197, 94, 0.5);
+      0 0 3px rgba(210, 105, 30, 0.8), 
+      0 0 8px rgba(210, 105, 30, 0.6);
   }
 }
 

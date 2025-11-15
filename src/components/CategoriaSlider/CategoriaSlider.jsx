@@ -20,15 +20,21 @@ const ProdutoSliderHorizontal = () => {
   const navigate = useNavigate();
   const { addToCart } = useContext(CartContext);
 
+  // 🔹 Fetch de produtos em todas categorias
   useEffect(() => {
-    const produtosRef = ref(db, "categorias/lanches/produtos");
-    const unsubscribe = onValue(produtosRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) setProdutos(Object.values(data));
+    const categoriasRef = ref(db, "categorias");
+    const unsubscribe = onValue(categoriasRef, (snapshot) => {
+      const data = snapshot.val() || {};
+      const todosProdutos = Object.entries(data).flatMap(([cat, val]) =>
+        Object.values(val.produtos || {}).map(prod => ({ ...prod, categoria: cat }))
+      );
+      // opcional: filtrar apenas produtos ativos
+      setProdutos(todosProdutos.filter(p => p.ativo !== false));
     });
     return () => unsubscribe();
   }, []);
 
+  // 🔹 Auto scroll do slider
   useEffect(() => {
     const slider = sliderRef.current;
     if (!slider) return;
@@ -209,7 +215,7 @@ const ProdutoSliderHorizontal = () => {
           >
             <div
               className="cursor-pointer"
-              onClick={() => navigate("/lanches")}
+              onClick={() => navigate(`/${produto.categoria}`)}
             >
               <img
                 src={produto.imagem}

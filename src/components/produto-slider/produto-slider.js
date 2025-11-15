@@ -1,74 +1,76 @@
 // src/components/produto-slider/produto-slider.js
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useMemo } from "react";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../firebaseConfig";
 import { CartContext } from "../../contexts/cart-context";
 import { motion, AnimatePresence } from "framer-motion";
 
+const ProdutoSlider = ({ categoriaSelecionada, produtosFiltrados, busca }) => {
+  const { addToCart } = useContext(CartContext);
 
-
-
-const ProdutoSlider = ({ categoriaSelecionada, produtosFiltrados }) => {
-  const { adicionarAoCarrinho } = useContext(CartContext);
   const [produtos, setProdutos] = useState([]);
   const [mensagem, setMensagem] = useState("");
   const [showButton, setShowButton] = useState(false);
-  const [, setLoading] = useState(true); // ✅ Ajustado para não gerar warning
 
+  // 🔹 Carregar produtos do Firebase
   useEffect(() => {
-  const categoriasRef = ref(db, "categorias");
-  onValue(categoriasRef, (snapshot) => {
-    const data = snapshot.val();
-    if (data) {
+    const categoriasRef = ref(db, "categorias");
+
+    const unsubscribe = onValue(categoriasRef, (snapshot) => {
+      const data = snapshot.val();
+      if (!data) return;
+
       const lista = Object.values(data).flatMap((cat) =>
         Object.values(cat.produtos || {}).map((p) => ({
           ...p,
           categoria: cat.nome,
         }))
       );
+
       setProdutos(lista);
-      setLoading(false);
-    }
-  });
-}, []);
+    });
 
-
-  // Mostrar botão flutuante só após rolagem e quando página terminar de carregar
-  useEffect(() => {
-    const handleScroll = () => {
-      if (window.scrollY > 150) {
-        setShowButton(true);
-      } else {
-        setShowButton(false);
-      }
-    };
-
-    const handleLoad = () => {
-      setShowButton(false);
-      window.addEventListener("scroll", handleScroll);
-    };
-
-    window.addEventListener("load", handleLoad);
-    return () => {
-      window.removeEventListener("load", handleLoad);
-      window.removeEventListener("scroll", handleScroll);
-    };
+    return () => unsubscribe();
   }, []);
 
+  // 🔹 Mostrar botão flutuante após 150px de scroll
+  useEffect(() => {
+    const handleScroll = () => setShowButton(window.scrollY > 150);
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // 🔹 Adicionar ao carrinho com feedback
   const handleAdd = (produto) => {
-    adicionarAoCarrinho(produto);
+    addToCart(produto);
     setMensagem(`${produto.nome} adicionado à sacola!`);
     setTimeout(() => setMensagem(""), 3000);
   };
 
-  const listaFiltrada = categoriaSelecionada
-    ? produtos.filter((p) => p.categoria === categoriaSelecionada)
-    : produtosFiltrados?.length
-    ? produtosFiltrados
-    : produtos;
+  // 🔹 Lista filtrada otimizada
+  const listaFiltrada = useMemo(() => {
+    let lista = produtos;
+
+    if (categoriaSelecionada) {
+      lista = lista.filter((p) => p.categoria === categoriaSelecionada);
+    }
+
+    if (produtosFiltrados?.length) {
+      lista = produtosFiltrados;
+    }
+
+    if (busca) {
+      lista = lista.filter((p) =>
+        p.nome.toLowerCase().includes(busca.toLowerCase())
+      );
+    }
+
+    return lista;
+  }, [produtos, categoriaSelecionada, produtosFiltrados, busca]);
 
   return (
     <div className="produto-slider-container">
+      {/* 🔹 Mensagem de item adicionado */}
       <AnimatePresence>
         {mensagem && (
           <motion.div
@@ -83,6 +85,7 @@ const ProdutoSlider = ({ categoriaSelecionada, produtosFiltrados }) => {
         )}
       </AnimatePresence>
 
+      {/* 🔹 Grid */}
       <div className="produtos-grid">
         {listaFiltrada.map((produto) => (
           <motion.div
@@ -93,9 +96,11 @@ const ProdutoSlider = ({ categoriaSelecionada, produtosFiltrados }) => {
             transition={{ duration: 0.3 }}
           >
             <img src={produto.imagem} alt={produto.nome} className="produto-img" />
+
             <h3>{produto.nome}</h3>
             <p className="produto-desc">{produto.descricao}</p>
             <p className="produto-preco">R$ {produto.preco}</p>
+
             <button onClick={() => handleAdd(produto)} className="btn-add">
               Adicionar
             </button>
@@ -103,6 +108,7 @@ const ProdutoSlider = ({ categoriaSelecionada, produtosFiltrados }) => {
         ))}
       </div>
 
+      {/* 🔹 Botão flutuante (NÃO ALTERADO COMO PEDIDO) */}
       <AnimatePresence>
         {showButton && (
           <motion.button

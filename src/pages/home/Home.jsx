@@ -1,57 +1,56 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
-import Navbar from "../../components/navbar/navbar";
-import ProdutoSlider from "../../components/produto-slider/produto-slider";
-import ScrollToTopButton from "../../components/ScrollToTopButton/ScrollToTopButton";
-import CategoriaSlider from "../../components/CategoriaSlider/CategoriaSlider";
-import "../home/home.css";
 
+import Navbar from "../../components/navbar/navbar.jsx";
+import ScrollToTopButton from "../../components/ScrollToTopButton/ScrollToTopButton.js";
+import CategoriaSlider from "../../components/CategoriaSlider/CategoriaSlider.jsx";
+
+
+import "./home.css";
+import ProdutoSlider from "../../components/produto-vitrine/produto-vitrine-lanches.jsx";
 
 function Home() {
   const [horaAtual, setHoraAtual] = useState(new Date());
   const [busca, setBusca] = useState("");
 
+  // Atualiza a hora a cada 60 segundos
   useEffect(() => {
-    const intervalo = setInterval(() => {
-      setHoraAtual(new Date());
-    }, 60000);
-    return () => clearInterval(intervalo);
+    const interval = setInterval(() => setHoraAtual(new Date()), 60000);
+    return () => clearInterval(interval);
   }, []);
 
+  // Recebe a busca enviada globalmente
   useEffect(() => {
     const handler = (e) => setBusca(e.detail);
     window.addEventListener("buscaAtualizada", handler);
     return () => window.removeEventListener("buscaAtualizada", handler);
   }, []);
 
-  const hora = horaAtual.getHours();
-  const minuto = horaAtual.getMinutes();
-  const horarioAtualEmMinutos = hora * 60 + minuto;
-  const inicioEmMinutos = 18 * 60;
-  const fimEmMinutos = 23 * 60 + 59;
+  // Disponível das 18:00 às 23:59
+  const pedidosDisponiveis = useMemo(() => {
+    const h = horaAtual.getHours();
+    const m = horaAtual.getMinutes();
+    const total = h * 60 + m;
+    return total >= 18 * 60 && total <= 23 * 60 + 59;
+  }, [horaAtual]);
 
-  const pedidosDisponiveis =
-    horarioAtualEmMinutos >= inicioEmMinutos &&
-    horarioAtualEmMinutos <= fimEmMinutos;
-
-  const formatarHora = (date) => {
-    const h = date.getHours().toString().padStart(2, "0");
-    const m = date.getMinutes().toString().padStart(2, "0");
+  // Formata hora
+  const horaFormatada = useMemo(() => {
+    const h = horaAtual.getHours().toString().padStart(2, "0");
+    const m = horaAtual.getMinutes().toString().padStart(2, "0");
     return `${h}:${m}`;
-  };
+  }, [horaAtual]);
 
   return (
     <>
       <Navbar />
 
-      <main
-        className="min-h-screen px-4 md:px-10 pb-20 bg-white"
-        style={{ paddingTop: "60px" }}
-      >
+      <main className="home-main bg-white" style={{ paddingTop: "60px" }}>
         <div className="max-w-6xl mx-auto">
+          {/* HERO */}
           <div className="hero-centralizado">
             <div className="logo-container">
-              <span className="logo-text">
+              <span className="logo-text glow-text">
                 Planet’s <strong>Burguer</strong>
               </span>
             </div>
@@ -90,7 +89,7 @@ function Home() {
             </div>
           </div>
 
-          {/* 🔹 CATEGORIAS */}
+          {/* CATEGORIAS */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -100,10 +99,13 @@ function Home() {
             <h3 className="text-lg font-semibold text-center text-zinc-800 mb-3">
               JÁ FEZ SEU PEDIDO
             </h3>
+
             <CategoriaSlider />
+            
+           
           </motion.div>
 
-          {/* 🔹 PRODUTOS */}
+          {/* PRODUTOS */}
           {pedidosDisponiveis ? (
             <motion.div
               initial={{ opacity: 0 }}
@@ -118,11 +120,11 @@ function Home() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
             >
-              <h2 className="footer text-center">
+              <h2 className="text-pedidos">
                 Pedidos disponíveis das 18:00 às 23:59.
               </h2>
-              <p className="text-sm mt-2">
-                Voltamos em breve! Agora são ⏰ {formatarHora(horaAtual)}.
+              <p className="time text-sm mt-2">
+                Voltamos em breve! Agora são ⏰ {horaFormatada}.
               </p>
             </motion.div>
           )}

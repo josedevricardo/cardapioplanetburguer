@@ -2,10 +2,8 @@ import React, { useEffect, useState, useContext } from "react";
 import "./produto2-vitrine.css";
 import bag from "../../assets/bag-black.png";
 import { CartContext } from "../../contexts/cart-context";
-import { ProdutoContext } from "../../contexts/categoria-context";
 
 function Produto2Vitrine(props) {
-  const { categorias } = useContext(ProdutoContext); // Contexto de categorias, se necessário no futuro
   const { addToCart } = useContext(CartContext);
 
   const [showMessage, setShowMessage] = useState(false);
@@ -15,6 +13,7 @@ function Produto2Vitrine(props) {
     const handleScroll = () => {
       setShowBackToTop(window.pageYOffset > 100);
     };
+
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -31,20 +30,26 @@ function Produto2Vitrine(props) {
       foto: props.foto,
       qtd: 1,
     };
+
     addToCart(item);
     setShowMessage(true);
     setTimeout(() => setShowMessage(false), 2000);
   };
 
-  // Evita renderizar caso dados obrigatórios estejam ausentes
-  if (!props || !props.nome || !props.preco) return null;
+  // Não renderiza se faltar informação essencial
+  if (!props?.nome || !props?.preco) return null;
 
   return (
     <div className="produto-box text-center">
       <img src={props.foto} alt={props.nome} />
+
       <div>
         <h2>{props.nome}</h2>
-        <p className="prod-vitrine-descricao-props">{props.descricao}</p>
+
+        {props.descricao && (
+          <p className="prod-vitrine-descricao-props">{props.descricao}</p>
+        )}
+
         <p className="prod-vitrine-preco">
           {new Intl.NumberFormat("pt-BR", {
             style: "currency",
@@ -58,6 +63,7 @@ function Produto2Vitrine(props) {
           <img src={bag} className="icon" alt="sacola" />
           Comprar
         </button>
+
         {showMessage && (
           <div className="message-hover-slider">Adicionado à sacola</div>
         )}

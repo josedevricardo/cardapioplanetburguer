@@ -6,6 +6,7 @@ body {
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
 }
 
+/* --- CARD DE PRODUTO --- */
 .produto-box {
   border: 2px solid #e0e0e0;
   border-radius: 18px;
@@ -14,11 +15,11 @@ body {
   display: inline-block;
   margin: 20px;
   background: #fff;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
   text-align: center;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
   position: relative;
- 
+
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .produto-box:hover {
@@ -39,31 +40,36 @@ body {
   font-weight: 600;
 }
 
+/* --- DESCRIÇÃO DO PRODUTO --- */
 .prod-vitrine-descricao-props {
   font-size: 0.8rem;
   color: #555;
   margin-bottom: 10px;
-  min-height: 36px;
+  min-height: 36px; /* mantém altura uniforme */
 }
 
+/* --- PREÇO --- */
 .prod-vitrine-preco {
-  color: #228B22;
+  color: #228b22;
   font-size: 1.2rem;
   font-weight: bold;
   margin-bottom: 10px;
 }
 
+/* --- BOTÃO COMPRAR --- */
 .btn-cart {
   background-color: #006400;
-  color: white;
+  color: #fff;
   border: none;
   border-radius: 8px;
   padding: 10px 16px;
   font-weight: 600;
+
   display: inline-flex;
   align-items: center;
   gap: 8px;
   cursor: pointer;
+
   transition: background-color 0.3s ease;
 }
 
@@ -76,16 +82,19 @@ body {
   height: 18px;
 }
 
+/* --- MSG: ADICIONADO À SACOLA --- */
 .message-hover-slider {
   position: absolute;
   top: 14%;
   left: 50%;
   transform: translateX(-50%);
+
   background-color: rgba(0, 128, 0, 0.85);
   color: #fff;
   padding: 8px 16px;
   border-radius: 30px;
   font-size: 13px;
+
   animation: slideIn 0.3s ease forwards;
   z-index: 10;
 }
@@ -101,11 +110,13 @@ body {
   }
 }
 
+/* --- BOTÃO VOLTAR AO TOPO (SE FOR USADO) --- */
 .back-to-top {
   position: fixed;
   bottom: 25px;
   right: 25px;
   z-index: 999;
+
   background-color: #006400;
   color: #fff;
   padding: 10px 18px;
@@ -113,6 +124,7 @@ body {
   border-radius: 8px;
   font-weight: bold;
   cursor: pointer;
+
   box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
   transition: background-color 0.3s ease;
 }

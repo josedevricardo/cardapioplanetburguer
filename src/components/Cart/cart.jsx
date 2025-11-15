@@ -1,4 +1,3 @@
-// src/components/cart/Cart.jsx
 import React, { useEffect, useState, useContext, useRef } from "react";
 import { Dock } from "react-dock";
 import { motion } from "framer-motion";
@@ -26,6 +25,9 @@ function Cart() {
   // guarda o HTML do último cupom gerado (para impressão manual)
   const [ultimoCupomHTML, setUltimoCupomHTML] = useState(null);
 
+  // Estado para o QR Code do pedido
+  const [pixQRCodePedido, setPixQRCodePedido] = useState(null);
+
   const { cartItems, totalCart, clearCart } = useContext(CartContext);
 
   const pagamentoRef = useRef(null);
@@ -41,14 +43,22 @@ function Cart() {
 
   const bairrosSemFrete = [
     "vitoria",
+    "vitória",
     "vitoria 1",
+    "vitória 1",
     "vitoria 2",
+    "vitória 2",
     "Vitoria 1",
+    "Vitória",
     "Vitoria 2",
     "Vitória 1",
     "Vitória 2",
     "vitoria2",
+    "vitória2",
+    "vitória1",
     "Vitoria2",
+    "Vitória1",
+    "Vitória2",
     "vitoria1",
     "Vitoria1",
   ];
@@ -303,6 +313,9 @@ function Cart() {
       // salva o HTML do cupom para impressão manual futura
       setUltimoCupomHTML(cupomHTML);
 
+      // Atualiza o estado com o QR Code gerado
+      setPixQRCodePedido(pixDataUrl);
+
       // NÃO imprimir automaticamente. Se quiser abrir a visualização automaticamente, pode descomentar:
       // abrirCupomEmJanela(cupomHTML, false);
 
@@ -388,6 +401,7 @@ function Cart() {
               value={nome}
               onChange={(e) => setNome(e.target.value)}
               placeholder="Digite seu nome"
+              onBlur={() => document.activeElement.blur()} // Remove o foco e esconde o teclado
             />
 
             <label htmlFor="telefone">Telefone:</label>
@@ -397,6 +411,7 @@ function Cart() {
               value={telefone}
               onChange={(e) => setTelefone(e.target.value)}
               placeholder="(31) 91234-5678"
+              onBlur={() => document.activeElement.blur()} // Remove o foco e esconde o teclado
             />
 
             <label htmlFor="rua">Rua:</label>
@@ -405,6 +420,7 @@ function Cart() {
               value={rua}
               onChange={(e) => setRua(e.target.value)}
               placeholder="Digite sua rua"
+              onBlur={() => document.activeElement.blur()} // Remove o foco e esconde o teclado
             />
 
             <label htmlFor="numero">Número:</label>
@@ -413,6 +429,7 @@ function Cart() {
               value={numero}
               onChange={(e) => setNumero(e.target.value)}
               placeholder="Número da casa"
+              onBlur={() => document.activeElement.blur()} // Remove o foco e esconde o teclado
             />
 
             <label htmlFor="bairro">Bairro:</label>
@@ -421,6 +438,7 @@ function Cart() {
               value={bairro}
               onChange={(e) => setBairro(e.target.value)}
               placeholder="Digite seu bairro"
+              onBlur={() => document.activeElement.blur()} // Remove o foco e esconde o teclado
             />
 
             <label htmlFor="pagamento">Forma de Pagamento:</label>
@@ -428,6 +446,7 @@ function Cart() {
               id="pagamento"
               ref={pagamentoRef}
               placeholder="Pix, Cartão ou Dinheiro"
+              onBlur={() => document.activeElement.blur()} // Remove o foco e esconde o teclado
             />
 
             <label htmlFor="informacoesAdicionais">
@@ -437,6 +456,7 @@ function Cart() {
               id="informacoesAdicionais"
               ref={informacoesAdicionaisRef}
               placeholder="Ex. sem cebola - Troco pra 100"
+              onBlur={() => document.activeElement.blur()} // Remove o foco e esconde o teclado
             />
 
             <label htmlFor="quemRecebe">Quem recebe:</label>
@@ -445,6 +465,7 @@ function Cart() {
               value={quemRecebe}
               onChange={(e) => setQuemRecebe(e.target.value)}
               placeholder="Caso você não receba o pedido"
+              onBlur={() => document.activeElement.blur()} // Remove o foco e esconde o teclado
             />
           </div>
 
@@ -480,7 +501,7 @@ function Cart() {
               💳 Pague com PIX na entrega
             </p>
             <img
-              src={pixqrcode}
+              src={pixQRCodePedido || pixqrcode}
               alt="QR Code PIX"
               style={{
                 width: "160px",
