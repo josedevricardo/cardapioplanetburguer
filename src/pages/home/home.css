@@ -1,4 +1,21 @@
 /* ---------- BLOCO INICIAL ---------- */
+.home-main {
+  position: relative;
+  min-height: 100vh;
+
+  background-attachment: fixed; /* efeito moderno */
+  z-index: 1;
+}
+
+
+.home-main::before {
+  content: "";
+  position: absolute;
+  inset: 0; /* leve escurecida, ajustável */
+  backdrop-filter: blur(2px); /* efeito moderno */
+  z-index: -1;
+}
+
 .hero-centralizado {
   display: flex;
   flex-direction: column;
@@ -15,6 +32,7 @@ h1 {
   font-size: 2.8rem;
   color: #D2691E;
 }
+
 
 .logo-container .logo-text {
   font-size: 2.1rem;
@@ -129,7 +147,7 @@ h1 {
 
 .time {
   text-align: center;
-  font-size: 16px; /* Aumentei um pouco para melhor legibilidade */
+  font-size: 18px; /* Aumentei um pouco para melhor legibilidade */
   color: #4b5563; /* Cor escura do Tailwind */
 }
 
@@ -188,17 +206,25 @@ h1 {
   margin-bottom: 1rem;
 }
 
+/* Aumenta o logo em todas as telas */
+.logotipo2 {
+  width: 140px;
+  display: block;
+  margin: 0 auto;
+}
 
-/* Aumenta ainda mais o GIF em telas grandes */
-/* Telas pequenas */
-@media (max-width: 767px) {
-  .gif-background {
-    top: 50px;
-    height: 200px;
-    background-size: contain;
-    opacity: 0.2;
+/* --- AJUSTE PARA TELAS PEQUENAS --- */
+@media (max-width: 480px) {
+  .hero-centralizado {
+    margin-top: -10px !important; /* sobe todo o bloco */
+  }
+
+  .logotipo2 {
+    margin-top: -10px !important; /* sobe o logo */
+    width: 90px; /* opcional: menor no mobile */
   }
 }
+
 
 /* Telas médias */
 @media (min-width: 768px) and (max-width: 1023px) {
@@ -209,6 +235,7 @@ h1 {
     background-size: cover;
   }
 }
+
 
 /* Telas grandes */
 @media (min-width: 1024px) {

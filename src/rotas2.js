@@ -7,7 +7,7 @@ export const categoriasFixas = [
   { nome: "Sucos", rota: "/sucos" },
   { nome: "Omeletes", rota: "/omeletes" },
   { nome: "Acréscimos", rota: "/Acrescimo" },
-  { nome: "Açaí", rota: "/acai" },
+  { nome: "Açaí Adicionais", rota: "/acai" },
 ];
 
 export const rotas = {

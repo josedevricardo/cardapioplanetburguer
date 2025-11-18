@@ -48,12 +48,9 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .categoria-item {
-    background: #1e1e1e;
-    color: #fff;
-  }
+  
   .categoria-item span {
-    color: #fff;
+    color: #052914;
   }
 }
 
@@ -61,7 +58,7 @@
   width: 100%;
   overflow: hidden;
   padding: 1rem 0;
-  background: #fff;
+  background: #ffffff;
 }
 
 .categoria-slider {

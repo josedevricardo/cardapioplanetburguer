@@ -24,7 +24,6 @@ function Navbar() {
   const openSidebar = () => window.dispatchEvent(new CustomEvent("openSidebar"));
   const toggleMobileMenu = () => setMobileMenuOpen((prev) => !prev);
 
-  // Atualiza busca e dispara evento global
   const handleBuscaChange = (valor) => {
     setBusca(valor);
     setTimeout(() => {
@@ -32,17 +31,14 @@ function Navbar() {
     }, 50);
   };
 
-  // Enter fecha teclado e rola para o primeiro produto
   const handleBuscaKeyDown = (event) => {
     if (event.key === "Enter") {
-      // Fecha teclado com delay para mobile
       setTimeout(() => {
         if (inputRef.current) inputRef.current.blur();
       }, 100);
 
-      // Rola para o produto encontrado
       setTimeout(() => {
-        const firstProduto = document.querySelector(".produto-card"); // ajuste para sua classe real
+        const firstProduto = document.querySelector(".produto-card");
         if (firstProduto) {
           firstProduto.scrollIntoView({ behavior: "smooth", block: "start" });
         }
@@ -50,14 +46,12 @@ function Navbar() {
     }
   };
 
-  // Fecha menu mobile ao clicar fora
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (isMobileMenuOpen && menuRef.current && !menuRef.current.contains(event.target)) {
         setMobileMenuOpen(false);
       }
 
-      // Fecha teclado se clicar fora do input
       if (inputRef.current && !inputRef.current.contains(event.target)) {
         inputRef.current.blur();
       }
@@ -66,7 +60,6 @@ function Navbar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, [isMobileMenuOpen]);
 
-  // Sticky + loader
   useEffect(() => {
     const handleScroll = () => setSticky(window.pageYOffset > 80);
     window.addEventListener("scroll", handleScroll);
@@ -93,7 +86,8 @@ function Navbar() {
       <div className="gif-background" />
 
       <nav className={`navbar ${isSticky ? "sticky" : ""}`}>
-        {/* Logo + menu mobile */}
+        
+        {/* ESQUERDA MOBILE */}
         <div className="mobile-left">
           <button
             className={`hamburger ${isMobileMenuOpen ? "open" : ""}`}
@@ -107,14 +101,14 @@ function Navbar() {
           </button>
 
           <Link to="/" className="logo-link logo-text-container">
-            <img src={logo} alt="Planets Burguer Logo" className="logotipo" />
+            <img src={logo} alt="Planets Burguer Logo" className="logo" />
             <span className="logotext">
               Planet's <strong>Burguer</strong>
             </span>
           </Link>
         </div>
 
-        {/* Barra de busca desktop */}
+        {/* BUSCA DESKTOP */}
         <div className="searchbar-desktop">
           <div className="search-input-wrapper">
             <input
@@ -126,6 +120,7 @@ function Navbar() {
               onChange={(e) => handleBuscaChange(e.target.value)}
               onKeyDown={handleBuscaKeyDown}
             />
+
             <svg
               className={`search-icon ${busca ? "active" : ""}`}
               xmlns="http://www.w3.org/2000/svg"
@@ -134,13 +129,13 @@ function Navbar() {
               stroke="currentColor"
               strokeWidth={2}
             >
-              <circle cx="11" cy="11" r="7" strokeLinecap="round" strokeLinejoin="round" />
-              <line x1="21" y1="21" x2="16.65" y2="16.65" strokeLinecap="round" strokeLinejoin="round" />
+              <circle cx="11" cy="11" r="7" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
             </svg>
           </div>
         </div>
 
-        {/* Menu desktop */}
+        {/* MENU DESKTOP */}
         <ul className="desktop-menu">
           {categoriasFixas.map(({ nome, rota }) => (
             <li key={nome}>
@@ -161,7 +156,7 @@ function Navbar() {
           ))}
         </ul>
 
-        {/* Sacola */}
+        {/* SACOLA */}
         <div className="right-buttons">
           <button onClick={openSidebar} className="sacola-button" aria-label="Abrir sacola">
             <div className="sacola-icon">🛍️</div>
@@ -176,10 +171,11 @@ function Navbar() {
           </button>
         </div>
 
-        {/* Menu mobile lateral */}
+        {/* MENU MOBILE LATERAL */}
         {isMobileMenuOpen && (
           <div className="mobile-sidebar" ref={menuRef}>
-            {/* Busca mobile */}
+
+            {/* BUSCA MOBILE */}
             <div className="searchbar-mobile">
               <div className="search-input-wrapper">
                 <input
@@ -191,6 +187,7 @@ function Navbar() {
                   onChange={(e) => handleBuscaChange(e.target.value)}
                   onKeyDown={handleBuscaKeyDown}
                 />
+
                 <svg
                   className={`search-icon ${busca ? "active" : ""}`}
                   xmlns="http://www.w3.org/2000/svg"
@@ -199,12 +196,13 @@ function Navbar() {
                   stroke="currentColor"
                   strokeWidth={2}
                 >
-                  <circle cx="11" cy="11" r="7" strokeLinecap="round" strokeLinejoin="round" />
-                  <line x1="21" y1="21" x2="16.65" y2="16.65" strokeLinecap="round" strokeLinejoin="round" />
+                  <circle cx="11" cy="11" r="7" />
+                  <line x1="21" y1="21" x2="16.65" y2="16.65" />
                 </svg>
               </div>
             </div>
 
+            {/* LISTA DE CATEGORIAS */}
             <ul className="mobile-menu">
               {categoriasFixas.map(({ nome, rota }) => (
                 <li key={nome}>
@@ -225,13 +223,42 @@ function Navbar() {
                 </li>
               ))}
             </ul>
+
+            {/* WHATSAPP FIXO */}
+            <div className="mobile-whatsapp">
+              <a
+                href="https://wa.me/5538998017215"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="whatsapp-link"
+              >
+                <svg
+                  className="whatsapp-svg"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 32 32"
+                >
+                  <path
+                    fill="#25D366"
+                    d="M16 .4C7.4.4.5 7.2.5 15.8c0 2.8.8 5.5 2.3 7.8L0 32l8.6-2.8c2.3 1.3 4.9 2 7.5 2 8.6 0 15.5-6.8 15.5-15.4C31.6 7.2 24.7.4 16 .4z"
+                  />
+                  <path
+                    fill="#fff"
+                    d="M24 19.3c-.4-.2-2.3-1.1-2.6-1.3-.4-.1-.6-.2-.8.2-.2.4-.9 1.3-1.1 1.5-.2.2-.4.2-.8 0-.4-.2-1.5-.6-2.9-1.9-1.1-1-1.9-2.2-2.1-2.6-.2-.4 0-.6.2-.8.2-.2.4-.4.6-.6.2-.2.2-.4.4-.6.2-.2.2-.4.2-.6 0-.2 0-.4-.2-.6-.2-.2-1.1-2.6-1.5-3.5-.4-.8-.8-.8-1.1-.8h-.8c-.2 0-.6.2-.9.4-.2.4-1.1 1.1-1.1 2.8 0 1.7 1.1 3.3 1.3 3.5.2.2 2.3 4.7 5.8 6.6 3.5 1.9 4.1 1.3 4.9 1.3.8 0 2.3-1 2.6-1.9.4-.8.4-1.5.2-1.7-.2-.2-.6-.4-1-.6z"
+                  />
+                </svg>
+
+                <span className="whatsapp-text">
+                  WhatsApp<br />
+                  <strong>38 99801-7215</strong>
+                </span>
+              </a>
+            </div>
           </div>
         )}
 
         {isMobileMenuOpen && <div className="mobile-overlay" />}
         <Cart id="cart" />
 
-        {/* Motinha animada */}
         <AnimatePresence>
           {motinhaAtiva && (
             <motion.div

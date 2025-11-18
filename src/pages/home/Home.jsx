@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
-
+import { Link } from "react-router-dom";
+import logo from "../../assets/mascote.png";
 import Navbar from "../../components/navbar/navbar.jsx";
 import ScrollToTopButton from "../../components/ScrollToTopButton/ScrollToTopButton.js";
 import CategoriaSlider from "../../components/CategoriaSlider/CategoriaSlider.jsx";
-
-
 import "./home.css";
 import ProdutoSlider from "../../components/produto-vitrine/produto-vitrine-lanches.jsx";
 
@@ -49,6 +48,17 @@ function Home() {
         <div className="max-w-6xl mx-auto">
           {/* HERO */}
           <div className="hero-centralizado">
+            {/* LOGO ACIMA NO MOBILE */}
+            <div>
+              <Link to="/">
+                <img
+                  src={logo}
+                  alt="Planets Burguer Logo"
+                  className="logotipo2"
+                />
+              </Link>
+            </div>
+
             <div className="logo-container">
               <span className="logo-text glow-text">
                 Planet’s <strong>Burguer</strong>
@@ -97,12 +107,10 @@ function Home() {
             className="mt-6 mb-6"
           >
             <h3 className="text-lg font-semibold text-center text-zinc-800 mb-3">
-              JÁ FEZ SEU PEDIDO
+              Já Fez seu pedido hoje? 😄 🍔
             </h3>
 
             <CategoriaSlider />
-            
-           
           </motion.div>
 
           {/* PRODUTOS */}

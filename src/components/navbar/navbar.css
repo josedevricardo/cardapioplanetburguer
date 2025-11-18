@@ -42,6 +42,9 @@
 .logo-text-container {
   gap: 10px;
 }
+.logo {
+    width: 22px;
+  }
 
 .logotipo {
   width: 48px;
@@ -308,6 +311,40 @@
   font-weight: bold;
 }
 
+
+/* ============================ */
+/*    WHATSAPP NO MENU MOBILE   */
+/* ============================ */
+
+.mobile-whatsapp {
+  margin-top: 25px;
+  padding: 15px 0;
+  border-top: 1px solid rgba(255,255,255,0.2);
+  display: flex;
+  justify-content: center;
+}
+
+.whatsapp-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+}
+
+.whatsapp-svg {
+  width: 46px;
+  height: 46px;
+  margin-bottom: 8px;
+}
+
+.whatsapp-text {
+  color: white;
+  font-size: 15px;
+  text-align: center;
+  line-height: 1.3;
+}
+
+
 /* -------- Espaço da navbar fixa -------- */
 .navbar-space {
   height: 40px; /* reduzido para desktop */
@@ -424,8 +461,8 @@
     animation: none;
   }
 
-  .logotipo {
-    width: 36px;
+  .logo {
+    width: 42px;
   }
 
     .logotext {

@@ -11,7 +11,6 @@ import { signOut } from "firebase/auth";
 import "./stiloPedido.css";
 import "./AdminPedidosFooter.css";
 
-
 const AVISO_ANTIGO_MS = 1000 * 60 * 60 * 10; // 10 horas
 
 function formatarDataLocal(data) {
@@ -48,50 +47,131 @@ function imprimirPedido(pedido) {
         <style>
           @page { size: 88mm auto; margin: 5mm; }
           body {
-            font-family: 'Courier New', monospace;
+            font-family: Arial, sans-serif;
             font-size: 12px;
             width: 88mm;
             margin: 0 auto;
           }
-          h2, h3 { text-align: center; margin: 4px 0; }
-          p { margin: 3px 0; }
+
+          h2 {
+            text-align: center;
+            font-size: 18px;
+            margin: 3px 0;
+          }
+
+          h3 {
+            text-align: center;
+            font-size: 14px;
+            margin: 5px 0;
+          }
+
+          p { margin: 4px 0; }
           ul { padding-left: 10px; list-style: none; margin: 0; }
           li { margin: 2px 0; }
+
           .total {
             text-align: center;
             font-weight: bold;
             font-size: 14px;
             border-top: 1px dashed #000;
-            margin-top: 6px;
+            margin-top: 8px;
             padding-top: 4px;
           }
+
           .logo { text-align: center; margin-bottom: 4px; }
           .logo img { width: 60px; height: auto; }
+
+          /* ---- BLOCO PIX ---- */
+
+          .pix-title {
+            text-align: center;
+            font-weight: bold;
+            font-size: 14px;
+            margin-top: 12px;
+            margin-bottom: 6px;
+          }
+
+          .qrcode-box {
+            display: flex;
+            justify-content: center;
+            margin: 10px 0;
+          }
+
+          .codigo-pix {
+            font-size: 11px;
+            background: #f2f2f2;
+            padding: 6px;
+            border-radius: 4px;
+            word-break: break-all;
+            margin-top: 5px;
+          }
+
+          .rodape {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 11px;
+          }
         </style>
       </head>
+
       <body>
+
         <div class="logo">
           <img src="https://i.imgur.com/kXJkLZV.png" alt="Logo" />
         </div>
+
         <h2>Planet's Burguer</h2>
         <h3>Pedido #${pedido.numeroPedido || pedido.id}</h3>
+
         <p><strong>Cliente:</strong> ${pedido.nome}</p>
         <p><strong>Telefone:</strong> ${pedido.telefone}</p>
         <p><strong>Endereço:</strong> ${pedido.rua}, Nº ${pedido.numero}, ${pedido.bairro}</p>
         <p><strong>Pagamento:</strong> ${pedido.pagamento}</p>
         <p><strong>Obs:</strong> ${pedido.informacoes_adicionais || "Nenhuma"}</p>
-        <hr />
+
+        <hr/>
+
         <h4>Itens:</h4>
         <ul>
           ${(pedido.itens || [])
             .map((item) => `<li>${item.qtd}x ${item.produto}</li>`)
             .join("")}
         </ul>
+
         <p class="total">TOTAL: R$ ${pedido.total}</p>
-        <p style="text-align:center;">${new Date(pedido.data).toLocaleString("pt-BR")}</p>
+
+        <!-- BLOCO PIX IGUAL AO PRINT -->
+        
+        ${
+          pedido.qrCodeBase64
+            ? `
+        <div class="pix-title">💳 Pague com PIX</div>
+
+        <div class="qrcode-box">
+          <img src="${pedido.qrCodeBase64}" width="180" />
+        </div>
+
+        <div style="text-align:center; font-size:11px;">
+          Se seu app não reconhecer a imagem,<br> copie o código abaixo e cole no Pix:
+        </div>
+
+        <div class="codigo-pix">${pedido.pixCopiaCola || ""}</div>
+        `
+            : ""
+        }
+
+        <div class="rodape">
+          Obrigado pela preferência!<br/>
+          Gerado em ${new Date().toLocaleString("pt-BR")}
+        </div>
+
         <script>
-          window.onload = () => { window.print(); setTimeout(() => window.close(), 600); };
+          window.onload = () => { 
+            window.print(); 
+            setTimeout(() => window.close(), 600); 
+          };
         </script>
+
       </body>
     </html>
   `);
@@ -425,9 +505,10 @@ export default function AdminPedidos() {
                   <p className={`status-${pedido.status}`}>Status: {pedido.status}</p>
                   <div className="actions">
                     <button className="btn" onClick={() => salvarComoTxt(pedido)}>💾 .TXT</button>
-                    <button className="btnEditar" onClick={() => abrirEdicao(pedido)}>✏️ Editar</button>
-                    {pedido.status === "pendente" && (
-                      <button className="btnEntregue" onClick={() => marcarComoEntregue(pedido.id)}>✅ Entregue</button>
+  <button className="btnEditar" onClick={() => abrirEdicao(pedido)}>✏️ Editar</button>
+  <button className="btnImprimir" onClick={() => imprimirPedido(pedido)}>🖨 Imprimir</button>
+  {pedido.status === "pendente" && (
+    <button className="btnEntregue" onClick={() => marcarComoEntregue(pedido.id)}>✅ Entregue</button>
                     )}
                   </div>
                 </div>

@@ -1,4 +1,3 @@
-// src/components/CategoriaSlider/ProdutoSliderHorizontal.jsx
 import React, { useEffect, useRef, useState, useContext } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
@@ -7,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { ref, onValue } from "firebase/database";
 import { db } from "../../firebaseConfig";
 import { CartContext } from "../../contexts/cart-context";
+
 
 const colors = ["#34D399", "#10B981", "#6EE7B7", "#FBBF24", "#F87171"];
 
@@ -26,10 +26,13 @@ const ProdutoSliderHorizontal = () => {
     const unsubscribe = onValue(categoriasRef, (snapshot) => {
       const data = snapshot.val() || {};
       const todosProdutos = Object.entries(data).flatMap(([cat, val]) =>
-        Object.values(val.produtos || {}).map(prod => ({ ...prod, categoria: cat }))
+        Object.values(val.produtos || {}).map((prod) => ({
+          ...prod,
+          categoria: cat,
+        }))
       );
       // opcional: filtrar apenas produtos ativos
-      setProdutos(todosProdutos.filter(p => p.ativo !== false));
+      setProdutos(todosProdutos.filter((p) => p.ativo !== false));
     });
     return () => unsubscribe();
   }, []);
@@ -102,7 +105,9 @@ const ProdutoSliderHorizontal = () => {
   };
 
   const handleAdd = (produto, index) => {
-    const precoNumerico = parseFloat(produto.preco.toString().replace(",", "."));
+    const precoNumerico = parseFloat(
+      produto.preco.toString().replace(",", ".")
+    );
     addToCart({ ...produto, preco: precoNumerico });
     setClicked(index);
     setToast(`🍔 ${produto.nome} adicionado à sacola!`);
@@ -131,6 +136,16 @@ const ProdutoSliderHorizontal = () => {
     }),
     exit: { opacity: 0, scale: 0, transition: { duration: 0.3 } },
   };
+const normalizarRota = (nome) => {
+  if (!nome) return "";
+
+  return nome
+    .normalize("NFD")               // remove acentos
+    .replace(/[\u0300-\u036f]/g, "") // remove acentos
+    .replace(/\s+/g, "-")           // espaços viram hífen
+    .replace(/[^a-zA-Z0-9-]/g, "")  // remove qualquer caractere estranho
+    .toLowerCase();
+};
 
   return (
     <div
@@ -213,9 +228,29 @@ const ProdutoSliderHorizontal = () => {
             className="categoria-item bg-white shadow-md rounded-xl p-3 flex flex-col items-center justify-between min-w-[160px] border border-gray-200"
             whileHover={{ scale: 1.05 }}
           >
+            {/* onclick de direcionmanto de pagina no slider */}
             <div
               className="cursor-pointer"
-              onClick={() => navigate(`/${produto.categoria}`)}
+             onClick={() => {
+  const rota = normalizarRota(produto.categoria);
+
+  const rotasValidas = [
+    "lanches",
+    "bebidas",
+    "sucos",
+    "omeletes",
+    "acrescimo"
+  ];
+
+  if (rotasValidas.includes(rota)) {
+    navigate(`/${rota}`);
+  } else {
+    console.warn("Categoria sem rota correspondente:", produto.categoria);
+    navigate("/"); // segurança — evita página 404
+  }
+}}
+
+
             >
               <img
                 src={produto.imagem}

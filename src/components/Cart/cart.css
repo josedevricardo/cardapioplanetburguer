@@ -1,19 +1,44 @@
+/* ---------------------- CART CONTAINER ---------------------- */
+.cart-motion-wrapper {
+  padding: 15px;
+  background: #fff;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  font-family: Arial, sans-serif;
+  scroll-behavior: smooth;
+  transition: transform 0.2s ease;
+}
 
-/* Estilização geral do carrinho permanece igual */
 .cart-btn-close {
-  width: 32px;
-  height: 32px;
+  width: 28px;
+  height: 28px;
   cursor: pointer;
-  margin: 10px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/* ---------------------- FORMULÁRIO ---------------------- */
+.formulario-cliente {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 15px;
+}
+
+.formulario-cliente label {
+  font-weight: 600;
+  font-size: 0.9rem;
 }
 
 .formulario-cliente input {
   width: 100%;
-  padding: 8px;
-  margin-bottom: 12px;
-  border-radius: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
   border: 1px solid #ccc;
-  font-size: 14px;
+  font-size: 0.9rem;
   transition: 0.3s ease;
 }
 
@@ -22,55 +47,74 @@
   outline: none;
 }
 
+/* ---------------------- LISTA DE PRODUTOS ---------------------- */
 .lista-produtos {
-  max-height: 180px;
+  margin: 10px 0;
+  flex-grow: 1;
   overflow-y: auto;
-  margin-bottom: 10px;
+  max-height: 180px;
 }
 
 .frete-msg {
+  font-size: 0.9rem;
+  margin: 6px 0;
+  text-align: center;
   color: #d97706;
   font-weight: 500;
-  text-align: center;
-  margin-top: 8px;
 }
 
+/* ---------------------- VALOR FINAL ---------------------- */
 .footer-cart-valor {
   display: flex;
   justify-content: space-between;
-  font-size: 18px;
-  font-weight: bold;
+  align-items: center;
+  font-size: 1rem;
+  font-weight: 600;
   padding: 10px;
   background-color: #f9fafb;
   border-radius: 8px;
-  margin: 10px;
+  margin: 10px 0;
+}
+
+/* ---------------------- BOTÕES ---------------------- */
+.btn-checkout,
+.btn-print-cupom {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.3s ease;
 }
 
 .btn-checkout {
-  background-color: #22c55e;
-  color: white;
-  padding: 12px;
+  background: #fca311;
+  color: #fff;
+  display: block;
   width: 90%;
   margin: 0 auto 15px;
-  display: block;
-  border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 16px;
-  cursor: pointer;
-  transition: background 0.3s ease;
 }
 
 .btn-checkout:hover {
-  background-color: #16a34a;
+  transform: scale(1.05);
 }
 
 .btn-checkout:disabled {
-  background-color: #9ca3af;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
-/* MENSAGENS */
+.btn-print-cupom {
+  background: #2b7a78;
+  color: #fff;
+}
+
+.btn-print-cupom:hover {
+  transform: scale(1.05);
+}
+
+/* ---------------------- MENSAGENS ---------------------- */
 .error-message,
 .success-message {
   text-align: center;
@@ -91,114 +135,82 @@
   color: #15803d;
 }
 
-/* MODAL MODERNA */
+/* ---------------------- MODAL ---------------------- */
 .modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.6);
+  background: rgba(0,0,0,0.5);
   backdrop-filter: blur(3px);
   display: flex;
-  align-items: center;
   justify-content: center;
-  z-index: 999;
+  align-items: center;
+  z-index: 9999;
 }
 
 .modal-box {
-  background-color: white;
-  padding: 30px;
-  border-radius: 20px;
-  width: 90%;
+  background: #fff;
+  padding: 20px;
+  border-radius: 12px;
+  width: 320px;
   max-width: 400px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   text-align: center;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.modal-box h2 {
+  margin-bottom: 12px;
 }
 
 .modal-buttons {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
-  margin-top: 20px;
+  gap: 10px;
+  margin-top: 16px;
 }
 
-.cancel-btn,
-.confirm-btn {
+.confirm-btn,
+.cancel-btn {
   flex: 1;
-  padding: 10px 0;
+  padding: 8px 12px;
+  font-weight: 600;
+  border-radius: 6px;
   border: none;
-  border-radius: 8px;
-  font-weight: bold;
-  font-size: 15px;
   cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: background 0.3s ease;
+}
+
+.confirm-btn {
+  background: #fca311;
+  color: #fff;
 }
 
 .cancel-btn {
-  background-color: #f3f4f6;
-  color: #374151;
+  background: #ccc;
+  color: #333;
+}
+
+.confirm-btn:hover {
+  background: #16a34a;
 }
 
 .cancel-btn:hover {
   background-color: #e5e7eb;
 }
 
-.confirm-btn {
-  background-color: #22c55e;
-  color: white;
-}
-
-.confirm-btn:hover {
-  background-color: #16a34a;
-}
-
 .confirm-btn:disabled {
-  background-color: #16a34a;
-  opacity: 0.8;
+  opacity: 0.6;
   cursor: not-allowed;
 }
 
+/* ---------------------- SPINNER ---------------------- */
 .spinner {
-  width: 18px;
-  height: 18px;
-  margin-right: 8px;
-  animation: spin 1s linear infinite;
-}
-
-.spinner .path {
-  stroke: white;
-  stroke-linecap: round;
-}
-
-@keyframes spin {
-  0% {
-    transform: rotate(0deg);
-  }
-  100% {
-    transform: rotate(360deg);
-  }
-}
-
-/* Efeito de movimento sutil */
-.cart-motion-wrapper {
-  padding: 10px;
-  height: 100%;
-  overflow-y: auto;
-  scroll-behavior: smooth;
-  transition: transform 0.2s ease;
-}
-
-/* Animação de carregamento do botão "Confirmar" */
-.spinner {
-  animation: spin 1s linear infinite;
   width: 20px;
   height: 20px;
   margin-right: 8px;
   vertical-align: middle;
+  animation: spin 1s linear infinite;
 }
 
 .spinner .path {
@@ -207,7 +219,23 @@
 }
 
 @keyframes spin {
-  100% {
-    transform: rotate(360deg);
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ---------------------- IMPRESSÃO ---------------------- */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .cart-motion-wrapper,
+  .cart-motion-wrapper * {
+    visibility: visible;
+  }
+  .cart-motion-wrapper {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
   }
 }
