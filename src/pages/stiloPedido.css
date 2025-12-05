@@ -408,3 +408,194 @@
 .btnImprimir:hover {
   background-color: #3aa9a3;
 }
+
+
+/* -------- Mobile (até 480px) -------- */
+@media (max-width: 480px) {
+/* Container principal */
+.admin-pedidos {
+padding: 6px;
+font-family: 'Arial', sans-serif;
+font-size: 0.85rem;
+background-color: #f5f5f5;
+}
+
+/* Header */
+header {
+display: flex;
+flex-direction: column;
+align-items: flex-start;
+gap: 4px;
+margin-bottom: 8px;
+}
+
+header h1 {
+font-size: 1.2rem;
+font-weight: bold;
+margin: 0;
+}
+
+header button, header select {
+padding: 4px 6px;
+font-size: 0.8rem;
+border-radius: 6px;
+border: 1px solid #ccc;
+background-color: #fff;
+cursor: pointer;
+}
+
+/* Botão Estatísticas mobile */
+.btn-estatisticas {
+background-color: #9b59b6;
+color: #fff;
+border: none;
+margin-top: 4px;
+padding: 4px 6px;
+font-size: 0.8rem;
+border-radius: 6px;
+cursor: pointer;
+transition: background-color 0.2s;
+}
+
+.btn-estatisticas:hover {
+background-color: #8e44ad;
+}
+
+/* Lista de pedidos */
+.lista-pedidos {
+display: flex;
+flex-direction: column;
+gap: 6px;
+}
+
+/* Cards de pedidos */
+.pedido-card {
+padding: 6px;
+border-radius: 8px;
+background-color: #fff;
+box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+font-size: 0.85rem;
+border-left: 4px solid transparent;
+}
+
+.pedido-card.pendente {
+border-left-color: #f39c12;
+}
+
+.pedido-card.entregue {
+border-left-color: #27ae60;
+}
+
+/* Ações dos pedidos */
+.pedido-card .acoes {
+display: flex;
+flex-wrap: wrap;
+gap: 4px;
+margin-top: 4px;
+}
+
+.pedido-card .acoes button {
+padding: 3px 6px;
+font-size: 0.75rem;
+border-radius: 6px;
+border: none;
+cursor: pointer;
+background-color: #3498db;
+color: #fff;
+transition: background-color 0.2s;
+}
+
+.pedido-card .acoes button:hover {
+background-color: #2980b9;
+}
+
+/* Modal de notificação */
+.modal-overlay {
+inset: 0;
+background-color: rgba(0,0,0,0.4);
+display: flex;
+justify-content: center;
+align-items: center;
+z-index: 999;
+}
+
+.modal-notificacao {
+background-color: #fff;
+padding: 10px 12px;
+border-radius: 10px;
+text-align: center;
+font-size: 0.85rem;
+box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+}
+
+/* Modal de edição */
+.modal-edicao {
+position: fixed;
+inset: 5% 2%;
+background-color: #fff;
+padding: 12px;
+border-radius: 10px;
+max-height: 90%;
+overflow-y: auto;
+font-size: 0.85rem;
+z-index: 999;
+}
+
+.modal-edicao input {
+width: 100%;
+padding: 4px 6px;
+margin: 4px 0 8px 0;
+border-radius: 6px;
+border: 1px solid #ccc;
+font-size: 0.85rem;
+}
+
+.modal-edicao button {
+padding: 4px 8px;
+font-size: 0.8rem;
+border-radius: 6px;
+border: none;
+cursor: pointer;
+margin-top: 4px;
+background-color: #2ecc71;
+color: #fff;
+transition: background-color 0.2s;
+}
+
+.modal-edicao button:hover {
+background-color: #27ae60;
+}
+
+/* Inputs e selects */
+input, select {
+font-size: 0.85rem;
+}
+}
+
+/* Botão flutuante só para mobile */
+@media (max-width: 480px) {
+  .btn-estatisticas-flutuante {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background-color: #9b59b6;
+    color: #fff;
+    font-size: 1.5rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    cursor: pointer;
+    transition: transform 0.2s, background-color 0.2s;
+    z-index: 1000;
+  }
+
+  .btn-estatisticas-flutuante:hover {
+    background-color: #8e44ad;
+    transform: scale(1.1);
+  }
+}

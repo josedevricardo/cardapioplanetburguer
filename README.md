@@ -1,82 +1,157 @@
-<a href="https://ibb.co/5k91zbj"><img src="https://i.ibb.co/0KXnWH9/img1.png" alt="img1" border="0"></a>
-<a href="https://ibb.co/1zFB7Sg"><img src="https://i.ibb.co/qJTh7ZS/img2.png" alt="img2" border="0"></a>
-<a href="https://ibb.co/s3H7mYk"><img src="https://i.ibb.co/rys97rT/img3.png" alt="img3" border="0"></a>
-<a href="https://ibb.co/mRWhqH9"><img src="https://i.ibb.co/yNjgy86/img4.png" alt="img4" border="0"></a>
+# 🍔 Planet Burger – Cardápio Online
 
-Deploy
+**Aplicação React moderna com TailwindCSS, Firebase, Netlify e painel Admin completo**
 
-https://cardapioplanetburger.netlify.app/
+Deploy: **[https://cardapioplanetburger.netlify.app/](https://cardapioplanetburger.netlify.app/)**
+Status Netlify: ![Netlify Status](https://api.netlify.com/api/v1/badges/f361336b-89fd-4865-8a36-ceb1d6eb8422/deploy-status)
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/f361336b-89fd-4865-8a36-ceb1d6eb8422/deploy-status)](https://app.netlify.com/sites/papaya-sundae-9004bb/deploys)
+---
 
+## 🚀 Tecnologias Utilizadas
 
-# Getting Started with Create React App
+* **React 18**
+* **TailwindCSS 3**
+* **Framer Motion**
+* **Firebase Auth + Database**
+* **Postgres (Neon) + Netlify Functions**
+* **QZ Tray (Impressão automática)**
+* **Netlify Deploy**
+* **Acessibilidade e PWA (opcional)**
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+---
 
-## Available Scripts
+## 📦 Instalação e Execução
 
-In the project directory, you can run:
+### 1. Clonar o projeto
+
+```bash
+git clone https://github.com/SEU_REPO_AQUI.git
+cd planet-burger
+```
+
+### 2. Instalar dependências
+
+```bash
+npm install
+```
+
+### 3. Rodar em modo desenvolvimento
+
+```bash
+npm start
+```
+
+Abra o navegador em:
+**[http://localhost:3000](http://localhost:3000)**
+
+---
+
+## 🛠 Scripts Disponíveis
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
-
-### `npm test`
-
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Inicia o servidor de desenvolvimento.
 
 ### `npm run build`
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+Gera a versão otimizada para produção na pasta `/build`.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+### `npm run deploy`
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+(Necessário configurar no Netlify)
+Realiza o deploy automático.
 
-### `npm run eject`
+---
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+## 🔐 Variáveis de Ambiente
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Crie os arquivos:
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+```
+.env.local
+.env.production
+```
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+E insira:
 
-## Learn More
+```
+REACT_APP_FIREBASE_API_KEY=...
+REACT_APP_FIREBASE_AUTH_DOMAIN=...
+REACT_APP_FIREBASE_PROJECT_ID=...
+REACT_APP_FIREBASE_DB_URL=...
+REACT_APP_NEON_DATABASE_URL=...
+```
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+> Nenhuma variável sensível deve ser commitada no Git.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 📁 Estrutura do Projeto
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
+src/
+ ├─ components/
+ ├─ pages/
+ ├─ admin/
+ ├─ hooks/
+ ├─ services/
+ ├─ styles/
+ └─ firebaseConfig.js
+```
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 🧩 Funcionalidades Principais
 
-### Making a Progressive Web App
+### 🛒 Cardápio Online
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+* Listagem dinâmica de produtos
+* Busca inteligente
+* Slider por categorias
+* Botões flutuantes
+* Modo escuro automático
 
-### Advanced Configuration
+### 🔐 Área Admin
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+* Login seguro (Firebase)
+* Gerenciamento de produtos e categorias
+* Pedidos em tempo real (Postgres + Netlify Functions)
+* Impressão automática via QZ Tray
+* Exportações: PDF / CSV / XLSX
+* Filtros de pedidos (pendente / entregue)
+* Backup automático
+* Estatísticas
 
-### Deployment
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+## 🎨 UI & UX
 
-### `npm run build` fails to minify
+* Tailwind moderno e customizado
+* Componentes animados (Framer Motion)
+* Layout responsivo completo
+* Design profissional com cores personalizadas
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## 📚 Documentação e Fontes Oficiais
+
+* React Docs: [https://react.dev](https://react.dev)
+* TailwindCSS: [https://tailwindcss.com](https://tailwindcss.com)
+* Firebase: [https://firebase.google.com/docs](https://firebase.google.com/docs)
+* Netlify Functions: [https://docs.netlify.com/functions/overview/](https://docs.netlify.com/functions/overview/)
+* Postgres Neon: [https://neon.tech/docs](https://neon.tech/docs)
+* QZ Tray: [https://qz.io/docs](https://qz.io/docs)
+
+---
+
+## 📌 Observações
+
+* Este projeto é totalmente responsivo.
+* Build otimizado para performance no Netlify.
+* Código revisado e compatível com padrões modernos.
+
+---
+
+## 🧑‍💻 Autor
+
+Planet Burger • Painel e cardápio desenvolvidos por RICARDO.

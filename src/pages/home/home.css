@@ -132,17 +132,60 @@ h1 {
   color: inherit;
 }
 
-/* ---------- HORÁRIO ---------- */
+/* ---------- HORÁRIO (Versão Moderna) ---------- */
 .text-pedidos {
-  /* Fundo de chocolate para o aviso de horário */
-  background-color: #D2691E; 
-  color: white;
+  background: linear-gradient(135deg, #d97706, #b45309);
+  color: #fff;
   font-size: 20px;
-  font-weight: bold;
+  font-weight: 700;
   text-align: center;
-  padding: 10px;
-  border-radius: 8px;
-  margin-bottom: 10px;
+  padding: 14px 18px;
+  border-radius: 14px;
+  margin-bottom: 12px;
+
+  /* Sombra suave moderna */
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.15);
+
+  /* Animação */
+  animation: avisoFadeSlide 0.6s ease-out;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Brilho suave passando */
+.text-pedidos::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 60%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.25);
+  transform: skewX(-20deg);
+  animation: brilho 3s infinite;
+}
+
+@keyframes avisoFadeSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes brilho {
+  0% {
+    left: -100%;
+  }
+  50% {
+    left: 130%;
+  }
+  100% {
+    left: 130%;
+  }
 }
 
 .time {

@@ -189,6 +189,7 @@ const ProdutoSlider = ({ busca }) => {
                   {formatarPreco(produto.preco)}
                 </p>
                 <button
+              
                   className="botao-adicionar"
                   onClick={() => handleClick(produto)}
                 >

@@ -12,15 +12,16 @@
 }
 
 .modalContainer {
-  background: white;
+  background: #fff;
   padding: 20px 25px;
   border-radius: 8px;
-  max-width: 400px;  /* largura máxima */
-  width: 90%;        /* largura adaptativa */
-  max-height: 90vh;  /* altura máxima para caber na tela */
-  overflow-y: auto;  /* rolagem vertical se necessário */
+  max-width: 400px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
   box-shadow: 0 0 15px rgba(0,0,0,0.3);
   font-family: Arial, sans-serif;
+  transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
 .modalContainer h2 {
@@ -32,7 +33,7 @@
 
 .modalContainer label {
   display: block;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
   font-weight: 600;
   font-size: 0.9rem;
 }
@@ -48,6 +49,14 @@
   font-size: 0.9rem;
   box-sizing: border-box;
   resize: vertical;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.modalContainer input:focus,
+.modalContainer textarea:focus {
+  border-color: #7b4eff;
+  box-shadow: 0 0 0 2px rgba(123, 78, 255, 0.2);
+  outline: none;
 }
 
 .modalContainer textarea {
@@ -76,6 +85,11 @@
   border-radius: 4px;
   padding: 3px 8px;
   cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.itemEdicao button:hover {
+  background: #c0392b;
 }
 
 .modalActions {
@@ -91,6 +105,7 @@
   border-radius: 5px;
   cursor: pointer;
   border: none;
+  transition: background 0.2s ease, transform 0.15s ease;
 }
 
 .modalActions button:disabled {
@@ -103,7 +118,15 @@
   color: white;
 }
 
+.modalActions button:first-child:hover:not(:disabled) {
+  background-color: #888;
+}
+
 .modalActions button:last-child {
   background-color: #27ae60;
   color: white;
+}
+
+.modalActions button:last-child:hover:not(:disabled) {
+  background-color: #219150;
 }

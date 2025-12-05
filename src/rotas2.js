@@ -1,12 +1,10 @@
-// src/rotas.js
-
 export const categoriasFixas = [
   { nome: "Home", rota: "/" },
   { nome: "+Lanches", rota: "/lanches" },
   { nome: "Bebidas", rota: "/bebidas" },
   { nome: "Sucos", rota: "/sucos" },
   { nome: "Omeletes", rota: "/omeletes" },
-  { nome: "Acréscimos", rota: "/Acrescimo" },
+  { nome: "Acréscimos", rota: "/acrescimo" },
   { nome: "Açaí Adicionais", rota: "/acai" },
 ];
 

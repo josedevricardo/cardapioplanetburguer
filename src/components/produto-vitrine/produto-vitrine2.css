@@ -1,3 +1,4 @@
+/* ---------------- CONTAINER GERAL ---------------- */
 .produto-slider-container {
   max-width: 1200px;
   margin: 20px auto;
@@ -7,9 +8,10 @@
   box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
   border-radius: 12px;
   margin-top: 5rem;
+  font-size: 12px;
 }
 
-/* Filtro de categorias */
+/* ---------------- CATEGORIAS ---------------- */
 .filtro-categorias {
   display: flex;
   flex-wrap: wrap;
@@ -38,10 +40,10 @@
   text-align: center;
   margin-bottom: 20px;
   font-weight: 600;
-  font-size: 1.3rem;
+  font-size: 1.0rem;
 }
 
-/* Floating menu (mobile) */
+/* ---------------- MENU FLUTUANTE MOBILE ---------------- */
 .floating-categorias-wrapper {
   display: none;
   position: relative;
@@ -50,6 +52,7 @@
 
 .botao-flutuante {
   padding: 10px 15px;
+  font-size: 12px;
   background: #e65500;
   color: white;
   border: none;
@@ -103,17 +106,11 @@
 }
 
 @keyframes slideIn {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
-/* Produto slider grid */
+/* ---------------- GRID PRODUTOS ---------------- */
 .produto-slider {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -121,7 +118,7 @@
   user-select: none;
 }
 
-/* Produto item */
+/* ---------------- ITEM DE PRODUTO ---------------- */
 .produto-item {
   background: #fff;
   border-radius: 12px;
@@ -172,26 +169,107 @@
   margin-bottom: 15px;
 }
 
-/* Botão adicionar */
+/* ---------------- BOTÃO ADICIONAR  ---------------- */
 .botao-adicionar {
-  background-color: #e65500;
+  background: linear-gradient(135deg, #ff7a00, #e65500);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: 600;
-  padding: 16px 16px;
-  width: 90%;
-  max-width: 220px;
-  transition: background-color 0.3s ease;
+  font-weight: 700;
+  padding: 12px 14px;
+  width: 100%;
+  max-width: 210px;
+  transition: all 0.25s ease;
   margin-top: auto;
+  font-size: 0.95rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+  overflow: hidden;
 }
 
 .botao-adicionar:hover {
-  background-color: #cc4d00;
+  transform: translateY(-3px) scale(1.03);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
 }
 
-/* Mostrar mais */
+/* Shine Effect */
+.botao-adicionar::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -120%;
+  width: 100%;
+  height: 100%;
+  background: rgba(255,255,255,0.28);
+  transform: skewX(-20deg);
+  transition: 0.5s;
+}
+
+.botao-adicionar:hover::after {
+  left: 120%;
+}
+
+/* Ícone sacola animado */
+.icon-sacola {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.botao-adicionar:hover .icon-sacola {
+  transform: scale(1.25) rotate(-5deg);
+}
+
+/* ---------------- MENSAGEM "ADICIONADO"  ---------------- */
+.message-fixed {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #e65500;
+  color: white;
+  padding: 12px 22px;
+  border-radius: 40px;
+  font-weight: 600;
+  font-size: 15px;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  white-space: nowrap;
+  max-width: 90%;
+  width: auto;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  z-index: 1000;
+  animation: toastSlideBounce 2.8s ease forwards;
+}
+
+@keyframes toastSlideBounce {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(40px) scale(0.9);
+  }
+  15% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1.08);
+  }
+  25% {
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  75% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px) scale(0.95);
+  }
+}
+
+/* ---------------- BOTÃO MOSTRAR MAIS ---------------- */
 .mostrar-mais-container {
   text-align: center;
   margin-top: 20px;
@@ -212,40 +290,7 @@
   background-color: #cc4d00;
 }
 
-/* Mensagem flutuante */
-.message-fixed {
-  position: fixed;
-  bottom: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #e65500;
-  color: white;
-  padding: 12px 20px;
-  border-radius: 32px;
-  font-weight: 600;
-  font-size: 14px;
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  white-space: nowrap;
-  max-width: 90%;
-  width: auto;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  animation: fadeInOutScale 3s ease-in-out forwards;
-  line-height: 1.3;
-  text-align: center;
-}
-
-.message-texto {
-  display: inline-block;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-
-
-/* Avisos */
+/* ---------------- AVISOS ---------------- */
 .aviso-cerveja,
 .aviso-baneston {
   background-color: #fff3cd;
@@ -259,7 +304,7 @@
   max-width: 600px;
 }
 
-/* Dark mode */
+/* ---------------- DARK MODE ---------------- */
 @media (prefers-color-scheme: dark) {
   .floating-menu {
     background: #1e1e1e;
@@ -279,9 +324,18 @@
     background-color: #e65500;
     color: white;
   }
+
+  .produto-item {
+    background: #131313;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.6);
+  }
+
+  .produto-item h3, .text-descricao, .prod-vitrine-preco {
+    color: #eee;
+  }
 }
 
-/* Mobile */
+/* ---------------- MOBILE ---------------- */
 @media (max-width: 768px) {
   .produto-slider {
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -310,7 +364,10 @@
 
   .botao-adicionar {
     width: 100%;
-    padding: 12px 0;
+    padding: 10px 8px;
+    font-size: 0.86rem;
+    max-width: 160px;
+    border-radius: 10px;
   }
 
   .floating-categorias-wrapper {
@@ -320,24 +377,26 @@
   .filtro-categorias {
     display: none;
   }
-}
 
-@keyframes fadeInOutScale {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) scale(0.9);
-  }
-  10% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-  }
-  90% {
-    opacity: 1;
-    transform: translateX(-50%) scale(1);
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) scale(0.9);
+  /* Toast menor em mobile para evitar overflow */
+  .message-fixed {
+    bottom: 18px;
+    padding: 10px 16px;
+    font-size: 14px;
+    border-radius: 36px;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.22);
+    max-width: 94%;
   }
 }
 
+
+/* pequena acessibilidade: foco visível */
+.botao-adicionar:focus,
+.floating-item:focus,
+.mostrar-mais-container button:focus {
+  outline: 3px solid rgba(230,85,0,0.18);
+  outline-offset: 2px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+}
+
+/* ---------------- FIM DO ARQUIVO ---------------- */

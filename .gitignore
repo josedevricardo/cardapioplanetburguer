@@ -1,43 +1,64 @@
-# Node modules
-/node_modules
-/.pnp
+# =======================================
+# Node & General
+# =======================================
+node_modules/
+.pnp/
 .pnp.js
-
-# Build output
-/build
-/dist
-
-# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-
-# Runtime data
-*.log
+pnpm-debug.log*
 *.pid
 *.seed
+*.log
 
-# Environment variables - não subir arquivos sensíveis
+# =======================================
+# Build outputs
+# =======================================
+build/
+dist/
+
+# =======================================
+# Environment variables (NUNCA subir)
+# =======================================
 .env
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-.env.production
+.env.*
+!.env.example   # opcional, caso você queira um modelo
 
-# MacOS system files
-.DS_Store
+# =======================================
+# Firebase & backend-related
+# =======================================
+firebase-debug.log
+pglite-debug.log
 
-# Coverage reports
-/coverage
+# =======================================
+# Coverage
+# =======================================
+coverage/
 
-# Netlify local files
-.netlify
-
-# Editor folders
+# =======================================
+# IDE / Editor
+# =======================================
 .vscode/
 .idea/
 
-# OS generated files
+# =======================================
+# OS files
+# =======================================
+.DS_Store
 Thumbs.db
 ehthumbs.db
+
+# =======================================
+# Netlify
+# =======================================
+.netlify/
+.netlify/state/
+
+# =======================================
+# Optional: cache de bundlers
+# =======================================
+.cache/
+.parcel-cache/
+.next/
+turbo/

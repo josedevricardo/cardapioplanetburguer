@@ -159,7 +159,7 @@ function Navbar() {
         {/* SACOLA */}
         <div className="right-buttons">
           <button onClick={openSidebar} className="sacola-button" aria-label="Abrir sacola">
-            <div className="sacola-icon">🛍️</div>
+            <div className="sacola-icon">🛒</div>
             <span className="sacola-text">
               Sacola{" "}
               <strong>

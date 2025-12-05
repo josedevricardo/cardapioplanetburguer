@@ -5,31 +5,31 @@
 /* Importa o estilo da navbar */
 @import "../components/navbar/navbar.css";
 
-
-/* 🔒 Garante modo claro fixo globalmente */
+/* 🌞 Força modo claro global */
 :root {
-  color-scheme: light only;
-  background-color: #ffffff;
-  color: #000000;
+color-scheme: light only;
+background-color: #ffffff;
+color: #000000;
 }
 
-/* 🔒 Corrige comportamento em navegadores mobile */
-html, body {
-  background-color: #ffffff !important;
-  color: #000000 !important;
-  -webkit-text-size-adjust: 100%;
-  -webkit-tap-highlight-color: transparent;
-}
-
+/* Corrige comportamento em navegadores mobile */
+html,
 body {
-  font-family: 'Inter', sans-serif;
-  margin: 0;
-  padding: 0;
+background-color: #ffffff !important;
+color: #000000 !important;
+-webkit-text-size-adjust: 100%;
+-webkit-tap-highlight-color: transparent;
+margin: 0;
+padding: 0;
 }
 
-/* Evita herança de tema escuro em componentes */
+/* Fonte padrão */
+body {
+font-family: "Inter", sans-serif;
+}
+
+/* Neutraliza qualquer tema escuro herdado */
+
 * {
   color-scheme: light only !important;
-}
-
-
+  }
