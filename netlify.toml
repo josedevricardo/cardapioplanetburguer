@@ -4,7 +4,6 @@
 [build]
   command = "npm run build"
   publish = "build"
-  environment = { NODE_ENV = "production" }
 
 ########################################
 # FUNCTIONS
@@ -67,11 +66,3 @@
   for = "*.webp"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
-
-########################################
-# COMPRESSION — BROTLI + GZIP
-########################################
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Content-Encoding = "br, gzip"
