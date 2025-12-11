@@ -1,7 +1,6 @@
 import React, { useState, useContext, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./produto-vitrine2.css";
-
 import { CartContext } from "../../contexts/cart-context";
 import { ProdutoContext } from "../../contexts/categoria-context";
 
@@ -26,7 +25,6 @@ const ProdutoVitrine = ({ busca }) => {
 
   useEffect(() => {
     const path = normalizar(location.pathname.replace("/", ""));
-
     const categoriaEncontrada = categorias.find(
       (cat) => normalizar(cat.nome) === path
     );
@@ -49,7 +47,7 @@ const ProdutoVitrine = ({ busca }) => {
 
   const categoriasNomes = ["Início", "Todas", ...categorias.map((c) => c.nome)];
   const buscaLower = (busca || "").toLowerCase();
-
+  // 🔹 Filtra por categoria e busca
   const produtosFiltradosPorCategoria =
     categoriaFiltro === "Todas"
       ? produtosUnificados
@@ -74,7 +72,7 @@ const ProdutoVitrine = ({ busca }) => {
       id: produto.id,
       nome: produto.nome,
       preco: produto.preco,
-      foto: produto.imagem || produto.foto,
+      foto: produto.foto || "https://via.placeholder.com/150", // ✅ CORRIGIDO
       qtd: 1,
     };
     addToCart(item);
@@ -134,7 +132,7 @@ const ProdutoVitrine = ({ busca }) => {
           aria-expanded={showFloatingMenu}
           onClick={() => setShowFloatingMenu((prev) => !prev)}
         >
-          ☰ Categorias
+          ☰ ✅ Ver Cardápio
         </button>
 
         {showFloatingMenu && (

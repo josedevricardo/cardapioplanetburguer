@@ -6,7 +6,7 @@ import Navbar from "../../components/navbar/navbar.jsx";
 import ScrollToTopButton from "../../components/ScrollToTopButton/ScrollToTopButton.js";
 import CategoriaSlider from "../../components/CategoriaSlider/CategoriaSlider.jsx";
 import "./home.css";
-import ProdutoSlider from "../../components/produto-vitrine/produto-vitrine-lanches.jsx";
+import ProdutoSlider from "../../components/produto-slider/produto-slider.js"; // CORRIGIDO para usar a versão com produto.foto
 
 function Home() {
   const [horaAtual, setHoraAtual] = useState(new Date());
@@ -48,14 +48,9 @@ function Home() {
         <div className="max-w-6xl mx-auto">
           {/* HERO */}
           <div className="hero-centralizado">
-            {/* LOGO ACIMA NO MOBILE */}
             <div>
               <Link to="/">
-                <img
-                  src={logo}
-                  alt="Planets Burguer Logo"
-                  className="logotipo2"
-                />
+                <img src={logo} alt="Planets Burguer Logo" className="logotipo2" />
               </Link>
             </div>
 
@@ -66,9 +61,7 @@ function Home() {
             </div>
 
             <div className="logo-container text-center">
-              <span className="logo-text2">
-                O sabor de outro planeta te espera!
-              </span>
+              <span className="logo-text2">O sabor de outro planeta te espera!</span>
 
               <div className="avaliacao-container">
                 <div className="estrelas">
@@ -86,11 +79,7 @@ function Home() {
                   rel="noopener noreferrer"
                   className="avaliar-link"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M12.293 9.293a1 1 0 011.414 0L17 12.586V5a1 1 0 112 0v10a1 1 0 01-1 1h-10a1 1 0 110-2h7.586l-3.293-3.293a1 1 0 010-1.414z" />
                   </svg>
                   Avalie no Google
@@ -115,25 +104,13 @@ function Home() {
 
           {/* PRODUTOS */}
           {pedidosDisponiveis ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.6 }}
-            >
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
               <ProdutoSlider busca={busca} />
             </motion.div>
           ) : (
-            <motion.div
-              className="text-center text-zinc-700 mt-10"
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-            >
-              <h2 className="text-pedidos">
-                Pedidos disponíveis das 18:00 às 23:59.
-              </h2>
-              <p className="time text-sm mt-2">
-                Voltamos em breve! Agora são ⏰ {horaFormatada}.
-              </p>
+            <motion.div className="text-center text-zinc-700 mt-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <h2 className="text-pedidos">Pedidos disponíveis das 18:00 às 23:59.</h2>
+              <p className="time text-sm mt-2">Voltamos em breve! Agora são ⏰ {horaFormatada}.</p>
             </motion.div>
           )}
         </div>
@@ -143,16 +120,10 @@ function Home() {
 
       <footer className="footer text-center">
         <p>
-          <a
-            className="direitos"
-            href="https://portfoliojosericardo.netlify.app/"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
+          <a className="direitos" href="https://portfoliojosericardo.netlify.app/" target="_blank" rel="noopener noreferrer">
             @Desenvolvedor Ricardo
           </a>
-          <strong> Planet´s Burguer</strong> R. das Bromélias, 280 Residencial
-          Vitória
+          <strong> Planet´s Burguer</strong> R. das Bromélias, 280 Residencial Vitória
         </p>
       </footer>
     </>

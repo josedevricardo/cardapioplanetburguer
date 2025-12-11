@@ -158,7 +158,7 @@ const ProdutoVitrine = ({ busca }) => {
           aria-expanded={showFloatingMenu}
           onClick={() => setShowFloatingMenu((prev) => !prev)}
         >
-          ☰ Categorias
+          ☰ ✅ Ver Cardápio
         </button>
 
         {showFloatingMenu && (

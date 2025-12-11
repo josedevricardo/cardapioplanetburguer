@@ -126,7 +126,7 @@ const ProdutoVitrine = ({ busca }) => {
           className="botao-flutuante"
           onClick={() => setShowFloatingMenu((prev) => !prev)}
         >
-          ☰ Categorias
+          ☰ ✅ Ver Cardápio
         </button>
 
         {showFloatingMenu && (

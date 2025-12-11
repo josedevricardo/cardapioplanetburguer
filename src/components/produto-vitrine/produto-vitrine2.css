@@ -58,8 +58,17 @@
   border: none;
   border-radius: 8px;
   cursor: pointer;
-  transition: all 0.3s ease;
+  animation: tremor 2.5s infinite;
 }
+
+@keyframes tremor {
+  0%, 90%, 100% { transform: translateX(0); }
+  92% { transform: translateX(-2px); }
+  94% { transform: translateX(2px); }
+  96% { transform: translateX(-2px); }
+  98% { transform: translateX(2px); }
+}
+
 
 .floating-menu {
   position: fixed;
@@ -304,36 +313,6 @@
   max-width: 600px;
 }
 
-/* ---------------- DARK MODE ---------------- */
-@media (prefers-color-scheme: dark) {
-  .floating-menu {
-    background: #1e1e1e;
-    border: 1px solid #444;
-  }
-
-  .floating-item {
-    background-color: #2a2a2a;
-    color: #eee;
-  }
-
-  .floating-item:hover {
-    background-color: #333;
-  }
-
-  .floating-item.ativo {
-    background-color: #e65500;
-    color: white;
-  }
-
-  .produto-item {
-    background: #131313;
-    box-shadow: 0 3px 8px rgba(0,0,0,0.6);
-  }
-
-  .produto-item h3, .text-descricao, .prod-vitrine-preco {
-    color: #eee;
-  }
-}
 
 /* ---------------- MOBILE ---------------- */
 @media (max-width: 768px) {

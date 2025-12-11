@@ -2,12 +2,24 @@ import React, { useEffect, useState, useContext } from "react";
 import "./produto2-vitrine.css";
 import bag from "../../assets/bag-black.png";
 import { CartContext } from "../../contexts/cart-context";
-
+import "./produto-vitrine.css";
 function Produto2Vitrine(props) {
   const { addToCart } = useContext(CartContext);
 
   const [showMessage, setShowMessage] = useState(false);
   const [showBackToTop, setShowBackToTop] = useState(false);
+
+  // Produto inativo? Não renderiza.
+  if (props?.ativo === false) return null;
+
+  // Informação essencial ausente? Não renderiza.
+  if (!props?.nome || props?.preco == null) return null;
+
+  // Fallback caso a imagem não exista
+  const fotoFinal =
+    props.foto && props.foto.length > 5
+      ? props.foto
+      : "https://via.placeholder.com/300x200?text=Sem+Imagem";
 
   useEffect(() => {
     const handleScroll = () => {
@@ -27,7 +39,7 @@ function Produto2Vitrine(props) {
       id: props.id,
       nome: props.nome,
       preco: props.preco,
-      foto: props.foto,
+      foto: fotoFinal,
       qtd: 1,
     };
 
@@ -36,19 +48,16 @@ function Produto2Vitrine(props) {
     setTimeout(() => setShowMessage(false), 2000);
   };
 
-  // Não renderiza se faltar informação essencial
-  if (!props?.nome || !props?.preco) return null;
-
   return (
     <div className="produto-box text-center">
-      <img src={props.foto} alt={props.nome} />
+      <img src={fotoFinal} alt={props.nome} />
 
       <div>
         <h2>{props.nome}</h2>
 
-        {props.descricao && (
+        {props.descricao ? (
           <p className="prod-vitrine-descricao-props">{props.descricao}</p>
-        )}
+        ) : null}
 
         <p className="prod-vitrine-preco">
           {new Intl.NumberFormat("pt-BR", {
