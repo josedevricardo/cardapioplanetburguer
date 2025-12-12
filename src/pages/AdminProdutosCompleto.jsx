@@ -5,9 +5,10 @@ import { saveAs } from "file-saver";
 import { PlusCircle, Trash2, Save, Upload, Search, LogOut } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import "./adminProdutos.css";
+import "./modalPedido.css";
 
 // Modal React para adicionar produto
-function ModalAdicionarProduto({ categorias, onClose, onSalvar }) {
+function ModalAdicionarProduto({ categorias, aberto, onClose, onSalvar }) {
   const [categoria, setCategoria] = useState("");
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
@@ -19,42 +20,66 @@ function ModalAdicionarProduto({ categorias, onClose, onSalvar }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!categoria || !nome || !preco) return;
-    onSalvar(categoria, { nome, descricao, preco: parseFloat(preco), estoque: parseInt(estoque), imagem, ativo });
+    onSalvar(categoria, {
+      nome,
+      descricao,
+      preco: parseFloat(preco),
+      estoque: parseInt(estoque),
+      imagem,
+      ativo
+    });
     onClose();
   };
 
   return (
-    <div className="modal-overlay">
+    <div className={`modal-produto-overlay  ${aberto ? "show" : ""}`}>
       <motion.div
-        className="modal-content"
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        exit={{ opacity: 0, scale: 0.95 }}
-        transition={{ duration: 0.3 }}
+        className="modalEditar"
+        initial={{ opacity: 0, scale: 0.95, y: 25 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 25 }}
+        transition={{ duration: 0.25 }}
       >
-        <h3>➕ Adicionar Produto</h3>
-        <form onSubmit={handleSubmit}>
+        <h3 className="titulo-modal">➕ Adicionar Produto</h3>
+
+        <form onSubmit={handleSubmit} className="modal-form">
+          <label>Categoria</label>
           <select value={categoria} onChange={(e) => setCategoria(e.target.value)} required>
             <option value="">Selecione uma categoria</option>
             {categorias.map((cat) => (
               <option key={cat} value={cat}>{cat}</option>
             ))}
           </select>
-          <input placeholder="Nome" value={nome} onChange={(e) => setNome(e.target.value)} required />
-          <input placeholder="Descrição" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
-          <input type="number" placeholder="Preço" value={preco} onChange={(e) => setPreco(e.target.value)} required />
-          <input type="number" placeholder="Estoque" value={estoque} onChange={(e) => setEstoque(e.target.value)} />
-          <input placeholder="URL da imagem" value={imagem} onChange={(e) => setImagem(e.target.value)} />
-          <label>
+
+          <label>Nome</label>
+          <input value={nome} onChange={(e) => setNome(e.target.value)} required />
+
+          <label>Descrição</label>
+          <input value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+
+          <label>Preço</label>
+          <input type="number" value={preco} onChange={(e) => setPreco(e.target.value)} required />
+
+          <label>Estoque</label>
+          <input type="number" value={estoque} onChange={(e) => setEstoque(e.target.value)} />
+
+          <label>URL da imagem</label>
+          <input value={imagem} onChange={(e) => setImagem(e.target.value)} />
+
+          <label className="checkbox-area">
             <input type="checkbox" checked={ativo} onChange={(e) => setAtivo(e.target.checked)} /> Produto ativo
           </label>
-          <button type="submit">Salvar Produto</button>
-          <button type="button" onClick={onClose} style={{ marginLeft: "0.5rem", backgroundColor: "#ef4444" }}>Cancelar</button>
+
+          <div className="modal-actions">
+            <button type="button" className="btnCancelar" onClick={onClose}>Cancelar</button>
+            <button type="submit" className="btnSalvar">Salvar</button>
+          </div>
         </form>
       </motion.div>
     </div>
   );
 }
+
 
 export default function AdminProdutosCompleto() {
   const [produtos, setProdutos] = useState({});

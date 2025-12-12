@@ -30,7 +30,6 @@
   gap: 85rem;
 }
 
-
 .navbar-buttons {
   display: flex;
   gap: 10px;
@@ -39,24 +38,22 @@
 .stiloPedido,
 .menu-btn {
   .menu-btn {
-  display: inline-block;
-  background-color: #1f29; 
-  color: #1f2937;             
-  font-weight: 600;
-  padding: 8px 16px;
-  border-radius: 8px;
-  text-decoration: none;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s ease, transform 0.2s ease;
-  margin-right: 10px;
+    display: inline-block;
+    background-color: #1f29;
+    color: #1f2937;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 8px;
+    text-decoration: none;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-right: 10px;
+  }
 
-}
-
-.menu-btn:hover {
-  background-color: #fbbf24; /* Tailwind: hover:bg-yellow-500 */
-  transform: translateY(-1px);
-}
-
+  .menu-btn:hover {
+    background-color: #fbbf24; /* Tailwind: hover:bg-yellow-500 */
+    transform: translateY(-1px);
+  }
 }
 
 .logoutBtn,
@@ -70,8 +67,6 @@
   transition: background 0.3s;
   margin-right: 10px;
   margin-left: 15px;
-  
-  
 }
 
 .logoutBtn:hover,
@@ -79,16 +74,15 @@
   background-color: #e60000;
 }
 
-
 .logoTitulo {
   display: flex;
-  flex-direction: column; /* Coluna: um abaixo do outro */
-  align-items: flex-start; /* Alinhar à esquerda */
+  flex-direction: column;
+  align-items: flex-start;
   gap: 4px;
 }
 
 .logo-pequeno {
- height: 30px;
+  height: 30px;
   width: 30px;
   object-fit: contain;
   background-image: url("../assets/mascote.png");
@@ -96,7 +90,6 @@
   background-repeat: no-repeat;
   background-position: center;
 }
-
 
 .tituloPainel {
   font-size: 1rem;
@@ -123,7 +116,6 @@
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-/* Efeito ao focar (quando clica no select) */
 .selectFiltro:focus {
   border-color: #7b4eff;
   box-shadow: 0 0 0 3px rgba(123, 78, 255, 0.2);
@@ -201,7 +193,6 @@
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
-/* Efeito ao passar o mouse */
 .pedidoCard:hover {
   transform: translateY(-5px);
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.12);
@@ -235,10 +226,12 @@
   font-size: 14px;
 }
 
-.modal-overlay {
+.modal-produto-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100vw; height: 100vh;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
   background: rgba(0, 0, 0, 0.5);
   display: flex;
   justify-content: center;
@@ -254,7 +247,7 @@
   width: 90%;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 0 15px rgba(0,0,0,0.3);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
 }
 
 .modal-content label {
@@ -323,10 +316,14 @@
 
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   background: rgba(0, 0, 0, 0.4);
-  display: flex; align-items: center; justify-content: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 9999;
 }
 
@@ -335,7 +332,7 @@
   padding: 25px 35px;
   border-radius: 15px;
   text-align: center;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   font-family: "Poppins", sans-serif;
 }
 
@@ -409,167 +406,159 @@
   background-color: #3aa9a3;
 }
 
-
 /* -------- Mobile (até 480px) -------- */
 @media (max-width: 480px) {
-/* Container principal */
-.admin-pedidos {
-padding: 6px;
-font-family: 'Arial', sans-serif;
-font-size: 0.85rem;
-background-color: #f5f5f5;
-}
+  .admin-pedidos {
+    padding: 6px;
+    font-family: "Arial", sans-serif;
+    font-size: 0.85rem;
+    background-color: #f5f5f5;
+  }
 
-/* Header */
-header {
-display: flex;
-flex-direction: column;
-align-items: flex-start;
-gap: 4px;
-margin-bottom: 8px;
-}
+  header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+    margin-bottom: 8px;
+  }
 
-header h1 {
-font-size: 1.2rem;
-font-weight: bold;
-margin: 0;
-}
+  header h1 {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin: 0;
+  }
 
-header button, header select {
-padding: 4px 6px;
-font-size: 0.8rem;
-border-radius: 6px;
-border: 1px solid #ccc;
-background-color: #fff;
-cursor: pointer;
-}
+  header button,
+  header select {
+    padding: 4px 6px;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    background-color: #fff;
+    cursor: pointer;
+  }
 
-/* Botão Estatísticas mobile */
-.btn-estatisticas {
-background-color: #9b59b6;
-color: #fff;
-border: none;
-margin-top: 4px;
-padding: 4px 6px;
-font-size: 0.8rem;
-border-radius: 6px;
-cursor: pointer;
-transition: background-color 0.2s;
-}
+  .btn-estatisticas {
+    background-color: #9b59b6;
+    color: #fff;
+    border: none;
+    margin-top: 4px;
+    padding: 4px 6px;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+  }
 
-.btn-estatisticas:hover {
-background-color: #8e44ad;
-}
+  .btn-estatisticas:hover {
+    background-color: #8e44ad;
+  }
 
-/* Lista de pedidos */
-.lista-pedidos {
-display: flex;
-flex-direction: column;
-gap: 6px;
-}
+  .lista-pedidos {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
 
-/* Cards de pedidos */
-.pedido-card {
-padding: 6px;
-border-radius: 8px;
-background-color: #fff;
-box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-font-size: 0.85rem;
-border-left: 4px solid transparent;
-}
+  .pedido-card {
+    padding: 6px;
+    border-radius: 8px;
+    background-color: #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    font-size: 0.85rem;
+    border-left: 4px solid transparent;
+  }
 
-.pedido-card.pendente {
-border-left-color: #f39c12;
-}
+  .pedido-card.pendente {
+    border-left-color: #f39c12;
+  }
 
-.pedido-card.entregue {
-border-left-color: #27ae60;
-}
+  .pedido-card.entregue {
+    border-left-color: #27ae60;
+  }
 
-/* Ações dos pedidos */
-.pedido-card .acoes {
-display: flex;
-flex-wrap: wrap;
-gap: 4px;
-margin-top: 4px;
-}
+  .pedido-card .acoes {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    margin-top: 4px;
+  }
 
-.pedido-card .acoes button {
-padding: 3px 6px;
-font-size: 0.75rem;
-border-radius: 6px;
-border: none;
-cursor: pointer;
-background-color: #3498db;
-color: #fff;
-transition: background-color 0.2s;
-}
+  .pedido-card .acoes button {
+    padding: 3px 6px;
+    font-size: 0.75rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    background-color: #3498db;
+    color: #fff;
+    transition: background-color 0.2s;
+  }
 
-.pedido-card .acoes button:hover {
-background-color: #2980b9;
-}
+  .pedido-card .acoes button:hover {
+    background-color: #2980b9;
+  }
 
-/* Modal de notificação */
-.modal-overlay {
-inset: 0;
-background-color: rgba(0,0,0,0.4);
-display: flex;
-justify-content: center;
-align-items: center;
-z-index: 999;
-}
+  .modal-overlay {
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+  }
 
-.modal-notificacao {
-background-color: #fff;
-padding: 10px 12px;
-border-radius: 10px;
-text-align: center;
-font-size: 0.85rem;
-box-shadow: 0 4px 12px rgba(0,0,0,0.25);
-}
+  .modal-notificacao {
+    background-color: #fff;
+    padding: 10px 12px;
+    border-radius: 10px;
+    text-align: center;
+    font-size: 0.85rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+  }
 
-/* Modal de edição */
-.modal-edicao {
-position: fixed;
-inset: 5% 2%;
-background-color: #fff;
-padding: 12px;
-border-radius: 10px;
-max-height: 90%;
-overflow-y: auto;
-font-size: 0.85rem;
-z-index: 999;
-}
+  .modal-edicao {
+    position: fixed;
+    inset: 5% 2%;
+    background-color: #fff;
+    padding: 12px;
+    border-radius: 10px;
+    max-height: 90%;
+    overflow-y: auto;
+    font-size: 0.85rem;
+    z-index: 999;
+  }
 
-.modal-edicao input {
-width: 100%;
-padding: 4px 6px;
-margin: 4px 0 8px 0;
-border-radius: 6px;
-border: 1px solid #ccc;
-font-size: 0.85rem;
-}
+  .modal-edicao input {
+    width: 100%;
+    padding: 4px 6px;
+    margin: 4px 0 8px 0;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    font-size: 0.85rem;
+  }
 
-.modal-edicao button {
-padding: 4px 8px;
-font-size: 0.8rem;
-border-radius: 6px;
-border: none;
-cursor: pointer;
-margin-top: 4px;
-background-color: #2ecc71;
-color: #fff;
-transition: background-color 0.2s;
-}
+  .modal-edicao button {
+    padding: 4px 8px;
+    font-size: 0.8rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    margin-top: 4px;
+    background-color: #2ecc71;
+    color: #fff;
+    transition: background-color 0.2s;
+  }
 
-.modal-edicao button:hover {
-background-color: #27ae60;
-}
+  .modal-edicao button:hover {
+    background-color: #27ae60;
+  }
 
-/* Inputs e selects */
-input, select {
-font-size: 0.85rem;
-}
+  input,
+  select {
+    font-size: 0.85rem;
+  }
 }
 
 /* Botão flutuante só para mobile */
@@ -588,7 +577,7 @@ font-size: 0.85rem;
     justify-content: center;
     align-items: center;
     border: none;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     cursor: pointer;
     transition: transform 0.2s, background-color 0.2s;
     z-index: 1000;
@@ -597,5 +586,145 @@ font-size: 0.85rem;
   .btn-estatisticas-flutuante:hover {
     background-color: #8e44ad;
     transform: scale(1.1);
+  }
+}
+
+/* ======================================================
+   🚀 RESPONSIVIDADE PARA O PAINEL DE PRODUTOS (NOVO)
+   ====================================================== */
+@media (max-width: 768px) {
+
+  /* Cada produto vira UM card por linha */
+  .card-categoria .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  /* Deixa cada card de produto menor e mais ajustado */
+  .card-produto {
+    padding: 12px !important;
+    border-radius: 10px;
+    font-size: 14px;
+  }
+
+  /* Inputs menores */
+  .card-produto .input {
+    font-size: 14px !important;
+    padding: 8px !important;
+  }
+
+  /* Imagem reduzida */
+  .card-produto img {
+    height: 80px !important;
+    max-height: 80px !important;
+  }
+
+  /* Botões compactos */
+  .btn-yellow,
+  .btn-red {
+    padding: 6px 10px !important;
+    font-size: 13px !important;
+  }
+
+  /* Título da categoria menor */
+  .card-categoria h3 {
+    font-size: 18px !important;
+  }
+
+  /* Reduz padding geral */
+  .p-6 {
+    padding: 12px !important;
+  }
+}
+
+
+/* ============================================
+   🔥 ESTILO MODERNO E COMPACTO PARA OS CARDS
+   ============================================ */
+
+/* ============================================
+   🔥 ESTILO MODERNO E COMPACTO PARA OS CARDS
+   ============================================ */
+
+.card-produto {
+  background: #ffffff;
+  border-radius: 10px;
+  padding: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card-produto:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+/* Imagens bem menores, estilo admin */
+.card-produto img {
+  width: 85px;
+  height: 85px;
+  object-fit: cover;
+  border-radius: 10px;
+  margin: 0 auto;
+}
+
+/* Inputs menores e modernos */
+.card-produto input,
+.card-produto textarea {
+  font-size: 14px;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+/* Botões compactos */
+.card-produto .btn-yellow,
+.card-produto .btn-red,
+.card-produto button {
+  padding: 6px 10px !important;
+  font-size: 13px !important;
+  border-radius: 8px !important;
+}
+
+/* Ajuste nos títulos */
+.card-produto h4,
+.card-categoria h3 {
+  font-size: 16px !important;
+  font-weight: 600;
+}
+
+/* ============================================
+   📱 MOBILE – cards pequenos e enxutos
+   ============================================ */
+@media (max-width: 768px) {
+
+  /* 1 card por linha */
+  .card-categoria .grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .card-produto {
+    padding: 10px;
+    border-radius: 12px;
+    gap: 6px;
+    font-size: 13px;
+  }
+
+  /* Imagem menor ainda */
+  .card-produto img {
+    width: 70px;
+    height: 70px;
+  }
+
+  .card-produto input,
+  .card-produto textarea {
+    padding: 5px 8px;
+    font-size: 13px;
+  }
+
+  .card-produto button {
+    padding: 5px 8px !important;
+    font-size: 12px !important;
   }
 }

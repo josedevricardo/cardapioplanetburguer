@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 import logo from "../../assets/mascote.png";
@@ -6,17 +6,10 @@ import Navbar from "../../components/navbar/navbar.jsx";
 import ScrollToTopButton from "../../components/ScrollToTopButton/ScrollToTopButton.js";
 import CategoriaSlider from "../../components/CategoriaSlider/CategoriaSlider.jsx";
 import "./home.css";
-import ProdutoSlider from "../../components/produto-slider/produto-slider.js"; // CORRIGIDO para usar a versão com produto.foto
+import ProdutoSlider from "../../components/produto-slider/produto-slider.js"; 
 
 function Home() {
-  const [horaAtual, setHoraAtual] = useState(new Date());
   const [busca, setBusca] = useState("");
-
-  // Atualiza a hora a cada 60 segundos
-  useEffect(() => {
-    const interval = setInterval(() => setHoraAtual(new Date()), 60000);
-    return () => clearInterval(interval);
-  }, []);
 
   // Recebe a busca enviada globalmente
   useEffect(() => {
@@ -25,27 +18,13 @@ function Home() {
     return () => window.removeEventListener("buscaAtualizada", handler);
   }, []);
 
-  // Disponível das 18:00 às 23:59
-  const pedidosDisponiveis = useMemo(() => {
-    const h = horaAtual.getHours();
-    const m = horaAtual.getMinutes();
-    const total = h * 60 + m;
-    return total >= 18 * 60 && total <= 23 * 60 + 59;
-  }, [horaAtual]);
-
-  // Formata hora
-  const horaFormatada = useMemo(() => {
-    const h = horaAtual.getHours().toString().padStart(2, "0");
-    const m = horaAtual.getMinutes().toString().padStart(2, "0");
-    return `${h}:${m}`;
-  }, [horaAtual]);
-
   return (
     <>
       <Navbar />
 
       <main className="home-main bg-white" style={{ paddingTop: "60px" }}>
         <div className="max-w-6xl mx-auto">
+          
           {/* HERO */}
           <div className="hero-centralizado">
             <div>
@@ -102,17 +81,14 @@ function Home() {
             <CategoriaSlider />
           </motion.div>
 
-          {/* PRODUTOS */}
-          {pedidosDisponiveis ? (
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.6 }}>
-              <ProdutoSlider busca={busca} />
-            </motion.div>
-          ) : (
-            <motion.div className="text-center text-zinc-700 mt-10" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <h2 className="text-pedidos">Pedidos disponíveis das 18:00 às 23:59.</h2>
-              <p className="time text-sm mt-2">Voltamos em breve! Agora são ⏰ {horaFormatada}.</p>
-            </motion.div>
-          )}
+          {/* PRODUTOS — sempre exibidos */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.6 }}
+          >
+            <ProdutoSlider busca={busca} />
+          </motion.div>
         </div>
       </main>
 

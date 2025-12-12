@@ -15,7 +15,8 @@ function Navbar() {
   const [motinhaAtiva, setMotinhaAtiva] = useState(false);
   const [busca, setBusca] = useState("");
 
-  const { totalCart } = useContext(CartContext);
+  const { totalCart } = useContext(CartContext); // CORRIGIDO
+
   const menuRef = useRef(null);
   const inputRef = useRef(null);
   const location = useLocation();
@@ -63,8 +64,10 @@ function Navbar() {
   useEffect(() => {
     const handleScroll = () => setSticky(window.pageYOffset > 80);
     window.addEventListener("scroll", handleScroll);
+
     setLoading(true);
     const timer = setTimeout(() => setLoading(false), 2000);
+
     return () => {
       window.removeEventListener("scroll", handleScroll);
       clearTimeout(timer);
@@ -73,6 +76,7 @@ function Navbar() {
 
   return (
     <>
+      {/* LOADING */}
       {loading && (
         <div className="loading-screen">
           <img src={logo} alt="Logo" className="loading-logo" />
@@ -171,7 +175,7 @@ function Navbar() {
           </button>
         </div>
 
-        {/* MENU MOBILE LATERAL */}
+        {/* MENU MOBILE */}
         {isMobileMenuOpen && (
           <div className="mobile-sidebar" ref={menuRef}>
 
@@ -202,6 +206,27 @@ function Navbar() {
               </div>
             </div>
 
+            {/* ⭐ AVALIAÇÃO — ADICIONADA AQUI */}
+            <div className="avaliacao-mobile-box">
+              <div className="estrelas">
+                <span>★</span>
+                <span>★</span>
+                <span>★</span>
+                <span>★</span>
+                <span>☆</span>
+                <span className="nota-texto">(4,5/5)</span>
+              </div>
+
+              <a
+                href="https://maps.app.goo.gl/rVyvhC7mdDsc35ak9?g_st=aw"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="avaliar-link"
+              >
+                Avalie no Google
+              </a>
+            </div>
+
             {/* LISTA DE CATEGORIAS */}
             <ul className="mobile-menu">
               {categoriasFixas.map(({ nome, rota }) => (
@@ -224,7 +249,7 @@ function Navbar() {
               ))}
             </ul>
 
-            {/* WHATSAPP FIXO */}
+            {/* WHATSAPP */}
             <div className="mobile-whatsapp">
               <a
                 href="https://wa.me/5538998017215"
@@ -273,6 +298,7 @@ function Navbar() {
             </motion.div>
           )}
         </AnimatePresence>
+        
       </nav>
 
       <div className="navbar-space" />

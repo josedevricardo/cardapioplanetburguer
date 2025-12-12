@@ -318,3 +318,24 @@
 .mostrar-mais-container button:hover {
   background: #cc4d00;
 }
+
+/* =============================
+   ANIMAÇÃO WHATSAPP ✓✓ (ADICIONADO)
+   Adicione no final do produto-slider.css
+============================= */
+
+/* =============================
+   EFEITO TIPO WHATSAPP — TIC DUPLO
+============================= */
+.btn-add.clicado {
+  background: #0aad57 !important;
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(0, 200, 120, 0.6);
+  animation: whats 0.5s ease;
+}
+
+@keyframes whats {
+  0% { transform: scale(0.85); opacity: 0.4; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1.05); }
+}

@@ -11,7 +11,7 @@
 }
 
 /* Fundo escuro com blur */
-.modal-overlay {
+.modal-overlay2 {
   position: fixed;
   inset: 0;
   background-color: rgba(0, 0, 0, 0.4);
