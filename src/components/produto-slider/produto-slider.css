@@ -132,7 +132,7 @@
   border-radius: 8px;
   font-weight: 700;
 
-  /* ✅ tamanho controlado */
+  /* tamanho controlado */
   padding: 10px 18px;
   width: fit-content;
   min-width: 120px;
@@ -140,7 +140,7 @@
   font-size: 0.85rem;
   cursor: pointer;
 
-  /* ✅ CENTRALIZA DE VERDADE */
+  /* CENTRALIZA DE VERDADE */
   align-self: center;
   margin-top: auto;
 
@@ -228,6 +228,52 @@
              brilho 1.6s infinite;
 }
 
+/* BOTÃO MOSTRAR MAIS */
+.btn-mostrar-mais {
+  width: 100%;
+  max-width: 154px;
+  margin: 30px auto 40px auto;
+  display: block;
+  background: linear-gradient(90deg, #34d399, #10b981, #6ee7b7);
+  color: #fff;
+  border: none;
+  padding: 14px 28px;
+  border-radius: 50px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  text-align: center;
+  transition: 0.2s ease-in-out;
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+}
+
+.btn-mostrar-mais:hover {
+  opacity: 0.85;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(255, 0, 106, 0.5);
+}
+
+.btn-mostrar-mais:active {
+  transform: scale(0.95);
+}
+
+/* =============================
+   EFEITO TIPO WHATSAPP — TIC DUPLO
+============================= */
+.btn-add.clicado {
+  background: #0aad57 !important;
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(0, 200, 120, 0.6);
+  animation: whats 0.5s ease;
+}
+
+@keyframes whats {
+  0% { transform: scale(0.85); opacity: 0.4; }
+  50% { transform: scale(1.15); opacity: 1; }
+  100% { transform: scale(1.05); }
+}
+
+
 /* flutuação */
 @keyframes flutuar {
   0% { transform: translateY(0); }
@@ -272,7 +318,6 @@
     animation: brilho 2s infinite;
   }
 }
-
 
 
 
@@ -339,3 +384,70 @@
   50% { transform: scale(1.15); opacity: 1; }
   100% { transform: scale(1.05); }
 }
+
+
+.vitrine-container {
+  padding: 12px;
+}
+
+/* 🔝 CATEGORIAS */
+.categorias-slider {
+  display: flex;
+  gap: 10px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+  margin-bottom: 15px;
+}
+
+.categorias-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.categoria-btn {
+  white-space: nowrap;
+  padding: 8px 16px;
+  border-radius: 999px;
+  border: none;
+  background: #f1f1f1;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.categoria-btn.ativo {
+  background: #22c55e;
+  color: #fff;
+}
+
+/* ⬅️ PRODUTOS */
+.produtos-slider-horizontal {
+  display: flex;
+  gap: 16px;
+  overflow-x: auto;
+  padding-bottom: 10px;
+}
+
+.produtos-slider-horizontal::-webkit-scrollbar {
+  display: none;
+}
+
+.produto-card-horizontal {
+  min-width: 220px;
+  background: #fff;
+  border-radius: 16px;
+  padding: 12px;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
+}
+
+.produto-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.preco {
+  font-weight: bold;
+  margin: 8px 0;
+}
+
+

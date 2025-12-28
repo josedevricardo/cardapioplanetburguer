@@ -2,7 +2,7 @@
   "name": "planetburger",
   "version": "0.1.0",
   "private": true,
-  "proxy": "http://localhost:8888",
+  
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.5.2",
     "@fortawesome/free-solid-svg-icons": "^6.5.2",
@@ -51,6 +51,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
+    "dev": "netlify dev",
     "start:clean": "BROWSER=none react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",

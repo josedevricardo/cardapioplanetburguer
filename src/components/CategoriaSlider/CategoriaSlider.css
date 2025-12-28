@@ -1,176 +1,113 @@
+/* ==============================
+   CONTAINER
+============================== */
 .categoria-slider-container {
   width: 100%;
   overflow: hidden;
   margin: 10px 0 25px;
+  padding: 1rem 0;
+  background: #ffffff;
+  position: relative;
 }
 
+/* ==============================
+   SLIDER HORIZONTAL
+============================== */
 .categoria-slider {
   display: flex;
-  gap: 12px;
+  gap: 1rem;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 6px;
   scrollbar-width: none;
+  padding-left: 0.5rem;
+  cursor: grab;
 }
 
 .categoria-slider::-webkit-scrollbar {
   display: none;
 }
 
+/* ==============================
+   ITEM / CARD
+============================== */
 .categoria-item {
   flex: 0 0 auto;
+  min-width: 140px;
   text-align: center;
   background: #ffffff;
   border-radius: 14px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  padding: 8px;
-  width: 90px;
+  padding: 8px 8px 12px;
+  user-select: none;
   transition: all 0.3s ease;
   cursor: grab;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .categoria-item:active {
   cursor: grabbing;
 }
 
-.categoria-img {
-  width: 60px;
-  height: 60px;
-  object-fit: contain;
-  margin: 0 auto 5px;
-  display: block;
-}
-
-.categoria-item span {
-  font-size: 0.8rem;
-  color: #222;
-  font-weight: 500;
-}
-
-@media (prefers-color-scheme: dark) {
-  
-  .categoria-item span {
-    color: #052914;
-  }
-}
-
-.categoria-slider-container {
-  width: 100%;
-  overflow: hidden;
-  padding: 1rem 0;
-  background: #ffffff;
-}
-
-.categoria-slider {
-  display: flex;
-  gap: 1.5rem;
-  cursor: grab;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-}
-
-.categoria-slider::-webkit-scrollbar {
-  display: none;
-}
-
-.categoria-item {
-  min-width: 100px;
-  text-align: center;
-  user-select: none;
-}
-
-.categoria-img {
-  width: 80px;
-  height: 80px;
-  object-fit: contain;
-  margin-bottom: 0.5rem;
-}
-
-.categoria-slider-container {
-  width: 100%;
-  overflow: hidden;
-  padding: 1rem 0;
-  background: #fff;
-}
-
-.categoria-slider {
-  display: flex;
-  gap: 1.5rem;
-  cursor: grab;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-}
-
-.categoria-slider::-webkit-scrollbar {
-  display: none;
-}
-
-.categoria-item {
-  min-width: 120px;
-  text-align: center;
-  user-select: none;
-}
-
-.categoria-img {
-  width: 100px;
-  height: 100px;
-  object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 0.5rem;
-}
-.categoria-slider-container {
-  width: 100%;
-  overflow: hidden;
-  padding: 1rem 0;
-  background: #fff;
-}
-
-.categoria-slider {
-  display: flex;
-  gap: 1rem;
-  cursor: grab;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  scrollbar-width: none;
-  padding-left: 0.5rem;
-}
-
-.categoria-slider::-webkit-scrollbar {
-  display: none;
-}
-
-.categoria-item {
-  min-width: 140px;
-  text-align: center;
-  user-select: none;
-  transition: all 0.3s ease;
-}
-
+/* ==============================
+   IMAGEM
+============================== */
 .categoria-img {
   width: 120px;
   height: 120px;
   object-fit: cover;
   border-radius: 10px;
+  margin-bottom: 6px;
+  display: block;
 }
-/* Botão moderno "Adicionar" menor */
+
+/* ==============================
+   TEXTO / NOME
+============================== */
+.categoria-item span {
+  font-size: 0.8rem;
+  color: #222;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+/* Dark mode automático */
+@media (prefers-color-scheme: dark) {
+  .categoria-item span {
+    color: #052914;
+  }
+}
+
+/* ==============================
+   PREÇO (JS INLINE STYLE)
+============================== */
+/* controlado no JSX para não quebrar layout */
+
+/* ==============================
+   BOTÃO ADICIONAR
+============================== */
 .btn-adicionar {
   position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+
   padding: 0.4rem 1.2rem;
   font-size: 0.75rem;
   font-weight: 700;
   color: #fff;
+
   background: linear-gradient(90deg, #34d399, #10b981, #6ee7b7);
   border: none;
   border-radius: 1.5rem;
+
   box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
   cursor: pointer;
   overflow: hidden;
   transition: all 0.3s ease-in-out;
+  margin-top: 0.75rem;
 }
 
 .btn-adicionar:hover {
@@ -182,9 +119,14 @@
   transform: scale(0.95);
 }
 
-/* Brilho animado do botão */
+.btn-adicionar:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Brilho animado */
 .btn-adicionar::before {
-  content: '';
+  content: "";
   position: absolute;
   top: -50%;
   left: -50%;
@@ -199,7 +141,7 @@
   transform: rotate(45deg) translate(100%, 100%);
 }
 
-/* Emoji dentro do botão */
+/* Emoji */
 .btn-adicionar span.emoji {
   margin-right: 0.3rem;
   font-size: 0.9rem;
@@ -210,22 +152,29 @@
   transform: scale(1.2) rotate(-10deg);
 }
 
-/* === Estilo moderno das setas === */
+/* ==============================
+   SETAS (DESKTOP)
+============================== */
 .arrow-btn {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+
   background: rgba(255, 255, 255, 0.15);
   border: 1px solid rgba(255, 255, 255, 0.25);
   backdrop-filter: blur(6px);
+
   color: #fff;
   box-shadow: 0 0 12px rgba(0, 0, 0, 0.25);
   border-radius: 50%;
+
   width: 42px;
   height: 42px;
+
   display: flex;
   align-items: center;
   justify-content: center;
+
   transition: all 0.25s ease-in-out;
   z-index: 50;
 }
@@ -243,15 +192,16 @@
   right: 10px;
 }
 
-/* Oculta setas em telas pequenas */
+/* Oculta setas no mobile */
 @media (max-width: 640px) {
   .arrow-btn {
     display: none;
   }
 }
 
-
-/* ===== RESPONSIVO: botões menores em telas pequenas ===== */
+/* ==============================
+   RESPONSIVO BOTÃO
+============================== */
 @media (max-width: 768px) {
   .btn-adicionar {
     padding: 0.3rem 0.8rem;

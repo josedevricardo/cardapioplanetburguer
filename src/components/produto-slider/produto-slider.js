@@ -11,49 +11,21 @@ const ProdutoSlider = ({ busca = "" }) => {
   const [produtos, setProdutos] = useState([]);
   const [categorias, setCategorias] = useState([]);
   const [categoriaAtiva, setCategoriaAtiva] = useState("todas");
-
   const [mensagem, setMensagem] = useState("");
-
   const [mostrarBotao, setMostrarBotao] = useState(false);
   const [menuAberto, setMenuAberto] = useState(false);
-
   const [ultimoClicado, setUltimoClicado] = useState(null);
+  const [limite, setLimite] = useState(6);
 
-  /* =============================
-      BOTÃO FLUTUANTE SCROLL
-  ============================= */
   useEffect(() => {
     const onScroll = () => {
-      const scrollAtual = window.scrollY;
-
-      if (scrollAtual > 80) {
-        setMostrarBotao(true);
-      } else {
-        setMostrarBotao(false);
-        setMenuAberto(false);
-      }
+      setMostrarBotao(window.scrollY > 80);
+      if (window.scrollY <= 80) setMenuAberto(false);
     };
-
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /* =============================
-      SOME EM 2s SE NÃO CLICAR
-  ============================= */
-  useEffect(() => {
-    if (!mostrarBotao || menuAberto) return;
-
-    const timeoutId = setTimeout(() => {
-      setMostrarBotao(false);
-    }, 2000);
-
-    return () => clearTimeout(timeoutId);
-  }, [mostrarBotao, menuAberto]);
-
-  /* =============================
-      FIREBASE — CATEGORIAS + PRODUTOS
-  ============================= */
   useEffect(() => {
     const categoriasRef = ref(db, "categorias");
 
@@ -72,6 +44,7 @@ const ProdutoSlider = ({ busca = "" }) => {
             id,
             categoria: catNome,
             ...produto,
+            ativo: produto.ativo !== false, // 🔥 TRATAMENTO CORRETO
           });
         });
       });
@@ -83,9 +56,6 @@ const ProdutoSlider = ({ busca = "" }) => {
     return () => off(categoriasRef);
   }, []);
 
-  /* =============================
-      ADICIONAR AO CARRINHO
-  ============================= */
   const handleAdd = (produto) => {
     addToCart({
       id: produto.id,
@@ -96,18 +66,14 @@ const ProdutoSlider = ({ busca = "" }) => {
     });
 
     setUltimoClicado(produto.id);
-
     setTimeout(() => setUltimoClicado(null), 1500);
 
     setMensagem(`${produto.nome} adicionado à sacola!`);
     setTimeout(() => setMensagem(""), 2500);
   };
 
-  /* =============================
-      FILTRO FINAL (categoria + busca)
-  ============================= */
   const listaFiltrada = useMemo(() => {
-    let lista = produtos;
+    let lista = produtos.filter((p) => p.ativo === true); // ✅ FILTRO FINAL
 
     if (categoriaAtiva !== "todas") {
       lista = lista.filter((p) => p.categoria === categoriaAtiva);
@@ -123,13 +89,8 @@ const ProdutoSlider = ({ busca = "" }) => {
     return lista;
   }, [produtos, categoriaAtiva, busca]);
 
-  /* =============================
-      RENDER
-  ============================= */
   return (
     <div className="produto-slider-container">
-
-      {/* TOAST */}
       <AnimatePresence>
         {mensagem && (
           <motion.div
@@ -143,7 +104,6 @@ const ProdutoSlider = ({ busca = "" }) => {
         )}
       </AnimatePresence>
 
-      {/* BOTÃO FLUTUANTE */}
       <button
         className={`botao-flutuante ${
           mostrarBotao && !menuAberto ? "mostrar" : ""
@@ -153,7 +113,6 @@ const ProdutoSlider = ({ busca = "" }) => {
         ☰ ✅ Ver Cardápio
       </button>
 
-      {/* MENU FLUTUANTE */}
       <AnimatePresence>
         {menuAberto && (
           <motion.div
@@ -162,7 +121,6 @@ const ProdutoSlider = ({ busca = "" }) => {
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 20, scale: 0.95 }}
           >
-            {/* TODAS */}
             <button
               className={`floating-item ${
                 categoriaAtiva === "todas" ? "ativo" : ""
@@ -170,12 +128,12 @@ const ProdutoSlider = ({ busca = "" }) => {
               onClick={() => {
                 setCategoriaAtiva("todas");
                 setMenuAberto(false);
+                setLimite(6);
               }}
             >
               Todas Categorias
             </button>
 
-            {/* LISTA DE CATEGORIAS */}
             {categorias.map((cat) => (
               <button
                 key={cat}
@@ -185,6 +143,7 @@ const ProdutoSlider = ({ busca = "" }) => {
                 onClick={() => {
                   setCategoriaAtiva(cat);
                   setMenuAberto(false);
+                  setLimite(6);
                 }}
               >
                 {cat}
@@ -194,12 +153,11 @@ const ProdutoSlider = ({ busca = "" }) => {
         )}
       </AnimatePresence>
 
-      {/* GRID DE PRODUTOS */}
       <div className="produtos-grid">
         {listaFiltrada.length === 0 ? (
-          <div className="sem-produtos">Nenhum produto encontrado.</div>
+          <div className="sem-produtos">Nenhum produto disponível.</div>
         ) : (
-          listaFiltrada.map((produto) => (
+          listaFiltrada.slice(0, limite).map((produto) => (
             <motion.div
               key={produto.id}
               className="produto-card"
@@ -232,12 +190,23 @@ const ProdutoSlider = ({ busca = "" }) => {
                 }`}
                 onClick={() => handleAdd(produto)}
               >
-                {ultimoClicado === produto.id ? "✓✓ Adicionado" : "Adicionar"}
+                {ultimoClicado === produto.id
+                  ? "✓✓ Adicionado"
+                  : "Adicionar"}
               </button>
             </motion.div>
           ))
         )}
       </div>
+
+      {listaFiltrada.length > limite && (
+        <button
+          className="btn-mostrar-mais"
+          onClick={() => setLimite((prev) => prev + 12)}
+        >
+          Mostrar mais
+        </button>
+      )}
     </div>
   );
 };

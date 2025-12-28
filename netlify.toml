@@ -66,3 +66,13 @@
   for = "*.webp"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
+
+########################################
+# LOCAL DEV (CORRETO)
+########################################
+[dev]
+  framework = "create-react-app"
+  command = "npm start"
+  port = 8888
+  targetPort = 3000
+
