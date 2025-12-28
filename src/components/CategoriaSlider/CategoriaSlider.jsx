@@ -19,6 +19,9 @@ const ProdutoSliderHorizontal = () => {
   const [toast, setToast] = useState(null);
   const [loadingId, setLoadingId] = useState(null);
 
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(false);
+
   const sliderRef = useRef(null);
   const isUserInteracting = useRef(false);
 
@@ -48,7 +51,27 @@ const ProdutoSliderHorizontal = () => {
   }, []);
 
   /* ===============================
-     🔹 AUTO SCROLL (SEM RE-RENDER)
+     🔹 CONTROLE FADE (INÍCIO / FIM)
+  =============================== */
+  useEffect(() => {
+    const slider = sliderRef.current;
+    if (!slider) return;
+
+    const checkEdges = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = slider;
+
+      setAtStart(scrollLeft <= 2);
+      setAtEnd(scrollLeft + clientWidth >= scrollWidth - 2);
+    };
+
+    checkEdges();
+    slider.addEventListener("scroll", checkEdges);
+
+    return () => slider.removeEventListener("scroll", checkEdges);
+  }, [produtos]);
+
+  /* ===============================
+     🔹 AUTO SCROLL
   =============================== */
   useEffect(() => {
     const slider = sliderRef.current;
@@ -96,7 +119,7 @@ const ProdutoSliderHorizontal = () => {
   };
 
   /* ===============================
-     🔐 ADD AO CARRINHO (SEGURO)
+     🔐 ADD AO CARRINHO
   =============================== */
   const handleAdd = (produto, index) => {
     if (
@@ -125,9 +148,6 @@ const ProdutoSliderHorizontal = () => {
     }, 1400);
   };
 
-  /* ===============================
-     🔹 NORMALIZAR ROTA (DINÂMICO)
-  =============================== */
   const normalizarRota = (nome = "") =>
     nome
       .normalize("NFD")
@@ -136,14 +156,34 @@ const ProdutoSliderHorizontal = () => {
       .replace(/[^a-zA-Z0-9-]/g, "")
       .toLowerCase();
 
-  /* ===============================
-     🔹 MEMO: evita re-render inútil
-  =============================== */
   const produtosMemo = useMemo(() => produtos, [produtos]);
 
   return (
     <div className="categoria-slider-container relative">
-      {/* 🔔 TOAST */}
+
+      {/* FADE ESQUERDO */}
+      {!atStart && (
+        <div
+          className="pointer-events-none hidden md:block
+                     absolute left-0 top-0 h-full w-12 z-10"
+          style={{
+            background: "linear-gradient(to right, #fff, transparent)",
+          }}
+        />
+      )}
+
+      {/* FADE DIREITO */}
+      {!atEnd && (
+        <div
+          className="pointer-events-none hidden md:block
+                     absolute right-0 top-0 h-full w-12 z-10"
+          style={{
+            background: "linear-gradient(to left, #fff, transparent)",
+          }}
+        />
+      )}
+
+      {/* TOAST */}
       <AnimatePresence>
         {toast && (
           <motion.div
@@ -160,13 +200,17 @@ const ProdutoSliderHorizontal = () => {
       </AnimatePresence>
 
       {/* SETAS */}
-      <button onClick={scrollLeft} className="arrow-btn arrow-left">
-        <ChevronLeft size={20} />
-      </button>
+      {!atStart && (
+        <button onClick={scrollLeft} className="arrow-btn arrow-left">
+          <ChevronLeft size={20} />
+        </button>
+      )}
 
-      <button onClick={scrollRight} className="arrow-btn arrow-right">
-        <ChevronRight size={20} />
-      </button>
+      {!atEnd && (
+        <button onClick={scrollRight} className="arrow-btn arrow-right">
+          <ChevronRight size={20} />
+        </button>
+      )}
 
       {/* SLIDER */}
       <div ref={sliderRef} className="categoria-slider">
@@ -214,8 +258,7 @@ const ProdutoSliderHorizontal = () => {
                 disabled={!precoValido || loadingId === produto.id}
                 onClick={() => handleAdd(produto, index)}
               >
-                <span className="emoji">🛒</span>
-                {clicked === index ? "Adicionando..." : "Adicionar"}
+                🛒 {clicked === index ? "Adicionando..." : "Adicionar"}
               </button>
             </div>
           );

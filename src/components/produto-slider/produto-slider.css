@@ -1,453 +1,266 @@
 /* ============================================
    CONTAINER PRINCIPAL
-   ============================================ */
+============================================ */
 .produto-slider-container {
   max-width: 1100px;
-  margin: 4.5rem auto 20px;
-  padding: 15px;
+  margin: 0 auto 20px;
+  padding: 12px 15px 15px;
   background: #fff;
   border-radius: 12px;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.08);
-  font-family: "Segoe UI", Tahoma, sans-serif;
-  font-size: 12px;
+  box-shadow: 0 0 8px rgba(0,0,0,.08);
 }
 
 /* ============================================
-   TOAST DE ITEM ADICIONADO
-   ============================================ */
+   TOAST
+============================================ */
 .mensagem-adicionado {
   position: fixed;
   bottom: 25px;
   left: 50%;
   transform: translateX(-50%);
-  background: linear-gradient(135deg, #ff7a00, #e65500);
-  color: white;
+  background: linear-gradient(135deg,#ff7a00,#e65500);
+  color: #fff;
   padding: 12px 22px;
   border-radius: 40px;
   font-weight: 600;
   font-size: 15px;
-  display: inline-flex;
+  display: flex;
   align-items: center;
   gap: 10px;
   white-space: nowrap;
   max-width: 90%;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+  box-shadow: 0 6px 20px rgba(0,0,0,.25);
   z-index: 1000;
   animation: toastSlideBounce 2.8s ease forwards;
 }
 
 @keyframes toastSlideBounce {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(30px) scale(0.95);
-  }
-  15% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1.04);
-  }
-  25% {
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-  80% {
-    opacity: 1;
-  }
-  100% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(15px) scale(0.94);
-  }
+  0% { opacity:0; transform:translate(-50%,30px) scale(.95);}
+  15% { opacity:1; transform:translate(-50%,0) scale(1.04);}
+  25% { transform:translate(-50%,0) scale(1);}
+  80% { opacity:1;}
+  100% { opacity:0; transform:translate(-50%,15px) scale(.94);}
 }
 
 /* ============================================
    GRID DE PRODUTOS
-   ============================================ */
+============================================ */
 .produtos-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr));
+  grid-template-columns: repeat(auto-fill,minmax(165px,1fr));
   gap: 18px;
   user-select: none;
 }
 
 /* ============================================
-   CARD DO PRODUTO
-   ============================================ */
+   CARD VERTICAL
+============================================ */
 .produto-card {
-  background: #fff;
-  border-radius: 12px;
-  padding: 12px 10px 16px;
-  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.08);
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  min-height: 290px;
-  transition: 0.25s ease;
+  background:#fff;
+  border-radius:12px;
+  padding:12px 10px 16px;
+  box-shadow:0 3px 8px rgba(0,0,0,.08);
+  text-align:center;
+  display:flex;
+  flex-direction:column;
+  min-height:290px;
+  transition:.25s ease;
 }
 
 .produto-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.12);
+  transform:translateY(-4px);
+  box-shadow:0 10px 20px rgba(0,0,0,.12);
 }
 
-/* ============================================
-   IMAGEM
-   ============================================ */
-.produto-img {
-  width: 100%;
-  border-radius: 12px;
-  object-fit: cover;
-  margin-bottom: 8px;
+.produto-card img.produto-img {
+  width:100%;
+  border-radius:12px;
+  object-fit:cover;
+  margin-bottom:8px;
 }
 
-/* ============================================
-   TEXTOS
-   ============================================ */
 .produto-card h3 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: #222;
-  margin: 4px 0;
+  font-size:1rem;
+  font-weight:700;
+  margin:4px 0;
 }
 
 .produto-desc {
-  font-size: 0.75rem;
-  color: #555;
-  margin: 0 8px 10px;
-  min-height: 38px;
+  font-size:.75rem;
+  color:#555;
+  margin:0 8px 10px;
+  min-height:38px;
 }
 
 .produto-preco {
-  font-size: 0.95rem;
-  font-weight: 700;
-  color: #059669;
-  margin-bottom: 12px;
+  font-size:.95rem;
+  font-weight:700;
+  color:#059669;
+  margin-bottom:12px;
 }
 
 /* ============================================
-   BOTÃO ADICIONAR — PADRÃO ÚNICO (DESKTOP = MOBILE)
-   ============================================ */
-
+   BOTÃO ADICIONAR
+============================================ */
 .btn-add {
-  background: linear-gradient(135deg, #ff7a00, #e65500);
-  color: #fff;
-  border: none;
-  border-radius: 8px;
-  font-weight: 700;
-
-  /* tamanho controlado */
-  padding: 10px 18px;
-  width: fit-content;
-  min-width: 120px;
-
-  font-size: 0.85rem;
-  cursor: pointer;
-
-  /* CENTRALIZA DE VERDADE */
-  align-self: center;
-  margin-top: auto;
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
-
-  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-
-  position: relative;
-  overflow: hidden;
-  user-select: none;
+  background:linear-gradient(135deg,#ff7a00,#e65500);
+  color:#fff;
+  border:none;
+  border-radius:8px;
+  font-weight:700;
+  padding:10px 18px;
+  min-width:120px;
+  font-size:.85rem;
+  cursor:pointer;
+  align-self:center;
+  margin-top:auto;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  box-shadow:0 3px 12px rgba(0,0,0,.12);
+  transition:.2s;
+  position:relative;
+  overflow:hidden;
 }
 
-/* hover */
 .btn-add:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.18);
+  transform:translateY(-2px) scale(1.03);
 }
 
-/* brilho */
 .btn-add::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  left: -120%;
-  background: rgba(255, 255, 255, 0.22);
-  transform: skewX(-15deg);
-  transition: 0.45s;
+  content:"";
+  position:absolute;
+  inset:0;
+  left:-120%;
+  background:rgba(255,255,255,.22);
+  transform:skewX(-15deg);
+  transition:.45s;
 }
 
-.btn-add:hover::after {
-  left: 120%;
+.btn-add:hover::after { left:120%; }
+
+/* ✓✓ WhatsApp */
+.btn-add.clicado {
+  background:#0aad57!important;
+  box-shadow:0 0 12px rgba(0,200,120,.6);
+  animation:whats .5s ease;
 }
 
+@keyframes whats {
+  0%{transform:scale(.85);opacity:.4}
+  50%{transform:scale(1.15);opacity:1}
+  100%{transform:scale(1.05)}
+}
 
 /* ============================================
    BOTÃO FLUTUANTE
-   ============================================ */
+============================================ */
 .botao-flutuante {
-  position: fixed;
-  left: 12px;
-  bottom: 140px;
-
-  padding: 10px 14px;
-  font-size: 10px;
-  font-weight: 700;
-
-  background: linear-gradient(135deg, #ff7a00, #e65500);
-  color: #fff;
-
-  border: none;
-  border-radius: 14px;
-  cursor: pointer;
-
-  display: flex;
-  align-items: center;
-  gap: 6px;
-
-  opacity: 0;
-  pointer-events: none;
-  transform: translateY(20px);
-
-  z-index: 999;
-
-  transition: opacity 0.4s ease, transform 0.4s ease;
-}
-.botao-flutuante:hover {
-  transform: scale(1.08);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  position:fixed;
+  left:12px;
+  bottom:140px;
+  padding:10px 14px;
+  font-size:10px;
+  font-weight:700;
+  background:linear-gradient(135deg,#ff7a00,#e65500);
+  color:#fff;
+  border:none;
+  border-radius:14px;
+  display:flex;
+  gap:6px;
+  opacity:0;
+  pointer-events:none;
+  transform:translateY(20px);
+  transition:.4s;
+  z-index:999;
 }
 
-/* aparece */
 .botao-flutuante.mostrar {
-  opacity: 1;
-  pointer-events: auto;
-  transform: translateY(0);
+  opacity:1;
+  pointer-events:auto;
+  transform:none;
 }
 
-/* animações SOMENTE quando permitido */
 .botao-flutuante.animado {
-  animation: flutuar 3s ease-in-out infinite,
-             brilho 1.6s infinite;
+  animation:flutuar 3s ease-in-out infinite, brilho 1.6s infinite;
 }
 
-/* BOTÃO MOSTRAR MAIS */
+@keyframes flutuar {
+  50%{transform:translateY(-4px)}
+}
+
+@keyframes brilho {
+  70%{box-shadow:0 0 0 14px rgba(255,122,0,0)}
+}
+
+/* ============================================
+   SLIDER HORIZONTAL
+============================================ */
+.produtos-slider-horizontal {
+  display:flex;
+  gap:16px;
+  overflow-x:auto;
+  padding-bottom:10px;
+}
+
+.produtos-slider-horizontal::-webkit-scrollbar { display:none; }
+
+.produto-card-horizontal {
+  min-width:220px;
+  background:#fff;
+  border-radius:16px;
+  padding:12px;
+  box-shadow:0 6px 16px rgba(0,0,0,.12);
+}
+
+.produto-card-horizontal img {
+  height:140px;
+  width:100%;
+  object-fit:cover;
+  border-radius:12px;
+}
+
 .btn-mostrar-mais {
-  width: 100%;
-  max-width: 154px;
-  margin: 30px auto 40px auto;
   display: block;
+  margin: 30px auto 40px auto; /* 🔥 margem funcionando */
+  padding: 14px 28px;
+  max-width: 180px;
+  width: 100%;
+
   background: linear-gradient(90deg, #34d399, #10b981, #6ee7b7);
   color: #fff;
   border: none;
-  padding: 14px 28px;
   border-radius: 50px;
   font-size: 16px;
   font-weight: 600;
   cursor: pointer;
-  text-align: center;
-  transition: 0.2s ease-in-out;
-  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
+
+  box-shadow: 0 4px 8px rgba(16,185,129,.4);
+  transition: .2s ease;
 }
 
 .btn-mostrar-mais:hover {
-  opacity: 0.85;
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 0, 106, 0.5);
+  opacity: .9;
 }
 
-.btn-mostrar-mais:active {
-  transform: scale(0.95);
+.btn-add {
+  display: flex;
+  align-items: center;
+  justify-content: center; /* 🔥 CENTRALIZA */
+  gap: 6px;
+
+  margin: auto auto 0 auto; /* 🔥 centraliza no card */
 }
 
-/* =============================
-   EFEITO TIPO WHATSAPP — TIC DUPLO
-============================= */
-.btn-add.clicado {
-  background: #0aad57 !important;
-  transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(0, 200, 120, 0.6);
-  animation: whats 0.5s ease;
-}
-
-@keyframes whats {
-  0% { transform: scale(0.85); opacity: 0.4; }
-  50% { transform: scale(1.15); opacity: 1; }
-  100% { transform: scale(1.05); }
-}
-
-
-/* flutuação */
-@keyframes flutuar {
-  0% { transform: translateY(0); }
-  50% { transform: translateY(-4px); }
-  100% { transform: translateY(0); }
-}
-
-/* brilho */
-@keyframes brilho {
-  0% {
-    box-shadow: 0 0 0 0 rgba(255, 122, 0, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 14px rgba(255, 122, 0, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(255, 122, 0, 0);
-  }
-}
-
-@keyframes pulse {
-  0% {
-    box-shadow: 0 0 0 0 rgba(230, 85, 0, 0.7);
-  }
-  70% {
-    box-shadow: 0 0 0 12px rgba(230, 85, 0, 0);
-  }
-  100% {
-    box-shadow: 0 0 0 0 rgba(230, 85, 0, 0);
-  }
-}
-
-/* =============================
-   MOBILE — MAIS LEVE
-============================= */
-@media (max-width: 768px) {
-  .botao-flutuante {
-    bottom: 120px;
-  }
-
-  .botao-flutuante.animado {
-    animation: brilho 2s infinite;
-  }
-}
-
-
-
-@media (max-width: 480px) {
-  .produtos-grid {
-    grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
-    gap: 15px;
-  }
-
-  .produto-card {
-    min-height: 270px;
-  }
-
-  .produto-card h3 {
-    font-size: 0.95rem;
-  }
-
-  .produto-desc {
-    font-size: 0.72rem;
-  }
-}
 
 /* ============================================
-   MOSTRAR MAIS
-   ============================================ */
-.mostrar-mais-container {
-  text-align: center;
-  margin-top: 20px;
+   MOBILE
+============================================ */
+@media (max-width:480px) {
+  .produtos-grid {
+    grid-template-columns:repeat(auto-fill,minmax(145px,1fr));
+    gap:15px;
+  }
+  .produto-card { min-height:270px }
 }
-
-.mostrar-mais-container button {
-  background: #e65500;
-  color: #fff;
-  border: none;
-  padding: 8px 16px;
-  font-weight: 600;
-  font-size: 0.9rem;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: background 0.3s;
-}
-
-.mostrar-mais-container button:hover {
-  background: #cc4d00;
-}
-
-/* =============================
-   ANIMAÇÃO WHATSAPP ✓✓ (ADICIONADO)
-   Adicione no final do produto-slider.css
-============================= */
-
-/* =============================
-   EFEITO TIPO WHATSAPP — TIC DUPLO
-============================= */
-.btn-add.clicado {
-  background: #0aad57 !important;
-  transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(0, 200, 120, 0.6);
-  animation: whats 0.5s ease;
-}
-
-@keyframes whats {
-  0% { transform: scale(0.85); opacity: 0.4; }
-  50% { transform: scale(1.15); opacity: 1; }
-  100% { transform: scale(1.05); }
-}
-
-
-.vitrine-container {
-  padding: 12px;
-}
-
-/* 🔝 CATEGORIAS */
-.categorias-slider {
-  display: flex;
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 10px;
-  margin-bottom: 15px;
-}
-
-.categorias-slider::-webkit-scrollbar {
-  display: none;
-}
-
-.categoria-btn {
-  white-space: nowrap;
-  padding: 8px 16px;
-  border-radius: 999px;
-  border: none;
-  background: #f1f1f1;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-.categoria-btn.ativo {
-  background: #22c55e;
-  color: #fff;
-}
-
-/* ⬅️ PRODUTOS */
-.produtos-slider-horizontal {
-  display: flex;
-  gap: 16px;
-  overflow-x: auto;
-  padding-bottom: 10px;
-}
-
-.produtos-slider-horizontal::-webkit-scrollbar {
-  display: none;
-}
-
-.produto-card-horizontal {
-  min-width: 220px;
-  background: #fff;
-  border-radius: 16px;
-  padding: 12px;
-  box-shadow: 0 6px 16px rgba(0,0,0,0.12);
-}
-
-.produto-img {
-  width: 100%;
-  height: 140px;
-  object-fit: cover;
-  border-radius: 12px;
-}
-
-.preco {
-  font-weight: bold;
-  margin: 8px 0;
-}
-
-

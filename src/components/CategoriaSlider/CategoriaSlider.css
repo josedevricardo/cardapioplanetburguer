@@ -73,17 +73,6 @@
   line-height: 1.2;
 }
 
-/* Dark mode automático */
-@media (prefers-color-scheme: dark) {
-  .categoria-item span {
-    color: #052914;
-  }
-}
-
-/* ==============================
-   PREÇO (JS INLINE STYLE)
-============================== */
-/* controlado no JSX para não quebrar layout */
 
 /* ==============================
    BOTÃO ADICIONAR
