@@ -1,4 +1,3 @@
-// src/components/Cart/cart.jsx
 import React, { useEffect, useState, useContext, useRef } from "react";
 import { Dock } from "react-dock";
 import { motion } from "framer-motion";
@@ -7,8 +6,6 @@ import "./cart.css";
 import { CartContext } from "../../contexts/cart-context.jsx";
 import InputMask from "react-input-mask";
 import back from "../../assets/back.png";
-import pixqrcode from "../../assets/QRCode_planet.jpg";
-import QRCode from "qrcode";
 
 function Cart() {
   const [show, setShow] = useState(false);
@@ -19,11 +16,8 @@ function Cart() {
   const [rua, setRua] = useState("");
   const [numero, setNumero] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [showModal, setShowModal] = useState(false);
   const [isSending, setIsSending] = useState(false);
-  const [ultimoCupomHTML, setUltimoCupomHTML] = useState(null);
-  const [pixQRCodePedido, setPixQRCodePedido] = useState(null);
+  const [showModal, setShowModal] = useState(false);
 
   const { cartItems, totalCart, clearCart } = useContext(CartContext);
   const pagamentoRef = useRef(null);
@@ -35,99 +29,42 @@ function Cart() {
     return () => window.removeEventListener("openSidebar", handleOpenSidebar);
   }, []);
 
-  const bairrosSemFrete = [
-    "vitoria","vitória","vitoria 1","vitória 1","vitoria 2","vitória 2",
-    "Vitoria 1","Vitória","Vitoria 2","Vitória 1","Vitória 2","vitoria2",
-    "vitória2","vitória1","Vitoria2","Vitória1","Vitória2","vitoria1","Vitoria1"
-  ];
+  // --- LÓGICA DE FRETE PERSONALIZADA ---
+  const bairrosSemFrete = ["vitoria", "vitória", "vitoria 1", "vitória 1", "vitoria 2", "vitória 2"];
   const bairroFormatado = bairro.trim().toLowerCase();
-  let frete = 5;
-  if (bairrosSemFrete.includes(bairroFormatado)) frete = 0;
-  else if (bairroFormatado === "industrial") frete = 2;
-  else if (bairroFormatado.includes("industrial") || bairroFormatado.includes("cidade industrial")) frete = 3;
-
   const bairroExibicao = bairro.trim().toUpperCase();
+  
+  let frete = 5; // Valor padrão
+
+  if (bairrosSemFrete.includes(bairroFormatado)) {
+    frete = 0;
+  } else if (bairroFormatado === "industrial") {
+    frete = 2;
+  } else if (bairroFormatado.includes("industrial") || bairroFormatado.includes("cidade industrial")) {
+    frete = 3;
+  }
 
   function validarCampos() {
     if (!nome.trim() || !quemRecebe.trim() || !telefone.trim() || !rua.trim() || !numero.trim() || !bairro.trim()) {
-      setErrorMessage("Por favor, preencha todos os campos obrigatórios.");
+      setErrorMessage("⚠️ Preencha todos os campos obrigatórios.");
       return false;
     }
-    if (cartItems.length === 0) {
-      setErrorMessage("Seu carrinho está vazio.");
-      return false;
-    }
-    setErrorMessage("");
     return true;
   }
 
-  function abrirModal() {
+  function prepararConfirmacao() {
     if (validarCampos()) {
       setShow(false);
       setShowModal(true);
     }
   }
 
-  const gerarPayloadPix = (chave, nomeRecebedor, cidade, valorStr, txid) => {
-    const tlv = (id, value) => {
-      const v = String(value);
-      const len = v.length.toString().padStart(2, "0");
-      return id + len + v;
-    };
-    const merchantInfo = `BR.GOV.BCB.PIX${tlv("01", chave)}`;
-    let payload = `000201${tlv("26", merchantInfo)}520400005303986`;
-    if (valorStr) payload += tlv("54", valorStr);
-    payload += tlv("58", "BR");
-    payload += tlv("59", nomeRecebedor);
-    payload += tlv("60", cidade);
-    payload += tlv("62", tlv("05", txid));
-    const calcularCRC16 = (str) => {
-      const polinomio = 0x1021;
-      let crc = 0xffff;
-      const data = str + "6304";
-      for (let i = 0; i < data.length; i++) {
-        crc ^= data.charCodeAt(i) << 8;
-        for (let j = 0; j < 8; j++) {
-          crc = (crc & 0x8000) ? ((crc << 1) ^ polinomio) : (crc << 1);
-          crc &= 0xffff;
-        }
-      }
-      return crc.toString(16).toUpperCase().padStart(4, "0");
-    };
-    const crc = calcularCRC16(payload);
-    return payload + "6304" + crc;
-  };
-
-  const abrirCupomEmJanela = (cupomHTML, imprimirForcado = false) => {
-    try {
-      const janela = window.open("", "_blank", "width=420,height=700");
-      if (!janela) return alert("Não foi possível abrir a janela do cupom. Verifique bloqueadores de pop-up.");
-      janela.document.write(cupomHTML);
-      janela.document.close();
-      janela.focus();
-      if (imprimirForcado) setTimeout(() => janela.print(), 500);
-    } catch (e) {
-      console.warn("Erro ao abrir cupom:", e);
-    }
-  };
-
   async function enviarPedido() {
-    if (!validarCampos()) return;
     setIsSending(true);
-    setShowModal(false);
-    setErrorMessage("");
-    setSuccessMessage("");
-
     const numeroPedido = `#${Math.floor(10000 + Math.random() * 90000)}`;
     const pagamento = pagamentoRef.current?.value || "Não informado";
-    const informacoesAdicionais = informacoesAdicionaisRef.current?.value || "Nenhuma";
+    const informacoes = informacoesAdicionaisRef.current?.value || "Nenhuma";
     const totalComFrete = (parseFloat(totalCart) + frete).toFixed(2);
-
-    const itensFormatados = cartItems.map(item => ({
-      produto: item.nome,
-      qtd: item.qtd,
-      descricao: item.descricao || ""
-    }));
 
     const pedidoParaSalvar = {
       nome: nome.trim(),
@@ -137,149 +74,137 @@ function Cart() {
       numero: numero.trim(),
       bairro: bairro.trim(),
       pagamento,
-      informacoes_adicionais: informacoesAdicionais,
-      itens: itensFormatados,
-      total: totalComFrete,
-      numeroPedido,
+      informacoes_adicionais: informacoes,
+      itens: cartItems.map(i => ({ 
+        produto: i.nome, 
+        nome: i.nome, 
+        qtd: i.qtd, 
+        preco: i.preco 
+       })),
+      total: parseFloat(totalComFrete),
+      numeroPedido
     };
 
     try {
-      const resposta = await fetch("/.netlify/functions/salvarPedido", {
+      const response = await fetch("/.netlify/functions/salvarPedido", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(pedidoParaSalvar),
       });
-      if (resposta.ok) setSuccessMessage("✅ Pedido enviado e salvo com sucesso!");
-      else setErrorMessage("⚠️ Pedido enviado, mas não foi salvo no servidor.");
 
-      // PIX
-      const chavePix = "38998017215";
-      const nomeRecebedor = "MARIA MADALENA OLIVEIRA";
-      const cidade = "MONTES CLAROS";
-      const valorParaPix = totalComFrete;
-      const txid = numeroPedido.replace("#", "PED");
-      const pixPayload = gerarPayloadPix(chavePix, nomeRecebedor, cidade, valorParaPix, txid);
-      let pixDataUrl = pixqrcode;
-      try { pixDataUrl = await QRCode.toDataURL(pixPayload); } catch { pixDataUrl = pixqrcode; }
-      setPixQRCodePedido(pixDataUrl);
+      if (!response.ok) throw new Error("Erro ao salvar");
 
-      const cupomHTML = `
-        <html><head><meta charset="utf-8"><title>Cupom ${numeroPedido}</title>
-        <style>
-          body { font-family: Arial; padding:10px; color:#000; }
-          .center{text-align:center;}
-          .items li{margin-bottom:4px;}
-          .bold{font-weight:700;}
-          .qr{margin-top:10px;}
-          pre.payload{white-space:pre-wrap; word-break:break-all; background:#f4f4f4; padding:8px; border-radius:4px; font-size:12px;}
-        </style></head>
-        <body>
-          <div class="center"><h2>Planet's Burguer</h2><div>Pedido: <strong>${numeroPedido}</strong></div></div>
-          <hr/>
-          <div><strong>Cliente:</strong> ${nome}</div>
-          <div><strong>Recebedor:</strong> ${quemRecebe}</div>
-          <div><strong>Telefone:</strong> ${telefone}</div>
-          <div><strong>Endereço:</strong> Rua ${rua}, Nº ${numero}, Bairro ${bairro}</div>
-          <div><strong>Pagamento:</strong> ${pagamento}</div>
-          <div><strong>Total com frete:</strong> R$ ${totalComFrete.replace(".", ",")}</div>
-          <div class="items"><strong>Itens:</strong><ul>${cartItems.map(i=>`<li>${i.qtd}x ${i.nome}${i.descricao?` (${i.descricao})`:``}</li>`).join("")}</ul></div>
-          <hr/>
-          <div class="center qr">
-            <div><strong>💳 Pague com PIX</strong></div>
-            <div style="margin:8px 0;"><img src="${pixDataUrl}" alt="QR Code PIX" style="width:160px;height:160px;border:2px solid #ccc;border-radius:8px;" /></div>
-          </div>
-          <hr/>
-          <div class="center small">Obrigado pela preferência!</div>
-          <div class="center small">Gerado em ${new Date().toLocaleString("pt-BR")}</div>
-        </body></html>
-      `;
-      setUltimoCupomHTML(cupomHTML);
+      const listaWhats = cartItems.map(i => `- ${i.qtd}x ${i.nome}`).join("\n");
+      const msg = `*Pedido: ${numeroPedido}*\n\n👤 *Cliente:* ${nome}\n📞 *Tel:* ${telefone}\n📍 *Endereço:* Rua ${rua}, ${numero}\n🏘️ *Bairro:* ${bairro}\n🙋 *Recebedor:* ${quemRecebe}\n💳 *Pagamento:* ${pagamento}\n📝 *Obs:* ${informacoes}\n\n🛒 *Itens:*\n${listaWhats}\n\n💰 *Total: R$ ${totalComFrete.replace(".", ",")}*`;
+      
+      window.open(`https://api.whatsapp.com/send?phone=5538998017215&text=${encodeURIComponent(msg)}`, "_blank");
 
-      // Enviar automaticamente para o painel
-      fetch("/.netlify/functions/enviarCupomPainel", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ numeroPedido, html: cupomHTML })
-      }).then(r => r.json()).then(d => console.log("Painel atualizado:", d))
-      .catch(e => console.error("Erro ao enviar para painel:", e));
-
-      // WhatsApp (sem payload)
-      const listaProdutos = cartItems.map(i=>`- ${i.qtd}x ${i.nome}${i.descricao?` (Obs:${i.descricao})`:``}`).join("\n");
-      const mensagem = `Olá, gostaria de finalizar meu pedido.\n\n📌 Número do Pedido: ${numeroPedido}\n👤 Nome: ${nome.trim()}\n🙋 Quem recebe: ${quemRecebe.trim()}\n📞 Telefone: ${telefone.trim()}\n📍 Endereço: Rua ${rua.trim()}, Nº ${numero.trim()}, Bairro ${bairro.trim()}\n💳 Forma de Pagamento: ${pagamento}\n\n🛒 Meu pedido:\n${listaProdutos}\n\n💰 Total com frete: R$ ${totalComFrete.replace(".", ",")}\n📝 Informações adicionais: ${informacoesAdicionais}`;
-      const numeroWhatsApp = "5538998017215";
-      const whatsappUrl = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
-      setTimeout(() => { window.open(whatsappUrl, "_blank"); setIsSending(false); }, 1200);
-
-      setNome(""); setQuemRecebe(""); setTelefone(""); setRua(""); setNumero(""); setBairro("");
-      if (pagamentoRef.current) pagamentoRef.current.value = "";
-      if (informacoesAdicionaisRef.current) informacoesAdicionaisRef.current.value = "";
       clearCart();
-    } catch (erro) {
-      setErrorMessage("Erro na conexão com o servidor"); console.error("Erro inesperado:", erro); setIsSending(false);
+      setShowModal(false);
+    } catch (e) {
+      setErrorMessage("❌ Erro ao processar o pedido.");
+      setShow(true);
+      setShowModal(false);
+    } finally {
+      setIsSending(false);
     }
   }
 
   return (
     <>
-      <Dock position="right" isVisible={show} fluid={false} size={340} onVisibleChange={(v)=>setShow(v)}>
-        <motion.div className="cart-motion-wrapper" whileHover={{scale:1.02}} whileTap={{scale:0.98}} transition={{type:"spring",stiffness:300,damping:20}}>
-          <div className="text-center">
-            <img onClick={()=>setShow(false)} src={back} className="cart-btn-close" alt="Fechar"/>
-            <h1>Meu Pedido</h1>
+      <Dock position="right" isVisible={show} fluid={false} size={340} onVisibleChange={setShow} style={{ zIndex: 1000 }}>
+        <motion.div className="cart-motion-wrapper" style={{ height: '100%', display: 'flex', flexDirection: 'column' }}>
+          
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "20px", flexShrink: 0 }}>
+            <h1 style={{ fontSize: "1.5rem", fontWeight: "800", color: "#111827", margin: 0 }}>Meu Pedido</h1>
+            <img onClick={() => setShow(false)} src={back} className="cart-btn-close" alt="Fechar" style={{ cursor: "pointer" }} />
           </div>
 
-          <div className="formulario-cliente">
-            <label>Nome:</label><input value={nome} onChange={e=>setNome(e.target.value)} placeholder="Digite seu nome" onBlur={()=>document.activeElement.blur()}/>
-            <label>Telefone:</label><InputMask mask="(99) 99999-9999" value={telefone} onChange={e=>setTelefone(e.target.value)} placeholder="(31) 91234-5678" onBlur={()=>document.activeElement.blur()}/>
-            <label>Rua:</label><input value={rua} onChange={e=>setRua(e.target.value)} placeholder="Digite sua rua" onBlur={()=>document.activeElement.blur()}/>
-            <label>Número:</label><input value={numero} onChange={e=>setNumero(e.target.value)} placeholder="Número da casa" onBlur={()=>document.activeElement.blur()}/>
-            <label>Bairro:</label><input value={bairro} onChange={e=>setBairro(e.target.value)} placeholder="Digite seu bairro" onBlur={()=>document.activeElement.blur()}/>
-            <label>Forma de Pagamento:</label><input ref={pagamentoRef} placeholder="Pix, Cartão ou Dinheiro" onBlur={()=>document.activeElement.blur()}/>
-            <label>Informações Adicionais:</label><input ref={informacoesAdicionaisRef} placeholder="Ex. sem cebola - Troco pra 100" onBlur={()=>document.activeElement.blur()}/>
-            <label>Quem recebe:</label><input value={quemRecebe} onChange={e=>setQuemRecebe(e.target.value)} placeholder="Caso você não receba o pedido" onBlur={()=>document.activeElement.blur()}/>
-          </div>
+          {cartItems.length === 0 ? (
+            <div style={{ flexGrow: 1, display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center", textAlign: "center", padding: "20px" }}>
+              <span style={{ fontSize: "3rem" }}>🛒</span>
+              <p style={{ color: "#666", marginTop: "10px", fontWeight: "500" }}>Seu carrinho está vazio.</p>
+              <p style={{ fontSize: "0.85rem", color: "#999" }}>Adicione alguns itens para continuar!</p>
+            </div>
+          ) : (
+            <>
+              <div className="lista-produtos" style={{ flexGrow: 1, overflowY: "auto", minHeight: "150px", marginBottom: "15px" }}>
+                {cartItems.map((item) => (
+                  <ProdutoCart 
+                    key={item.id}
+                    id={item.id}
+                    nome={item.nome}
+                    preco={item.preco}
+                    foto={item.foto}
+                    qtd={item.qtd}
+                    adicionais={item.adicionais}
+                  />
+                ))}
+              </div>
 
-          <div className="lista-produtos">{cartItems.map(i=><ProdutoCart key={i.id} {...i}/>)} </div>
-          <p className="frete-msg">{frete===0?`🚚 Frete grátis para ${bairroExibicao || "BAIRRO INFORMADO"}.`:`🚚 Frete aplicado ao bairro ${bairroExibicao || "BAIRRO INFORMADO"}.`}</p>
+              <div style={{ flexShrink: 0 }}>
+                <hr style={{ border: "none", borderTop: "1px solid #eee", margin: "10px 0" }} />
 
-          <div className="footer-cart-valor">
-            <span>Total com frete</span>
-            <strong>{new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"}).format(parseFloat(totalCart)+frete)}</strong>
-          </div>
+                <div className="formulario-cliente">
+                  <label>Nome Completo</label>
+                  <input value={nome} onChange={e => setNome(e.target.value)} placeholder="Ex: João Silva" />
+                  
+                  <label>WhatsApp</label>
+                  <InputMask mask="(99) 99999-9999" value={telefone} onChange={e => setTelefone(e.target.value)} placeholder="(38) 99999-9999" />
+                  
+                  <div style={{ display: "flex", gap: "10px" }}>
+                    <div style={{ flex: "2" }}>
+                      <label>Rua</label>
+                      <input value={rua} onChange={e => setRua(e.target.value)} placeholder="Nome da rua" />
+                    </div>
+                    <div style={{ flex: "1" }}>
+                      <label>Nº</label>
+                      <input value={numero} onChange={e => setNumero(e.target.value)} placeholder="123" />
+                    </div>
+                  </div>
 
-          <div style={{textAlign:"center",marginTop:20}}>
-            <p style={{fontWeight:"bold",marginBottom:8}}>💳 Pague com PIX na entrega</p>
-            <img src={pixQRCodePedido || pixqrcode} alt="QR Code PIX" style={{width:160,height:160,borderRadius:10,border:"2px solid #ccc",margin:"0 auto"}}/>
-            <p style={{fontSize:"0.9rem",marginTop:8}}>Escaneie o QR Code ou finalize pelo Pix</p>
-          </div>
+                  <label>Bairro</label>
+                  <input value={bairro} onChange={e => setBairro(e.target.value)} placeholder="Ex: Centro" />
+                  
+                  <label>Quem vai receber?</label>
+                  <input value={quemRecebe} onChange={e => setQuemRecebe(e.target.value)} placeholder="Ex: Eu mesmo" />
 
-          {errorMessage && <div className="error-message">❌ {errorMessage}</div>}
-          {successMessage && <div style={{fontSize:"1.2rem",fontWeight:700,margin:"1rem 0",color:"green",textAlign:"center"}}>{successMessage}</div>}
+                  <label>Forma de Pagamento</label>
+                  <input ref={pagamentoRef} placeholder="Pix, Cartão ou Dinheiro" />
+                  
+                  <label>Observações</label>
+                  <input ref={informacoesAdicionaisRef} placeholder="Ex: Sem cebola, troco para 50..." />
+                </div>
 
-          <div style={{display:"flex",gap:8,justifyContent:"center",marginTop:8}}>
-            <button onClick={abrirModal} className="btn-checkout" disabled={isSending}>{isSending?"Enviando...":"Finalizar Pedido"}</button>
-            <button onClick={()=>ultimoCupomHTML?abrirCupomEmJanela(ultimoCupomHTML,true):alert("Nenhum cupom gerado ainda.")} className="btn-print-cupom" style={{background:"#2b7a78",color:"#fff",padding:"8px 12px",borderRadius:6}}>Imprimir Cupom</button>
-          </div>
+                {/* MENSAGEM DE FRETE DINÂMICA */}
+                <div className="frete-msg">
+                  {frete === 0 
+                    ? `🎉 Frete Grátis para ${bairroExibicao || "seu bairro"}!` 
+                    : `🛵 Taxa para ${bairroExibicao || "seu bairro"}: R$ ${frete.toFixed(2).replace(".", ",")}`}
+                </div>
+
+                <div className="footer-cart-valor">
+                  <span>Total Final</span>
+                  <strong>{new Intl.NumberFormat("pt-BR", { style: "currency", currency: "BRL" }).format(totalCart + frete)}</strong>
+                </div>
+
+                <button onClick={prepararConfirmacao} className="btn-checkout" disabled={isSending}>
+                  {isSending ? "ENVIANDO..." : "FINALIZAR PEDIDO"}
+                </button>
+                {errorMessage && <div className="error-message">{errorMessage}</div>}
+              </div>
+            </>
+          )}
         </motion.div>
       </Dock>
 
       {showModal && (
-        <div className="modal-overlay">
-          <div className="modal-box" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-            <h2 id="modal-title">Confirmar Pedido</h2>
-            <p>Você deseja realmente finalizar o pedido?</p>
-            <div className="modal-buttons">
-              <button onClick={()=>setShowModal(false)} className="cancel-btn">Cancelar</button>
-              <button onClick={enviarPedido} className="confirm-btn" disabled={isSending}>
-                {isSending ? (
-                  <>
-                    <svg className="spinner" viewBox="0 0 50 50" aria-hidden="true" focusable="false">
-                      <circle className="path" cx="25" cy="25" r="20" fill="none" strokeWidth="5"/>
-                    </svg>
-                    Enviando...
-                  </>
-                ) : "Confirmar"}
-              </button>
+        <div className="modal-overlay" style={{ zIndex: 9999, position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="modal-box" style={{ background: 'white', padding: '25px', borderRadius: '12px', maxWidth: '300px', textAlign: 'center' }}>
+            <h2>Confirmar Pedido?</h2>
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+              <button onClick={() => { setShowModal(false); setShow(true); }} className="cancel-btn" style={{ flex: 1, padding: '10px', cursor: 'pointer' }}>REVISAR</button>
+              <button onClick={enviarPedido} className="confirm-btn" style={{ flex: 1, padding: '10px', background: '#22c55e', color: 'white', border: 'none', cursor: 'pointer', fontWeight: 'bold' }}>CONFIRMAR</button>
             </div>
           </div>
         </div>

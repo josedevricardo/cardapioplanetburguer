@@ -1,66 +1,102 @@
+/* Adicione no topo do cart.css */
+.cart-motion-wrapper {
+  font-family: 'Inter', -apple-system, sans-serif !important;
+  -webkit-font-smoothing: antialiased; /* Deixa a letra mais fina e elegante no Mac/iPhone */
+}
+
+.cart-motion-wrapper h1 {
+  letter-spacing: -0.04em; /* Título bem coladinho e moderno */
+}
 /* ---------------------- CART CONTAINER ---------------------- */
 .cart-motion-wrapper {
-  padding: 15px;
-  background: #fff;
+  padding: 20px;
+  background: #ffffff;
   height: 100%;
   display: flex;
   flex-direction: column;
-  overflow-y: auto;
-  font-family: Arial, sans-serif;
-  scroll-behavior: smooth;
-  transition: transform 0.2s ease;
+  font-family: 'Inter', -apple-system, sans-serif;
+  overflow-x: hidden;
 }
 
 .cart-btn-close {
-  width: 28px;
-  height: 28px;
-  cursor: pointer;
-  position: absolute;
-  top: 10px;
-  right: 10px;
+  width: 32px;
+  height: 32px;
+  padding: 6px;
+  background: #f3f4f6;
+  border-radius: 50%;
+  transition: all 0.2s;
 }
 
-/* ---------------------- FORMULÁRIO ---------------------- */
+.cart-btn-close:hover {
+  background: #fee2e2;
+  transform: rotate(90deg);
+}
+
+/* ---------------------- FORMULÁRIO ELEGANTE ---------------------- */
 .formulario-cliente {
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  margin-bottom: 15px;
+  gap: 12px;
+  background: #f9fafb;
+  padding: 15px;
+  border-radius: 12px;
+  border: 1px solid #f3f4f6;
 }
 
 .formulario-cliente label {
-  font-weight: 600;
-  font-size: 0.9rem;
+  font-weight: 700;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #6b7280;
+  margin-bottom: -8px;
 }
 
 .formulario-cliente input {
   width: 100%;
-  padding: 6px 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 0.9rem;
-  transition: 0.3s ease;
+  padding: 12px 14px;
+  border-radius: 8px;
+  border: 2px solid #e5e7eb;
+  font-size: 0.95rem;
+  background: #fff;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .formulario-cliente input:focus {
-  border-color: #0070f3;
+  border-color: #fca311;
+  box-shadow: 0 0 0 4px rgba(252, 163, 17, 0.1);
   outline: none;
 }
 
 /* ---------------------- LISTA DE PRODUTOS ---------------------- */
 .lista-produtos {
-  margin: 10px 0;
+  margin: 15px 0;
   flex-grow: 1;
   overflow-y: auto;
-  max-height: 180px;
+  scrollbar-width: thin;
+}
+
+.lista-produtos::-webkit-scrollbar {
+  width: 4px;
+}
+
+.lista-produtos::-webkit-scrollbar-thumb {
+  background: #e5e7eb;
+  border-radius: 10px;
 }
 
 .frete-msg {
-  font-size: 0.9rem;
-  margin: 6px 0;
-  text-align: center;
-  color: #d97706;
-  font-weight: 500;
+  font-size: 0.85rem;
+  margin: 10px 0;
+  padding: 8px;
+  border-radius: 8px;
+  background: #fffbeb;
+  color: #92400e;
+  border: 1px dashed #fcd34d;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
 }
 
 /* ---------------------- VALOR FINAL ---------------------- */
@@ -68,174 +104,74 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 1rem;
-  font-weight: 600;
-  padding: 10px;
-  background-color: #f9fafb;
-  border-radius: 8px;
-  margin: 10px 0;
-}
-
-/* ---------------------- BOTÕES ---------------------- */
-.btn-checkout,
-.btn-print-cupom {
-  padding: 10px 16px;
-  border: none;
-  border-radius: 6px;
-  font-size: 0.95rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: transform 0.15s ease, background 0.3s ease;
-}
-
-.btn-checkout {
-  background: #fca311;
+  padding: 18px;
+  background: #1f2937;
   color: #fff;
-  display: block;
-  width: 90%;
-  margin: 0 auto 15px;
+  border-radius: 12px;
+  margin: 15px 0;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
 }
 
-.btn-checkout:hover {
-  transform: scale(1.05);
+.footer-cart-valor span { font-weight: 400; opacity: 0.9; }
+.footer-cart-valor strong { font-size: 1.3rem; color: #fca311; }
+
+/* ---------------------- BOTÕES PREMIUM ---------------------- */
+.btn-checkout {
+  background: linear-gradient(135deg, #fca311 0%, #ef4444 100%);
+  color: #fff;
+  padding: 16px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+  transition: all 0.3s ease;
 }
+
+.btn-checkout:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+  filter: brightness(1.1);
+}
+
+.btn-checkout:active { transform: translateY(0); }
 
 .btn-checkout:disabled {
-  opacity: 0.6;
+  background: #d1d5db;
+  box-shadow: none;
   cursor: not-allowed;
 }
 
-.btn-print-cupom {
-  background: #2b7a78;
-  color: #fff;
-}
-
-.btn-print-cupom:hover {
-  transform: scale(1.05);
-}
-
-/* ---------------------- MENSAGENS ---------------------- */
-.error-message,
-.success-message {
-  text-align: center;
-  margin: 10px auto;
-  padding: 10px;
-  border-radius: 8px;
-  width: 90%;
-  font-weight: bold;
-}
-
-.error-message {
-  background-color: #fee2e2;
-  color: #b91c1c;
-}
-
-.success-message {
-  background-color: #dcfce7;
-  color: #15803d;
-}
-
-/* ---------------------- MODAL ---------------------- */
+/* ---------------------- MODAL MODERNIZADO ---------------------- */
 .modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0,0,0,0.5);
-  backdrop-filter: blur(3px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 9999;
+  background: rgba(17, 24, 39, 0.8);
+  backdrop-filter: blur(8px);
 }
 
 .modal-box {
   background: #fff;
-  padding: 20px;
-  border-radius: 12px;
-  width: 320px;
-  max-width: 400px;
-  text-align: center;
-  box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+  padding: 30px;
+  border-radius: 24px;
+  width: 90%;
+  max-width: 380px;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
 
-.modal-box h2 {
-  margin-bottom: 12px;
-}
-
-.modal-buttons {
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  margin-top: 16px;
-}
-
-.confirm-btn,
-.cancel-btn {
-  flex: 1;
-  padding: 8px 12px;
-  font-weight: 600;
-  border-radius: 6px;
-  border: none;
-  cursor: pointer;
-}
+.modal-buttons { gap: 12px; }
 
 .confirm-btn {
-  background: #fca311;
-  color: #fff;
+  background: #10b981;
+  color: white;
+  padding: 12px;
+  border-radius: 10px;
+  font-weight: 700;
 }
 
 .cancel-btn {
-  background: #ccc;
-  color: #333;
-}
-
-.confirm-btn:hover {
-  background: #16a34a;
-}
-
-.cancel-btn:hover {
-  background-color: #e5e7eb;
-}
-
-.confirm-btn:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* ---------------------- SPINNER ---------------------- */
-.spinner {
-  width: 20px;
-  height: 20px;
-  margin-right: 8px;
-  vertical-align: middle;
-  animation: spin 1s linear infinite;
-}
-
-.spinner .path {
-  stroke: white;
-  stroke-linecap: round;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}
-
-/* ---------------------- IMPRESSÃO ---------------------- */
-@media print {
-  body * {
-    visibility: hidden;
-  }
-  .cart-motion-wrapper,
-  .cart-motion-wrapper * {
-    visibility: visible;
-  }
-  .cart-motion-wrapper {
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-  }
+  background: #f3f4f6;
+  color: #4b5563;
+  padding: 12px;
+  border-radius: 10px;
 }

@@ -1,3 +1,4 @@
+// src/components/produto-cart/produto-cart.jsx
 import "./produto-cart.css";
 import { CartContext } from "../../contexts/cart-context";
 import { useContext } from "react";
@@ -5,52 +6,49 @@ import { motion } from "framer-motion";
 import PropTypes from "prop-types";
 
 function ProdutoCart(props) {
-  const { addToCart, RemoveItemCart } = useContext(CartContext);
+  const { addToCart, removeFromCart } = useContext(CartContext);
 
-  // Ao adicionar, mantém os adicionais passados no item
   function AddItem() {
-    const item = {
+    addToCart({
       id: props.id,
       nome: props.nome,
       preco: props.preco,
       foto: props.foto,
       qtd: 1,
-      adicionais: props.adicionais || [],  // mantém os adicionais aqui
-    };
-    addToCart(item);
+      adicionais: props.adicionais || [],
+    });
   }
 
   function RemoveItem() {
-    RemoveItemCart(props.id);
+    removeFromCart(props.id);
   }
 
   return (
     <motion.div
       className="produto-cart-box"
-      initial={{ opacity: 0, scale: 0.95 }}
-      animate={{ opacity: 1, scale: 1 }}
-      transition={{ duration: 0.3 }}
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
     >
       <img
         src={props.foto}
-        alt={`Foto do produto ${props.nome}`}
+        alt={props.nome}
+        className="img-produto"
         onError={(e) => {
-          e.target.onerror = null;
-          e.target.src = "/img/default.png"; // fallback se imagem falhar
+          e.target.src = "/img/default.png";
         }}
       />
 
-      <div>
+      <div className="detalhes-produto">
         <p className="produto-cart-nome">{props.nome}</p>
 
-        {/* Exibir adicionais, se houver */}
-        {props.adicionais && props.adicionais.length > 0 && (
+        {props.adicionais?.length > 0 && (
           <p className="produto-cart-adicionais">
-            Adicionais: {props.adicionais.map((a) => a.nome).join(", ")}
+            {props.adicionais.map((a) => a.nome).join(", ")}
           </p>
         )}
 
-        <p className="produto-cart-valor">
+        <p className="produto-cart-valor-unitario">
           {new Intl.NumberFormat("pt-BR", {
             style: "currency",
             currency: "BRL",
@@ -58,16 +56,13 @@ function ProdutoCart(props) {
         </p>
 
         <div className="footer-produto-cart">
-          <div>
-            <button onClick={RemoveItem} className="footer-produto-btn" aria-label="Remover item">
-              -
-            </button>
-            <span className="footer-produto-qtd">{props.qtd}</span>
-            <button onClick={AddItem} className="footer-produto-btn" aria-label="Adicionar item">
-              +
-            </button>
+          <div className="controles-quantidade">
+            <button className="btn-menos" onClick={RemoveItem}>−</button>
+            <span className="qtd-display">{props.qtd}</span>
+            <button className="btn-mais" onClick={AddItem}>+</button>
           </div>
-          <p className="footer-produto-preco text-right">
+
+          <p className="subtotal-item">
             {new Intl.NumberFormat("pt-BR", {
               style: "currency",
               currency: "BRL",
@@ -79,14 +74,13 @@ function ProdutoCart(props) {
   );
 }
 
-// Validação de propriedades esperadas, adicionando adicionais (array)
 ProdutoCart.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   nome: PropTypes.string.isRequired,
   preco: PropTypes.number.isRequired,
-  foto: PropTypes.string.isRequired,
-  qtd: PropTypes.number.isRequired,
-  adicionais: PropTypes.array,  // array de objetos {id, nome}
+  foto: PropTypes.string,
+  qtd: PropTypes.number,
+  adicionais: PropTypes.array,
 };
 
 export default ProdutoCart;

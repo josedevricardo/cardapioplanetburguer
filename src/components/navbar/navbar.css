@@ -1,22 +1,36 @@
 /* -------- Navbar geral -------- */
+/* Ajuste na Navbar para permitir que os itens se aproximem */
 .navbar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 10px 24px;
-  background-color: white;
+  padding: 8px 3%;
+  background: #fff;
   position: fixed;
   top: 0;
   width: 100%;
-  z-index: 100;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-   
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  /* Removido o space-between para os itens não "fugirem" para as pontas */
 }
 
 .navbar.sticky {
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
 }
+/* Mantém o lado esquerdo fixo na ponta esquerda */
 
+
+/* Container da busca agora controla o espaço */
+.search-container {
+  max-width: 300px;
+  margin-right: 20px; /* Espaço entre busca e o grupo da direita */
+}
+
+/* Grupo da direita (Contato + Sacola) agora colado na busca */
+.nav-right-group {
+  display: flex;
+  align-items: center;
+  gap: 15px; /* Espaço entre o WhatsApp e a Sacola */
+}
 
 .gif-background {
   position: absolute;
@@ -522,3 +536,595 @@
     font-size: 1.1rem;
   }
 }
+
+/* Navbar */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4%;
+  background: #fff;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Ícone de Home */
+.home-icon-link {
+  font-size: 1.3rem;
+  text-decoration: none;
+  background: #f3f4f6;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 10px;
+  transition: background 0.2s;
+}
+
+.home-icon-link:hover {
+  background: #e5e7eb;
+}
+
+/* NOVO BOTÃO DE SACOLA COMPACTO E ORGANIZADO */
+.sacola-button.compact-new {
+  background: #111827;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+  min-height: 40px;
+}
+
+.sacola-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.1);
+  padding: 4px 8px;
+  border-radius: 8px;
+}
+
+.sacola-icon {
+  font-size: 1.1rem;
+}
+
+/* BADGE AGORA DENTRO DO BOTÃO, SEM SAIR PRA FORA */
+.cart-badge-inner {
+  background: #ef4444;
+  color: white;
+  font-size: 10px;
+  font-weight: 800;
+  margin-left: 5px;
+  padding: 1px 5px;
+  border-radius: 5px;
+}
+
+.sacola-text-price {
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* WhatsApp Estilo Card */
+.whatsapp-global-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  background: #f0fdf4;
+  padding: 5px 12px;
+  border-radius: 10px;
+}
+
+.whatsapp-icon-bg {
+  background: #25D366;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.whatsapp-icon-bg svg { width: 14px; height: 14px; }
+
+.whatsapp-info span { font-size: 9px; color: #166534; display: block; }
+.whatsapp-info strong { font-size: 11px; color: #111827; }
+
+/* Menu Lateral */
+.mobile-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 270px;
+  height: 100vh;
+  background: #fff;
+  z-index: 1100;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.menu-item-btn {
+  width: 100%;
+  text-align: left;
+  padding: 14px 10px;
+  background: none;
+  border: none;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #1f2937;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Tooltip Adjustments */
+.sacola-tooltip {
+  position: absolute;
+  background: white;
+  color: #111827;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 800;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  border: 1px solid #e5e7eb;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .logotext { display: none; } /* Esconde o texto da logo no mobile para dar espaço à Home */
+  .sacola-button.compact-new { padding: 6px 10px; }
+  .sacola-text-price { font-size: 11px; }
+}
+
+
+/* MENU LATERAL - MOBILE SIDEBAR */
+.mobile-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background: #ffffff;
+  z-index: 1100;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 5px 0 25px rgba(0,0,0,0.1);
+}
+
+.sidebar-header {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 25px;
+  padding-left: 10px;
+  border-left: 4px solid #10b981; /* Verde do site */
+}
+
+.mobile-menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* EFEITO DE MOVIMENTO NO BOTÃO DO MENU */
+.menu-item-btn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  padding: 16px 12px;
+  margin-bottom: 8px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #4b5563;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Texto dentro do botão */
+.menu-item-btn span {
+  transition: transform 0.3s ease;
+}
+
+/* Ícone da flecha escondido inicialmente */
+.arrow-icon {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
+  color: #10b981; /* Verde padrão */
+  font-weight: bold;
+  font-size: 1.2rem;
+}
+
+/* EFEITO AO PASSAR O MOUSE OU CLICAR */
+.menu-item-btn:hover, 
+.menu-item-btn:active {
+  background-color: #f0fdf4; /* Fundo verde bem clarinho */
+  color: #10b981; /* Texto verde */
+}
+
+.menu-item-btn:hover span,
+.menu-item-btn:active span {
+  transform: translateX(10px); /* Move o texto para a direita */
+}
+
+.menu-item-btn:hover .arrow-icon,
+.menu-item-btn:active .arrow-icon {
+  opacity: 1;
+  transform: translateX(0); /* Flecha aparece e vai para posição real */
+}
+
+/* Botão de Início com destaque */
+.item-home {
+  border: 1px solid #f3f4f6;
+  margin-bottom: 20px;
+}
+
+/* Rodapé do Menu */
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 20px;
+  border-top: 1px solid #f3f4f6;
+}
+
+/* Overlay com desfoque */
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+  z-index: 1050;
+}
+/* Ajuste Mobile para não amontoar */
+@media (max-width: 768px) {
+  .search-container {
+    max-width: 120px;
+    margin-right: 10px;
+  }
+  
+  .nav-right-group {
+    gap: 8px;
+    margin-right: 10px;
+  }
+}
+/* Ajustes responsivos para os botões */
+@media (max-width: 768px) {
+  .menu-item-btn {
+    padding: 14px 10px;
+    font-size: 1rem;
+  }
+}
+
+/* Barra de busca Desktop */
+.searchbar-desktop input {
+  border: 1px solid #e5e7eb;
+  padding: 8px 15px;
+  border-radius: 10px;
+  outline: none;
+  width: 200px;
+  transition: all 0.3s;
+}
+
+.searchbar-desktop input:focus {
+  border-color: #10b981;
+  width: 250px;
+}
+
+/* Estado ativo do menu lateral */
+.menu-item-btn.ativo {
+  background-color: #f0fdf4;
+  color: #10b981;
+  border-left: 4px solid #10b981;
+}
+
+.menu-item-btn.ativo .arrow-icon {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.motinha-entrega {
+  pointer-events: none;
+}
+
+/* Navbar Base */
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4%;
+  background: #ffffff;
+  position: fixed;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+/* Ícone de Home */
+.home-icon-link {
+  font-size: 1.2rem;
+  background: #f3f4f6;
+  width: 35px;
+  height: 35px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+/* Sacola Compacta e Badge Integrada */
+.sacola-button.compact-new {
+  background: #111827;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  position: relative;
+}
+
+.sacola-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+
+.cart-badge-inner {
+  background: #ef4444;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 800;
+  margin-left: 4px;
+  padding: 0px 4px;
+  border-radius: 4px;
+}
+
+.sacola-text-price {
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+}
+
+/* WHATSAPP ESTILIZADO */
+.whatsapp-global-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  background: #f0fdf4;
+  padding: 6px 12px;
+  border-radius: 50px;
+  border: 1px solid #dcfce7;
+}
+
+.whatsapp-icon-bg {
+  background: #25D366;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.whatsapp-icon-bg svg { width: 16px; height: 16px; }
+
+.whatsapp-info span { font-size: 9px; color: #166534; display: block; line-height: 1; }
+.whatsapp-info strong { font-size: 11px; color: #111827; }
+
+/* Menu Lateral e Efeitos */
+.menu-item-btn {
+  width: 100%;
+  background: none;
+  border: none;
+  padding: 15px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #4b5563;
+  transition: all 0.3s;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.menu-item-btn span { transition: transform 0.3s ease; }
+.arrow-icon { opacity: 0; transform: translateX(-10px); transition: 0.3s; color: #10b981; }
+
+.menu-item-btn:hover, .menu-item-btn.ativo {
+  background: #f0fdf4;
+  color: #10b981;
+}
+
+.menu-item-btn:hover span, .menu-item-btn.ativo span { transform: translateX(8px); }
+.menu-item-btn:hover .arrow-icon, .menu-item-btn.ativo .arrow-icon { opacity: 1; transform: translateX(0); }
+
+.sidebar-footer {
+  margin-top: auto;
+  padding-top: 15px;
+  border-top: 1px solid #f3f4f6;
+}
+
+.motinha-entrega {
+  position: fixed;
+  top: 50%;
+  z-index: 9999;
+  font-size: 3rem;
+  pointer-events: none;
+}
+
+
+
+.nav-left, .nav-right-group {
+  display: flex;
+  align-items: center;
+  
+  gap: 12px;
+}
+
+/* BARRA DE BUSCA CENTRAL */
+.search-container {
+  flex: 1;
+  max-width: 300px;
+  margin: 0 15px;
+}
+
+.search-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-wrapper input {
+  width: 100%;
+  padding: 8px 35px 8px 15px;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s;
+}
+
+.search-wrapper input:focus {
+  border-color: #10b981;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
+}
+
+.search-icon-inside {
+  position: absolute;
+  right: 12px;
+  font-size: 14px;
+  color: #9ca3af;
+}
+
+/* WHATSAPP */
+.whatsapp-global-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+  background: #f0fdf4;
+  padding: 6px 12px;
+  border-radius: 50px;
+}
+
+.whatsapp-icon-bg {
+  background: #25D366;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.whatsapp-icon-bg svg { width: 14px; height: 14px; }
+
+.whatsapp-info span { font-size: 8px; color: #166534; display: block; line-height: 1; }
+.whatsapp-info strong { font-size: 10px; color: #111827; }
+
+/* SACOLA E BADGE */
+.sacola-button.compact-new {
+  background: #111827;
+  padding: 6px 10px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: none;
+  cursor: pointer;
+}
+
+.sacola-wrapper {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 2px 5px;
+  border-radius: 5px;
+}
+
+.cart-badge-inner {
+  background: #ef4444;
+  color: #fff;
+  font-size: 9px;
+  font-weight: 800;
+  margin-left: 3px;
+  padding: 0 3px;
+  border-radius: 3px;
+}
+
+.sacola-text-price {
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+/* HOME */
+.home-icon-link {
+  font-size: 1.1rem;
+  background: #f3f4f6;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  text-decoration: none;
+}
+
+/* RESPONSIVIDADE MOBILE */
+@media (max-width: 768px) {
+  .search-container {
+    max-width: 140px; /* Menor no mobile para caber tudo */
+    margin: 0 8px;
+  }
+  
+  .search-wrapper input {
+    padding: 6px 30px 6px 10px;
+    font-size: 12px;
+  }
+
+  .logotext { display: none; }
+}
+
+@media (max-width: 768px) {
+  .logo { height: 35px; }
+  .sacola-text-price { font-size: 11px; }
+}
+

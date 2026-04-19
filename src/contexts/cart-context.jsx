@@ -1,22 +1,22 @@
-// src/contexts/cart-context.jsx
 import { createContext, useState, useEffect } from "react";
 
 export const CartContext = createContext();
 
-// --- Função para limpar e converter preços ---
+// --- Sanitizar preço ---
 const sanitizePrice = (raw) => {
   if (raw === null || raw === undefined) return 0;
   if (typeof raw === "number") return raw;
+
   if (typeof raw === "string") {
-    // remove R$, espaços e vírgulas
     const cleaned = raw.replace(/[^\d,.-]/g, "").replace(",", ".");
     const num = parseFloat(cleaned);
     return isNaN(num) ? 0 : num;
   }
+
   return 0;
 };
 
-// --- Função para limpar item do carrinho ---
+// --- Sanitizar item ---
 const sanitizeCartItem = (item) => {
   if (!item) return null;
 
@@ -29,81 +29,60 @@ const sanitizeCartItem = (item) => {
     item.imagem ||
     item.url ||
     item.image ||
-    "/img/default.png"; // fallback automático
+    "/img/default.png";
 
   return { ...item, id, nome, preco, qtd, foto };
 };
-
 
 export const CartProvider = ({ children }) => {
   const [cartItems, setCartItems] = useState([]);
   const [pedidos, setPedidos] = useState([]);
   const [totalCart, setTotalCart] = useState(0);
 
-  // Carrega do localStorage
+  // Carregar localStorage
   useEffect(() => {
     try {
-      const carrinhoSalvo = localStorage.getItem("carrinho");
-      const pedidosSalvos = localStorage.getItem("pedidos");
+      const carrinho = JSON.parse(localStorage.getItem("carrinho") || "[]");
+      const pedidosLS = JSON.parse(localStorage.getItem("pedidos") || "[]");
 
-      if (carrinhoSalvo) {
-        const parsed = JSON.parse(carrinhoSalvo);
-        if (Array.isArray(parsed)) {
-          setCartItems(parsed.map(sanitizeCartItem).filter(Boolean));
-        }
-      }
-
-      if (pedidosSalvos) {
-        const parsedP = JSON.parse(pedidosSalvos);
-        if (Array.isArray(parsedP)) setPedidos(parsedP);
-      }
-    } catch (err) {
-      console.error("Erro ao carregar carrinho/pedidos:", err);
+      setCartItems(carrinho.map(sanitizeCartItem).filter(Boolean));
+      setPedidos(Array.isArray(pedidosLS) ? pedidosLS : []);
+    } catch {
       localStorage.removeItem("carrinho");
       localStorage.removeItem("pedidos");
     }
   }, []);
 
-  // Atualiza total e salva carrinho
+  // Atualizar total
   useEffect(() => {
     const sanitized = cartItems.map(sanitizeCartItem);
-    localStorage.setItem("carrinho", JSON.stringify(sanitized));
 
-    // cálculo preciso do total
     const total = sanitized.reduce((acc, item) => {
-      const preco = sanitizePrice(item.preco);
-      const qtd = parseInt(item.qtd) || 0;
-      return acc + preco * qtd;
+      return acc + sanitizePrice(item.preco) * (parseInt(item.qtd) || 0);
     }, 0);
 
     setTotalCart(Number(total.toFixed(2)));
+    localStorage.setItem("carrinho", JSON.stringify(sanitized));
   }, [cartItems]);
 
-  // Persistir pedidos
   useEffect(() => {
     localStorage.setItem("pedidos", JSON.stringify(pedidos));
   }, [pedidos]);
 
-  // Adiciona item (usa nome ou id como chave)
+  // Adicionar
   const addToCart = (item) => {
-    const precoSan = sanitizePrice(item.preco ?? item.price ?? 0);
-    const nome = item.nome || item.name || "";
-    const id = item.id || nome;
+    const id = item.id || item.nome;
 
     setCartItems((prev) => {
-      const prevSan = prev.map(sanitizeCartItem);
-      const existente = prevSan.find((p) => p.id === id);
+      const existente = prev.find((p) => p.id === id);
 
       if (existente) {
-        // Atualiza quantidade
-        return prevSan.map((p) =>
+        return prev.map((p) =>
           p.id === id ? { ...p, qtd: (parseInt(p.qtd) || 1) + 1 } : p
         );
       }
 
-      // Novo item
-      const novo = sanitizeCartItem({ ...item, id, nome, preco: precoSan, qtd: 1 });
-      return [...prevSan, novo];
+      return [...prev, sanitizeCartItem({ ...item, qtd: 1 })];
     });
   };
 
@@ -115,10 +94,11 @@ export const CartProvider = ({ children }) => {
     setCartItems((prev) =>
       prev
         .map((item) =>
-          item.id === id ? { ...item, qtd: (parseInt(item.qtd) || 1) - 1 } : item
+          item.id === id
+            ? { ...item, qtd: (parseInt(item.qtd) || 1) - 1 }
+            : item
         )
-        .map(sanitizeCartItem)
-        .filter((item) => item && item.qtd > 0)
+        .filter((item) => item.qtd > 0)
     );
   };
 
@@ -130,14 +110,15 @@ export const CartProvider = ({ children }) => {
 
   const adicionarPedido = (pedido) => {
     const numeroPedido = Date.now();
-    const novoPedido = { ...pedido, numeroPedido };
-    setPedidos((prev) => [...prev, novoPedido]);
+    const novo = { ...pedido, numeroPedido };
+
+    setPedidos((prev) => [...prev, novo]);
     clearCart();
   };
 
   const removerPedido = (numeroPedido) => {
     setPedidos((prev) =>
-      prev.filter((pedido) => pedido.numeroPedido !== numeroPedido)
+      prev.filter((p) => p.numeroPedido !== numeroPedido)
     );
   };
 

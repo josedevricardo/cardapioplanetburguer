@@ -1,73 +1,106 @@
+/* src/components/produto-cart/produto-cart.css */
+
+/* Importando uma fonte moderna caso o sistema não tenha */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+
 .produto-cart-box {
-  border: 1px solid #e9e9e9;
-  padding: 10px;
   display: flex;
-  margin: 20px;
+  gap: 14px;
+  padding: 14px;
+  background: #ffffff;
+  border-radius: 16px; /* Bordas mais arredondadas e modernas */
+  margin-bottom: 12px;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border: 1px solid #f0f0f0;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 }
 
-.produto-cart-box img {
-  width: 50px;
-  height: 50px;
-  margin-right: 10px;
-  object-fit: cover; /* Protege o layout caso a imagem não esteja no tamanho ideal */
+.img-produto {
+  width: 75px;
+  height: 75px;
+  border-radius: 12px;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.detalhes-produto {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .produto-cart-nome {
-  margin: 10px 3px 0px 0px;
+  font-weight: 700;
+  color: #111827; /* Cinza quase preto, muito moderno */
+  font-size: 1rem;
+  margin: 0;
+  line-height: 1.2;
+  letter-spacing: -0.02em; /* Letras levemente mais juntas (estilo Apple) */
 }
 
-.produto-cart-valor {
-  color: #d2691e;
+.produto-cart-adicionais {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280; /* Cinza médio para descrição */
+  margin: 4px 0;
+  line-height: 1.4;
+}
+
+.produto-cart-valor-unitario {
   font-size: 0.8rem;
-  margin: 10px 3px 0px 0px;
+  font-weight: 400;
+  color: #9ca3af;
+  margin-bottom: 8px;
 }
 
 .footer-produto-cart {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  flex-wrap: wrap;
+  margin-top: 4px;
 }
 
-.footer-produto-btn {
-  border: 1px solid #cacaca;
-  padding: 10px 15px;
-  border-radius: 5px;
-  background-color: #d2691e;
-  color: #fff;
-  font-weight: bold;
+.controles-quantidade {
+  display: flex;
+  align-items: center;
+  background: #f3f4f6;
+  border-radius: 12px; /* Botões pílula mais quadrados nas pontas ficam mais tech */
+  padding: 3px;
+}
+
+.btn-menos, .btn-mais {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  border: none;
+  background: #ffffff;
+  color: #111827;
+  font-weight: 700;
   cursor: pointer;
-  transition: background-color 0.2s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  transition: all 0.2s ease;
 }
 
-.footer-produto-btn:hover {
-  background-color: #a14c15;
+.btn-menos:hover, .btn-mais:hover {
+  background: #111827;
+  color: #ffffff;
 }
 
-.footer-produto-qtd {
-  margin-left: 5px;
-  margin-right: 5px;
+.qtd-display {
+  padding: 0 12px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #111827;
 }
 
-.footer-produto-preco {
-  color: #d2691e;
-  font-size: 1rem;
-  font-weight: bold;
-  line-height: 1rem;
-  display: inline-block;
-  width: 86px;
-  text-align: right;
-}
-
-/* RESPONSIVO */
-@media screen and (max-width: 591px) {
-  .footer-produto-cart {
-    flex-direction: column;
-    align-items: flex-start;
-    font-size: 0.7rem;
-    padding: 0px;
-    gap: 8px;
-  }
-
-  
+.subtotal-item {
+  font-weight: 800;
+  color: #10b981; /* Verde esmeralda mais vibrante */
+  font-size: 1.05rem;
+  margin: 0;
+  letter-spacing: -0.01em;
 }
