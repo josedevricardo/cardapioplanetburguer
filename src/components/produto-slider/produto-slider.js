@@ -44,7 +44,7 @@ const ProdutoSlider = ({ busca = "" }) => {
             id,
             categoria: catNome,
             ...produto,
-            ativo: produto.ativo !== false, // 🔥 TRATAMENTO CORRETO
+            ativo: produto.ativo !== false, //  TRATAMENTO CORRETO
           });
         });
       });

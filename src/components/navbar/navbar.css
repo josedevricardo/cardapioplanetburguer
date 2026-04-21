@@ -992,7 +992,7 @@
 .nav-left, .nav-right-group {
   display: flex;
   align-items: center;
-  
+  align-items: flex-start;
   gap: 12px;
 }
 
@@ -1106,6 +1106,36 @@
   justify-content: center;
   border-radius: 8px;
   text-decoration: none;
+}
+
+.delivery-banner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1; /* Faz o banner ocupar o espaço central */
+  padding: 0 15px;
+}
+
+.banner-img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.banner-img:hover {
+  transform: scale(1.02);
+}
+
+
+
+/* Esconder banner no mobile se ficar muito apertado */
+@media (max-width: 768px) {
+  .delivery-banner {
+    display: none; 
+  }
 }
 
 /* RESPONSIVIDADE MOBILE */

@@ -32,8 +32,10 @@ function ModalAdicionarProduto({ categorias, aberto, onClose, onSalvar }) {
     onClose();
   };
 
+  if (!aberto) return null; // Garantia extra de que não renderiza se fechado
+
   return (
-    <div className={`modal-produto-overlay ${aberto ? "show" : ""}`}>
+    <div className={`modal-produto-overlay show`}>
       <motion.div
         className="modalEditar"
         initial={{ opacity: 0, scale: 0.95, y: 25 }}
@@ -61,7 +63,7 @@ function ModalAdicionarProduto({ categorias, aberto, onClose, onSalvar }) {
           <input value={descricao} onChange={(e) => setDescricao(e.target.value)} />
 
           <label>Preço</label>
-          <input type="number" value={preco} onChange={(e) => setPreco(e.target.value)} required />
+          <input type="number" step="0.01" value={preco} onChange={(e) => setPreco(e.target.value)} required />
 
           <label>Estoque</label>
           <input type="number" value={estoque} onChange={(e) => setEstoque(e.target.value)} />
@@ -98,8 +100,10 @@ export default function AdminProdutosCompleto() {
   const [modalAberto, setModalAberto] = useState(false);
 
   const mostrarMensagem = useCallback((texto) => {
-    const audio = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
-    audio.play();
+    try {
+        const audio = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
+        audio.play().catch(() => {}); // Evita erro de política de autoplay do navegador
+    } catch (e) {}
     setMensagem(texto);
     setTimeout(() => setMensagem(""), 3000);
   }, []);
@@ -110,6 +114,7 @@ export default function AdminProdutosCompleto() {
       const data = snapshot.val() || {};
       const reorganizado = {};
       Object.entries(data).forEach(([cat, dados]) => {
+        // Correção: Garante que se a categoria existir mas não tiver produtos, retorne objeto vazio
         reorganizado[cat] = dados.produtos || {};
       });
       setProdutos(reorganizado);
@@ -146,14 +151,17 @@ export default function AdminProdutosCompleto() {
   };
 
   const adicionarCategoria = () => {
-    if (!novaCategoria.trim()) return mostrarMensagem("❌ Nome inválido.");
-    set(ref(db, `categorias/${novaCategoria}`), { nome: novaCategoria, produtos: {} })
-      .then(() => mostrarMensagem("✅ Categoria adicionada."))
+    const nomeLimpo = novaCategoria.trim();
+    if (!nomeLimpo) return mostrarMensagem("❌ Nome inválido.");
+    // No Firebase, para criar o nó pai, salvamos o nome da categoria
+    set(ref(db, `categorias/${nomeLimpo}`), { nome: nomeLimpo })
+      .then(() => {
+        mostrarMensagem("✅ Categoria adicionada.");
+        setNovaCategoria("");
+      })
       .catch(() => mostrarMensagem("❌ Erro ao adicionar categoria."));
-    setNovaCategoria("");
   };
 
-  // 🔥 ESTA É A FUNÇÃO AGORA NO LOCAL CORRETO
   const removerCategoria = (cat) => {
     if (!window.confirm(`Excluir categoria "${cat}" com todos os produtos?`)) return;
     remove(ref(db, `categorias/${cat}`))
@@ -172,7 +180,7 @@ export default function AdminProdutosCompleto() {
     Object.entries(produtos).forEach(([cat, lista]) => {
       if (filtroCategoria && cat !== filtroCategoria) return;
       Object.values(lista).forEach((prod) => {
-        csv += `"${cat}","${prod.nome}","${prod.descricao}","${prod.preco}","${prod.estoque}","${prod.ativo}","${prod.imagem}"\n`;
+        csv += `"${cat}","${prod.nome || ""}","${prod.descricao || ""}","${prod.preco || 0}","${prod.estoque || 0}","${prod.ativo}","${prod.imagem || ""}"\n`;
       });
     });
     const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
@@ -194,15 +202,13 @@ export default function AdminProdutosCompleto() {
       <AnimatePresence>
         {mensagem && (
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.8 }}
-            transition={{ duration: 0.4 }}
+            initial={{ opacity: 0, scale: 0.8, x: "-50%", y: "-50%" }}
+            animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%" }}
+            exit={{ opacity: 0, scale: 0.8, x: "-50%", y: "-50%" }}
             style={{
               position: "fixed",
               top: "50%",
               left: "50%",
-              transform: "translate(-50%, -50%)",
               background: "#16a34a",
               color: "#fff",
               padding: "1rem 2rem",
@@ -223,20 +229,20 @@ export default function AdminProdutosCompleto() {
 
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-3xl font-bold">🛠️ Admin de Produtos</h2>
-
-        <button className="btn-voltar" onClick={() => navigate(-1)}>
-          ⬅️ Voltar
-        </button>
-
-        <button
-          onClick={() => {
-            localStorage.removeItem("adminLogado");
-            window.location.href = "/login-admin";
-          }}
-          className="btn-sair"
-        >
-          <LogOut size={18} /> Sair
-        </button>
+        <div className="flex gap-2">
+            <button className="btn-voltar" onClick={() => navigate(-1)}>
+              ⬅️ Voltar
+            </button>
+            <button
+              onClick={() => {
+                localStorage.removeItem("adminLogado");
+                window.location.href = "/login-admin";
+              }}
+              className="btn-sair"
+            >
+              <LogOut size={18} /> Sair
+            </button>
+        </div>
       </div>
 
       <div className="flex flex-col md:flex-row gap-2 mb-4 items-center">
@@ -254,7 +260,7 @@ export default function AdminProdutosCompleto() {
         <select className="select-categoria" value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)}>
           <option value="">Todas categorias</option>
           {categoriasKeys.map((cat) => (
-            <option key={cat}>{cat}</option>
+            <option key={cat} value={cat}>{cat}</option>
           ))}
         </select>
 
@@ -282,9 +288,16 @@ export default function AdminProdutosCompleto() {
         ➕ Adicionar novo produto
       </button>
 
-      {modalAberto && (
-        <ModalAdicionarProduto categorias={categoriasKeys} onClose={() => setModalAberto(false)} onSalvar={adicionarProduto} />
-      )}
+      <AnimatePresence>
+        {modalAberto && (
+          <ModalAdicionarProduto 
+            categorias={categoriasKeys} 
+            aberto={modalAberto} 
+            onClose={() => setModalAberto(false)} 
+            onSalvar={adicionarProduto} 
+          />
+        )}
+      </AnimatePresence>
 
       {categoriasKeys
         .filter((cat) => !filtroCategoria || cat === filtroCategoria)
@@ -292,22 +305,19 @@ export default function AdminProdutosCompleto() {
           <div key={cat} className="card-categoria">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-2xl font-bold text-yellow-700">{cat}</h3>
-
               <button className="btn-remove-categoria" onClick={() => removerCategoria(cat)}>
                 <Trash2 size={16} /> Remover categoria
               </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(produtos[cat])
+              {Object.entries(produtos[cat] || {})
                 .filter(([_, prod]) => {
                   const termo = filtro.toLowerCase().trim();
                   if (!termo) return true;
                   return (
                     prod.nome?.toLowerCase().includes(termo) ||
-                    prod.descricao?.toLowerCase().includes(termo) ||
-                    prod.preco?.toString().includes(termo) ||
-                    prod.estoque?.toString().includes(termo)
+                    prod.descricao?.toLowerCase().includes(termo)
                   );
                 })
                 .map(([id, prod]) => (
