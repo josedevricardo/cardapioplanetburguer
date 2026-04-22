@@ -1,353 +1,226 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { db } from "../firebaseConfig";
-import { ref, onValue, update, push, remove, set } from "firebase/database";
-import { saveAs } from "file-saver";
-import { PlusCircle, Trash2, Save, Upload, Search, LogOut } from "lucide-react";
+import { ref, onValue, update, push, remove } from "firebase/database";
+import { Trash2, Save, Search, ImageIcon, Plus, X, Eye, EyeOff, Edit, DollarSign } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from "react-router-dom";
 import "./adminProdutos.css";
-import "./modalPedido.css";
 
-// Modal React para adicionar produto
+// --- COMPONENTE DO MODAL (ADICIONAR NOVO) ---
 function ModalAdicionarProduto({ categorias, aberto, onClose, onSalvar }) {
   const [categoria, setCategoria] = useState("");
+  const [novaCatNome, setNovaCatNome] = useState("");
+  const [mostraInputCat, setMostraInputCat] = useState(false);
   const [nome, setNome] = useState("");
   const [descricao, setDescricao] = useState("");
   const [preco, setPreco] = useState("");
-  const [estoque, setEstoque] = useState(0);
   const [imagem, setImagem] = useState("");
-  const [ativo, setAtivo] = useState(true);
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => setImagem(reader.result);
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!categoria || !nome || !preco) return;
-    onSalvar(categoria, {
-      nome,
-      descricao,
-      preco: parseFloat(preco),
-      estoque: parseInt(estoque),
-      imagem,
-      ativo,
+    const catFinal = mostraInputCat ? novaCatNome.trim() : categoria;
+    if (!catFinal || !nome || !preco) return;
+    onSalvar(catFinal, { 
+      nome, 
+      descricao, 
+      preco: parseFloat(preco), 
+      imagem, 
+      ativo: true 
     });
+    
+    setCategoria(""); setNovaCatNome(""); setNome(""); setDescricao(""); setPreco(""); setImagem("");
     onClose();
   };
 
-  if (!aberto) return null; // Garantia extra de que não renderiza se fechado
+  if (!aberto) return null;
 
   return (
-    <div className={`modal-produto-overlay show`}>
-      <motion.div
-        className="modalEditar"
-        initial={{ opacity: 0, scale: 0.95, y: 25 }}
-        animate={{ opacity: 1, scale: 1, y: 0 }}
-        exit={{ opacity: 0, scale: 0.95, y: 25 }}
-        transition={{ duration: 0.25 }}
-      >
-        <h3 className="titulo-modal">➕ Adicionar Produto</h3>
-
-        <form onSubmit={handleSubmit} className="modal-form">
-          <label>Categoria</label>
-          <select value={categoria} onChange={(e) => setCategoria(e.target.value)} required>
-            <option value="">Selecione uma categoria</option>
-            {categorias.map((cat) => (
-              <option key={cat} value={cat}>
-                {cat}
-              </option>
-            ))}
-          </select>
-
-          <label>Nome</label>
-          <input value={nome} onChange={(e) => setNome(e.target.value)} required />
-
-          <label>Descrição</label>
-          <input value={descricao} onChange={(e) => setDescricao(e.target.value)} />
-
-          <label>Preço</label>
-          <input type="number" step="0.01" value={preco} onChange={(e) => setPreco(e.target.value)} required />
-
-          <label>Estoque</label>
-          <input type="number" value={estoque} onChange={(e) => setEstoque(e.target.value)} />
-
-          <label>URL da imagem</label>
-          <input value={imagem} onChange={(e) => setImagem(e.target.value)} />
-
-          <label className="checkbox-area">
-            <input type="checkbox" checked={ativo} onChange={(e) => setAtivo(e.target.checked)} /> Produto ativo
-          </label>
-
-          <div className="modal-actions">
-            <button type="button" className="btnCancelar" onClick={onClose}>
-              Cancelar
-            </button>
-            <button type="submit" className="btnSalvar">
-              Salvar
-            </button>
-          </div>
+    <div className="fixed inset-0 z-[1001] flex items-center justify-center bg-black/50 backdrop-blur-sm">
+      <motion.div className="modalEditar" initial={{ scale: 0.9 }} animate={{ scale: 1 }}>
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="font-bold text-lg">➕ Novo Produto</h3>
+          <button onClick={onClose}><X /></button>
+        </div>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-2">
+            <div className="flex gap-2">
+              {!mostraInputCat ? (
+                <select className="input" value={categoria} onChange={(e) => setCategoria(e.target.value)} required={!mostraInputCat}>
+                  <option value="">Categoria...</option>
+                  {categorias.map(c => <option key={c} value={c}>{c}</option>)}
+                </select>
+              ) : (
+                <input className="input" placeholder="Nova Categoria" value={novaCatNome} onChange={(e) => setNovaCatNome(e.target.value)} required />
+              )}
+              <button type="button" className="btn-add-categoria" onClick={() => setMostraInputCat(!mostraInputCat)}>
+                {mostraInputCat ? <X size={16}/> : <Plus size={16}/>}
+              </button>
+            </div>
+            <input className="input" placeholder="Nome do Produto" value={nome} onChange={(e) => setNome(e.target.value)} required />
+            <textarea className="input-textarea" placeholder="Descrição" value={descricao} onChange={(e) => setDescricao(e.target.value)} />
+            <input className="input" type="number" step="0.01" placeholder="Preço" value={preco} onChange={(e) => setPreco(e.target.value)} required />
+            <label className="btn-upload-mini" style={{border: '1px dashed #ccc', padding: '10px', borderRadius: '8px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '5px'}}>
+               <ImageIcon size={16} /> {imagem ? "Imagem OK ✅" : "Anexar Foto"}
+               <input type="file" hidden accept="image/*" onChange={handleImageUpload} />
+            </label>
+            <button type="submit" className="btn-add-produto" style={{width: '100%', justifyContent: 'center'}}>Cadastrar Produto</button>
         </form>
       </motion.div>
     </div>
   );
 }
 
+// --- COMPONENTE PRINCIPAL ---
 export default function AdminProdutosCompleto() {
   const navigate = useNavigate();
-
   const [produtos, setProdutos] = useState({});
-  const [novaCategoria, setNovaCategoria] = useState("");
   const [filtro, setFiltro] = useState("");
   const [filtroCategoria, setFiltroCategoria] = useState("");
   const [mensagem, setMensagem] = useState("");
   const [modalAberto, setModalAberto] = useState(false);
 
-  const mostrarMensagem = useCallback((texto) => {
-    try {
-        const audio = new Audio("https://www.soundjay.com/buttons/sounds/button-3.mp3");
-        audio.play().catch(() => {}); // Evita erro de política de autoplay do navegador
-    } catch (e) {}
-    setMensagem(texto);
-    setTimeout(() => setMensagem(""), 3000);
-  }, []);
+  const mostrarMsg = useCallback((t) => { setMensagem(t); setTimeout(() => setMensagem(""), 2500); }, []);
 
   useEffect(() => {
-    const categoriasRef = ref(db, "categorias");
-    const unsubscribe = onValue(categoriasRef, (snapshot) => {
-      const data = snapshot.val() || {};
-      const reorganizado = {};
-      Object.entries(data).forEach(([cat, dados]) => {
-        // Correção: Garante que se a categoria existir mas não tiver produtos, retorne objeto vazio
-        reorganizado[cat] = dados.produtos || {};
+    const unsub = onValue(ref(db, "categorias"), (s) => {
+      const data = s.val() || {};
+      const reorg = {};
+      Object.entries(data).forEach(([cat, d]) => {
+        reorg[cat] = d.produtos || {};
       });
-      setProdutos(reorganizado);
+      setProdutos(reorg);
     });
-
-    return () => unsubscribe();
+    return () => unsub();
   }, []);
 
-  const handleInputChange = (cat, id, campo, valor) => {
-    setProdutos((prev) => ({
-      ...prev,
-      [cat]: {
-        ...prev[cat],
-        [id]: {
-          ...prev[cat][id],
-          [campo]: valor,
-        },
-      },
-    }));
+  // Lógica para atualizar imagem de produto existente
+  const handleUpdateImage = (cat, id, e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setProdutos(prev => ({
+          ...prev, 
+          [cat]: { ...prev[cat], [id]: { ...prev[cat][id], imagem: reader.result } }
+        }));
+        mostrarMsg("🖼️ Imagem carregada! Clique em Salvar.");
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const salvarProduto = (cat, id) => {
-    const produtoAtualizado = produtos[cat][id];
-    update(ref(db, `categorias/${cat}/produtos/${id}`), produtoAtualizado)
-      .then(() => mostrarMensagem("✅ Produto atualizado com sucesso!"))
-      .catch(() => mostrarMensagem("❌ Erro ao salvar."));
+  const salvarProd = (cat, id) => {
+    update(ref(db, `categorias/${cat}/produtos/${id}`), produtos[cat][id])
+      .then(() => mostrarMsg("✅ Alterações Salvas!"));
   };
 
-  const removerProduto = (cat, id) => {
-    if (!window.confirm("Deseja realmente remover este produto?")) return;
-    remove(ref(db, `categorias/${cat}/produtos/${id}`))
-      .then(() => mostrarMensagem("🗑️ Produto removido."))
-      .catch(() => mostrarMensagem("❌ Erro ao remover produto."));
-  };
-
-  const adicionarCategoria = () => {
-    const nomeLimpo = novaCategoria.trim();
-    if (!nomeLimpo) return mostrarMensagem("❌ Nome inválido.");
-    // No Firebase, para criar o nó pai, salvamos o nome da categoria
-    set(ref(db, `categorias/${nomeLimpo}`), { nome: nomeLimpo })
-      .then(() => {
-        mostrarMensagem("✅ Categoria adicionada.");
-        setNovaCategoria("");
-      })
-      .catch(() => mostrarMensagem("❌ Erro ao adicionar categoria."));
-  };
-
-  const removerCategoria = (cat) => {
-    if (!window.confirm(`Excluir categoria "${cat}" com todos os produtos?`)) return;
-    remove(ref(db, `categorias/${cat}`))
-      .then(() => mostrarMensagem("🗑️ Categoria removida."))
-      .catch(() => mostrarMensagem("❌ Erro ao remover categoria."));
-  };
-
-  const exportarJSON = () => {
-    const blob = new Blob([JSON.stringify(produtos, null, 2)], { type: "application/json" });
-    saveAs(blob, "produtos-backup.json");
-    mostrarMensagem("📦 Exportado como JSON.");
-  };
-
-  const exportarCSV = () => {
-    let csv = "categoria,nome,descricao,preco,estoque,ativo,imagem\n";
-    Object.entries(produtos).forEach(([cat, lista]) => {
-      if (filtroCategoria && cat !== filtroCategoria) return;
-      Object.values(lista).forEach((prod) => {
-        csv += `"${cat}","${prod.nome || ""}","${prod.descricao || ""}","${prod.preco || 0}","${prod.estoque || 0}","${prod.ativo}","${prod.imagem || ""}"\n`;
-      });
+  const handleAdd = (cat, obj) => {
+    update(ref(db, `categorias/${cat}`), { nome: cat }).then(() => {
+        push(ref(db, `categorias/${cat}/produtos`), obj).then(() => { 
+            mostrarMsg("✅ Adicionado com Sucesso!"); 
+            setModalAberto(false); 
+        });
     });
-    const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
-    saveAs(blob, "produtos.csv");
-    mostrarMensagem("📄 Exportado como CSV.");
   };
 
-  const adicionarProduto = (categoria, produto) => {
-    const novoRef = push(ref(db, `categorias/${categoria}/produtos`));
-    set(novoRef, produto)
-      .then(() => mostrarMensagem("✅ Produto adicionado com sucesso!"))
-      .catch(() => mostrarMensagem("❌ Erro ao adicionar produto."));
+  const removerProd = (cat, id, nome) => {
+    if (window.confirm(`Deseja excluir apenas o produto "${nome}"?`)) {
+      // Remove APENAS o produto no caminho específico, sem afetar o nó pai da categoria
+      remove(ref(db, `categorias/${cat}/produtos/${id}`))
+        .then(() => mostrarMsg("🗑️ Produto Removido!"));
+    }
   };
 
   const categoriasKeys = Object.keys(produtos);
 
   return (
-    <div className="p-6 max-w-screen-xl mx-auto">
+    <div className="p-4 max-w-screen-xl mx-auto">
       <AnimatePresence>
-        {mensagem && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8, x: "-50%", y: "-50%" }}
-            animate={{ opacity: 1, scale: 1, x: "-50%", y: "-50%" }}
-            exit={{ opacity: 0, scale: 0.8, x: "-50%", y: "-50%" }}
-            style={{
-              position: "fixed",
-              top: "50%",
-              left: "50%",
-              background: "#16a34a",
-              color: "#fff",
-              padding: "1rem 2rem",
-              borderRadius: "1rem",
-              fontSize: "18px",
-              fontWeight: "bold",
-              boxShadow: "0 10px 25px rgba(0,0,0,0.3)",
-              zIndex: 9999,
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-            }}
-          >
-            {mensagem}
-          </motion.div>
-        )}
+        {mensagem && <motion.div className="mensagem-fixa">{mensagem}</motion.div>}
       </AnimatePresence>
 
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold">🛠️ Admin de Produtos</h2>
-        <div className="flex gap-2">
-            <button className="btn-voltar" onClick={() => navigate(-1)}>
-              ⬅️ Voltar
-            </button>
-            <button
-              onClick={() => {
-                localStorage.removeItem("adminLogado");
-                window.location.href = "/login-admin";
-              }}
-              className="btn-sair"
-            >
-              <LogOut size={18} /> Sair
-            </button>
-        </div>
+        <h2 className="text-2xl font-bold">🛠️ Admin Planet's</h2>
+        <button className="btn-sair" onClick={() => navigate(-1)}>Voltar</button>
       </div>
 
-      <div className="flex flex-col md:flex-row gap-2 mb-4 items-center">
-        <div className="relative w-full md:w-1/3">
-          <input
-            type="text"
-            className="input-busca"
-            placeholder="Buscar produto..."
-            value={filtro}
-            onChange={(e) => setFiltro(e.target.value.toLowerCase())}
-          />
+      <div className="controles-topo">
+        <div className="busca-wrapper">
+          <input className="input-busca" placeholder="Buscar produto..." onChange={(e) => setFiltro(e.target.value.toLowerCase())} />
           <Search className="icon-busca" size={18} />
         </div>
-
         <select className="select-categoria" value={filtroCategoria} onChange={(e) => setFiltroCategoria(e.target.value)}>
-          <option value="">Todas categorias</option>
-          {categoriasKeys.map((cat) => (
-            <option key={cat} value={cat}>{cat}</option>
-          ))}
+          <option value="">Todas Categorias</option>
+          {categoriasKeys.map(c => <option key={c} value={c}>{c}</option>)}
         </select>
-
-        <button className="btn-export" onClick={exportarJSON}>
-          <Upload size={16} /> JSON
-        </button>
-        <button className="btn-export" onClick={exportarCSV}>
-          <Upload size={16} /> CSV
-        </button>
+        <button className="btn-add-produto" onClick={() => setModalAberto(true)}><Plus size={18}/> Novo Produto</button>
       </div>
 
-      <div className="flex gap-2 mb-6">
-        <input
-          value={novaCategoria}
-          onChange={(e) => setNovaCategoria(e.target.value)}
-          placeholder="Nova categoria"
-          className="input-categoria"
-        />
-        <button onClick={adicionarCategoria} className="btn-add-categoria">
-          <PlusCircle size={18} /> Categoria
-        </button>
-      </div>
+      <ModalAdicionarProduto categorias={categoriasKeys} aberto={modalAberto} onClose={() => setModalAberto(false)} onSalvar={handleAdd} />
 
-      <button className="btn-add-produto" onClick={() => setModalAberto(true)}>
-        ➕ Adicionar novo produto
-      </button>
-
-      <AnimatePresence>
-        {modalAberto && (
-          <ModalAdicionarProduto 
-            categorias={categoriasKeys} 
-            aberto={modalAberto} 
-            onClose={() => setModalAberto(false)} 
-            onSalvar={adicionarProduto} 
-          />
-        )}
-      </AnimatePresence>
-
-      {categoriasKeys
-        .filter((cat) => !filtroCategoria || cat === filtroCategoria)
-        .map((cat) => (
-          <div key={cat} className="card-categoria">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-2xl font-bold text-yellow-700">{cat}</h3>
-              <button className="btn-remove-categoria" onClick={() => removerCategoria(cat)}>
-                <Trash2 size={16} /> Remover categoria
-              </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {Object.entries(produtos[cat] || {})
-                .filter(([_, prod]) => {
-                  const termo = filtro.toLowerCase().trim();
-                  if (!termo) return true;
-                  return (
-                    prod.nome?.toLowerCase().includes(termo) ||
-                    prod.descricao?.toLowerCase().includes(termo)
-                  );
-                })
-                .map(([id, prod]) => (
-                  <div key={id} className="card-produto">
-                    <input className="input" value={prod.nome || ""} onChange={(e) => handleInputChange(cat, id, "nome", e.target.value)} placeholder="Nome" />
-                    <input className="input" value={prod.descricao || ""} onChange={(e) => handleInputChange(cat, id, "descricao", e.target.value)} placeholder="Descrição" />
-                    <input className="input" type="number" value={prod.preco || ""} onChange={(e) => handleInputChange(cat, id, "preco", e.target.value)} placeholder="Preço" />
-                    <input className="input" type="number" value={prod.estoque ?? ""} onChange={(e) => handleInputChange(cat, id, "estoque", e.target.value)} placeholder="Estoque" />
-                    <input className="input" value={prod.imagem || ""} onChange={(e) => handleInputChange(cat, id, "imagem", e.target.value)} placeholder="URL da imagem" />
-
-                    <div className="flex items-center gap-2 mb-2">
-                      <input type="checkbox" checked={prod.ativo ?? true} onChange={(e) => handleInputChange(cat, id, "ativo", e.target.checked)} />
-                      <span className="text-sm">Produto ativo</span>
-                    </div>
-
-                    {prod.imagem && <img src={prod.imagem} alt="" className="h-24 w-full object-contain mb-2 border rounded" />}
-
-                    <div className="flex justify-between mt-2">
-                      <button className="btn-yellow" onClick={() => salvarProduto(cat, id)}>
-                        <Save size={16} /> Salvar
-                      </button>
-                      <button className="btn-red" onClick={() => removerProduto(cat, id)}>
-                        <Trash2 size={16} /> Remover
-                      </button>
-                    </div>
-                  </div>
-                ))}
-            </div>
+      {categoriasKeys.filter(c => !filtroCategoria || c === filtroCategoria).map(cat => (
+        <div key={cat} className="card-categoria">
+          <div className="flex justify-between items-center mb-4 border-b pb-2">
+            <h3 style={{margin: 0, color: '#b45309'}}>{cat}</h3>
+            {/* Botão de Excluir Categoria (Separado) */}
+            <button className="btn-remove-categoria" onClick={() => { if(window.confirm(`AVISO: Isso excluirá a categoria "${cat}" e TODOS os produtos dentro dela. Confirmar?`)) remove(ref(db, `categorias/${cat}`)) }}>
+              <Trash2 size={16} /> <span className="texto-btn-pc">Excluir Categoria</span>
+            </button>
           </div>
-        ))}
+          
+          <div className="grid">
+            {Object.entries(produtos[cat] || {}).filter(([_, p]) => !filtro || p.nome?.toLowerCase().includes(filtro)).map(([id, prod]) => (
+              <div key={id} className="card-produto">
+                {prod.imagem && <img src={prod.imagem} className="img-admin" alt="" />}
+                
+                {/* Correção da Imagem: handleUpdateImage adicionado ao onChange */}
+                <label className="btn-upload-mini">
+                  {prod.imagem ? "Trocar Imagem" : "Anexar Imagem"}
+                  <input type="file" hidden accept="image/*" onChange={(e) => handleUpdateImage(cat, id, e)} />
+                </label>
+                
+                <input className="input" placeholder="Nome" value={prod.nome || ""} onChange={(e) => {
+                  const val = e.target.value;
+                  setProdutos(prev => ({...prev, [cat]: {...prev[cat], [id]: {...prev[cat][id], nome: val }}}));
+                }} />
+
+                <textarea className="input-textarea" placeholder="Descrição..." value={prod.descricao || ""} onChange={(e) => {
+                  const val = e.target.value;
+                  setProdutos(prev => ({...prev, [cat]: {...prev[cat], [id]: {...prev[cat][id], descricao: val }}}));
+                }} />
+
+                <div className="flex items-center gap-1 mb-2 bg-white border border-gray-200 p-1 rounded-md">
+                   <DollarSign size={14} className="text-green-600" />
+                   <input className="input" style={{margin:0, border:'none', fontWeight:'bold'}} type="number" step="0.01" value={prod.preco || ""} onChange={(e) => {
+                      const val = e.target.value;
+                      setProdutos(prev => ({...prev, [cat]: {...prev[cat], [id]: {...prev[cat][id], preco: val }}}));
+                   }} />
+                </div>
+
+                <div className="flex justify-between items-center gap-2">
+                   <button onClick={() => update(ref(db, `categorias/${cat}/produtos/${id}`), {ativo: !prod.ativo})}>
+                     {prod.ativo ? <Eye size={18} color="#2563eb"/> : <EyeOff size={18} color="#9ca3af"/>}
+                   </button>
+
+                   <div className="flex gap-1 flex-1 justify-end">
+                     <button className="btn-export" title="Editar" onClick={() => salvarProd(cat, id)}><Edit size={16}/></button>
+                     <button className="btn-yellow" title="Salvar" onClick={() => salvarProd(cat, id)}><Save size={16}/></button>
+                     <button className="btn-red" title="Excluir Produto" onClick={() => removerProd(cat, id, prod.nome)}><Trash2 size={16}/></button>
+                   </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      ))}
     </div>
   );
 }
