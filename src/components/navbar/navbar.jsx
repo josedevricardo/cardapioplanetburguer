@@ -5,7 +5,7 @@ import { CartContext } from "../../contexts/cart-context";
 import { categoriasFixas } from "../../rotas2";
 import Cart from "../Cart/cart";
 import logo from "../../assets/mascote.png";
-import bannerDelivery from "../../assets/banner2_delivery.png";
+import bannerDelivery from "../../assets/planetburguer.gif";
 
 import "./navbar.css";
 
@@ -101,11 +101,11 @@ function Navbar() {
             <span className="line"></span>
             <span className="line"></span>
           </button>
-          <Link to="/" className="home-icon-link">
-            🏠
-          </Link>
           <Link to="/" className="logo-link">
             <img src={logo} alt="Logo" className="logo" />
+            <Link to="/" className="home-icon-link">
+            🏠
+          </Link>
             <span className="logotext">
               Planet's <strong>Burguer</strong>
             </span>
@@ -119,8 +119,9 @@ function Navbar() {
           src={bannerDelivery} 
           alt="Propaganda Delivery" 
           className="banner-img"
-          style={{ height: '40px', width: 'auto' }} /* Adicione esta linha */
-        />
+          style={{ height: '120px', width: 'auto' }} 
+          />
+          
           </div>
         </div>
 
