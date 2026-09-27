@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { db, auth } from "../firebaseConfig";
 import { ref, onValue, update, set } from "firebase/database";
@@ -15,6 +15,51 @@ const AVISO_ANTIGO_MS = 1000 * 60 * 60 * 24 * 30;
 function formatarDataLocal(data) {
   const d = new Date(data);
   return d.toLocaleString("pt-BR");
+}
+
+// Função para gerar o som de campainha de balcão (timbre metálico estridente)
+function tocarAlarmeSonoro() {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    if (!AudioContext) return;
+    const ctx = new AudioContext();
+
+    // Toca duas badaladas secas de campainha de balcão
+    [0, 0.25].forEach((delay) => {
+      setTimeout(() => {
+        if (ctx.state === 'suspended') {
+          ctx.resume();
+        }
+
+        // Frequências duplas para criar o som metálico do sino de balcão
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const gainNode = ctx.createGain();
+
+        // Frequências agudas típicas de sininho de metal
+        osc1.type = "sine";
+        osc1.frequency.setValueAtTime(1200, ctx.currentTime);
+
+        osc2.type = "triangle";
+        osc2.frequency.setValueAtTime(2400, ctx.currentTime);
+
+        // Volume no máximo com queda rápida (efeito batida seca)
+        gainNode.gain.setValueAtTime(1.0, ctx.currentTime);
+        gainNode.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+
+        osc1.connect(gainNode);
+        osc2.connect(gainNode);
+        gainNode.connect(ctx.destination);
+
+        osc1.start();
+        osc2.start();
+        osc1.stop(ctx.currentTime + 0.35);
+        osc2.stop(ctx.currentTime + 0.35);
+      }, delay * 1000);
+    });
+  } catch (e) {
+    console.error("Erro ao reproduzir som:", e);
+  }
 }
 
 // 2. Função para Gerar PDF de Fechamento de Caixa (Relatório Geral)
@@ -71,8 +116,8 @@ function gerarRelatorioCaixa(pedidos, filtro, total) {
 
 // 3. Função de Impressão Térmica (Recibo Individual)
 function imprimirPedido(pedido) {
-  const janela = window.open("", "PRINT", "width=400,height=600");
-  if (!janela) return alert("Bloqueador de pop-up ativado!");
+  const janela = window.open("", "_blank", "width=300,height=400");
+  if (!janela) return alert("Permita os pop-ups no navegador!");
 
   janela.document.write(`
     <html>
@@ -80,10 +125,10 @@ function imprimirPedido(pedido) {
         <title>Recibo - Planet's Burguer</title>
         <style>
           @page { size: 80mm auto; margin: 0; }
-          body { font-family: 'Courier New', Courier, monospace; font-size: 12px; width: 80mm; padding: 10px; }
+          body { font-family: 'Courier New', Courier, monospace; font-size: 12px; width: 80mm; padding: 5px; }
           .center { text-align: center; }
           .total { font-weight: bold; font-size: 14px; border-top: 1px dashed #000; margin-top: 10px; padding-top: 5px; }
-          hr { border: 0; border-top: 1px solid #000; margin: 10px 0; }
+          hr { border: 0; border-top: 1px solid #000; margin: 8px 0; }
         </style>
       </head>
       <body>
@@ -97,11 +142,18 @@ function imprimirPedido(pedido) {
         <p><strong>PAGAMENTO:</strong> ${pedido.pagamento}</p>
         <hr/>
         <p><strong>ITENS:</strong></p>
-        ${(pedido.itens || []).map(i => `<div>${i.qtd}x ${i.produto}</div>`).join("")}
+        ${(pedido.itens || []).map(i => `<div>${i.qtd}x${i.produto}</div>`).join("")}
         <hr/>
         <p><strong>OBS:</strong> ${pedido.informacoes_adicionais || "Nenhuma"}</p>
         <p class="total center">VALOR TOTAL: R$ ${Number(pedido.total).toFixed(2)}</p>
-        <script>window.onload = () => { window.print(); window.close(); };</script>
+        <script>
+          window.onload = () => {
+            setTimeout(() => {
+              window.print();
+              setTimeout(() => { window.close(); }, 500);
+            }, 300);
+          };
+        </script>
       </body>
     </html>
   `);
@@ -112,12 +164,17 @@ export default function AdminPedidos() {
   const [pedidos, setPedidos] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [pedidoEmEdicao, setPedidoEmEdicao] = useState(null);
-  const [statusFiltro, setStatusFiltro] = useState("todos");
+  const [statusFiltro, setStatusFiltro] = useState("pendente"); // Começa filtrando pendentes para refletir dinamicamente no total
   const [notificacao, setNotificacao] = useState(false);
+  const [somAtivo, setSomAtivo] = useState(false);
+  const [valorOculto, setValorOculto] = useState(true); // Inicia oculto por padrão (privacidade fixa)
   const navigate = useNavigate();
-  const audioRef = useRef(new Audio("https://actions.google.com/sounds/v1/alarms/beep_short.ogg"));
 
-  // Sincronização com Firebase
+  const ativarSomAudio = () => {
+    tocarAlarmeSonoro();
+    setSomAtivo(true);
+  };
+
   useEffect(() => {
     const pedidosRef = ref(db, "pedidos");
     const unsubscribe = onValue(pedidosRef, (snapshot) => {
@@ -140,7 +197,6 @@ export default function AdminPedidos() {
     return () => unsubscribe();
   }, []);
 
-  // Notificação sonora e visual
   useEffect(() => {
     if (pedidos.length > 0) {
       const ultimoPedido = pedidos[0];
@@ -148,10 +204,14 @@ export default function AdminPedidos() {
       if (!localStorage.getItem(chave)) {
         localStorage.setItem(chave, "true");
         setNotificacao(true);
-        audioRef.current.play().catch(() => {});
+        tocarAlarmeSonoro();
+
         if (ultimoPedido.status === "pendente") {
-          setTimeout(() => imprimirPedido(ultimoPedido), 1000);
+          setTimeout(() => {
+            imprimirPedido(ultimoPedido);
+          }, 500);
         }
+
         setTimeout(() => setNotificacao(false), 4000);
       }
     }
@@ -187,12 +247,12 @@ export default function AdminPedidos() {
 
   return (
     <div className="stiloPedido">
-      <nav className="navbar2">
+      {/* Cabeçalho Fixo */}
+      <nav className="navbar2" style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 1000, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', boxSizing: 'border-box' }}>
         <div className="logoTitulo">
-          <span className="tituloPainel">🍔 Painel Planet's Burguer</span>
+          <span className="tituloPainel">🍔 Planet's Burguer</span>
         </div>
         <div className="navRight">
-          {/* BOTÃO ESTATÍSTICAS ADICIONADO AQUI */}
           <Link to="/admin-estatisticas" className="menu-btn" style={{ background: '#8e44ad' }}>
             📊 Estatísticas
           </Link>
@@ -201,21 +261,36 @@ export default function AdminPedidos() {
         </div>
       </nav>
 
-      <div className="container">
+      {/* Espaçamento superior seguro */}
+      <div className="container" style={{ paddingTop: '110px', paddingBottom: '40px' }}>
+        
+        {/* Botão de Ativar Som */}
+        {!somAtivo && (
+          <div style={{ background: '#fff3cd', border: '1px solid #ffeeba', color: '#856404', padding: '12px 15px', borderRadius: '8px', textAlign: 'center', marginBottom: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: '10px', flexWrap: 'wrap', fontSize: '0.9rem' }}>
+            <span style={{ flex: '1 1 200px', textAlign: 'left', fontWeight: '500' }}>🔔 Alerta sonoro desativado.</span>
+            <button 
+              onClick={ativarSomAudio}
+              style={{ background: '#27ae60', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '6px', cursor: 'pointer', fontWeight: 'bold', fontSize: '0.85rem', whiteSpace: 'nowrap' }}
+            >
+              🔊 Habilitar Som Agora
+            </button>
+          </div>
+        )}
+
         <AnimatePresence>
           {notificacao && (
             <motion.div className="notificacao-topo" initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -50 }}>
-              🔔 Novo pedido recebido!
+              🔔 Novo pedido recebido! Imprimindo cupom...
             </motion.div>
           )}
         </AnimatePresence>
 
         <div className="filtros-estatisticas">
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
             <select value={statusFiltro} onChange={(e) => setStatusFiltro(e.target.value)} className="selectFiltro">
-              <option value="todos">Todos (30 dias)</option>
               <option value="pendente">Pendentes</option>
               <option value="entregue">Entregues</option>
+              <option value="todos">Todos (30 dias)</option>
             </select>
             
             <button 
@@ -226,8 +301,16 @@ export default function AdminPedidos() {
             </button>
           </div>
 
-          <div className="total-badge">
-            Total em Tela: <strong>R$ {totalValor.toFixed(2)}</strong>
+          {/* Badge de Total em Tela perfeitamente alinhado lado a lado */}
+          <div className="total-badge" style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' }}>
+            <span>Total em Tela: <strong>{valorOculto ? "R$ *****" : `R$ ${totalValor.toFixed(2)}`}</strong></span>
+            <button 
+              onClick={() => setValorOculto(!valorOculto)}
+              title={valorOculto ? "Mostrar Valor" : "Ocultar Valor (Privacidade)"}
+              style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.1rem', padding: '0', display: 'flex', alignItems: 'center' }}
+            >
+              {valorOculto ? "👁️‍🗨️" : "👁️"}
+            </button>
           </div>
         </div>
 

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import logo from "../../assets/mascote.png";
+import logo from "../../assets/burgue+A.png";
 import Navbar from "../../components/navbar/navbar.jsx";
 import ScrollToTopButton from "../../components/ScrollToTopButton/ScrollToTopButton.js";
 import CategoriaSlider from "../../components/CategoriaSlider/CategoriaSlider.jsx";
@@ -35,7 +35,7 @@ function Home() {
 
             <div className="logo-container">
               <span className="logo-text glow-text">
-                Planet’s <strong>Burguer</strong>
+                 <strong>BURGUE+A</strong>
               </span>
             </div>
 

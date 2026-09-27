@@ -4,8 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CartContext } from "../../contexts/cart-context";
 import { categoriasFixas } from "../../rotas2";
 import Cart from "../Cart/cart";
-import logo from "../../assets/mascote.png";
-import bannerDelivery from "../../assets/planetburguer.gif";
+import logo from "../../assets/burgue+A2.png";
 
 import "./navbar.css";
 
@@ -85,13 +84,22 @@ function Navbar() {
         <div className="loading-screen">
           <img src={logo} alt="Logo" className="loading-logo" />
           <div className="loading-content">
-            <p>🍔 Carregando...</p>
+            <div class="loading-screen" id="loadingScreen">
+              <div class="loader-content">
+                <div class="loader-icon">🍔</div>
+                <h2>Delivery BURGUE+A</h2>
+                <p>Preparando o cardápio...</p>
+                <div class="loader-bar">
+                  <div class="loader-progress"></div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       )}
 
       <nav className={`navbar ${isSticky ? "sticky" : ""}`}>
-        {/* GRUPO ESQUERDA */}
+        {/* GRUPO ESQUERDA: Botão Início + Menu Hambúrguer + Logo com Tag Cardápio */}
         <div className="nav-left">
           <button
             className={`hamburger ${isMobileMenuOpen ? "open" : ""}`}
@@ -101,34 +109,34 @@ function Navbar() {
             <span className="line"></span>
             <span className="line"></span>
           </button>
+          <Link to="/" className="nav-inicio-link" title="Página Inicial">
+            <svg
+              className="home-svg-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+              <polyline points="9 22 9 12 15 12 15 22"></polyline>
+            </svg>
+          </Link>
+
           <Link to="/" className="logo-link">
             <img src={logo} alt="Logo" className="logo" />
-            <Link to="/" className="home-icon-link">
-            🏠
-          </Link>
-            <span className="logotext">
-              Planet's <strong>Burguer</strong>
-            </span>
+            <div className="logo-text-group">
+              <span className="logotext">
+                Delivery <strong>BURGUE+A</strong>
+              </span>
+              <span className="navbar-cardapio-tag">Cardápio Digital</span>
+            </div>
           </Link>
         </div>
 
-        {/* NOVO GRUPO CENTRO: BANNER DE DELIVERY */}
-        <div className="nav-center-group">
-          <div className="delivery-banner">
-            <img 
-          src={bannerDelivery} 
-          alt="Propaganda Delivery" 
-          className="banner-img"
-          style={{ height: '120px', width: 'auto' }} 
-          />
-          
-          </div>
-        </div>
-
-        {/* GRUPO CONTATO + CARRINHO */}
+        {/* GRUPO DIREITA: Apenas o botão da sacola */}
         <div className="nav-right-group">
-          {!isMobile && <WhatsAppLink />}
-
           <button onClick={openSidebar} className="sacola-button compact-new">
             <div className="sacola-wrapper">
               <span className="sacola-icon">🛒</span>
@@ -167,8 +175,7 @@ function Navbar() {
           </button>
         </div>
 
-        {/* RESTANTE DO CÓDIGO (SIDEBAR, CART, ETC) */}
-        {/* ... (mantido) */}
+        {/* SIDEBAR MOBILE */}
         <AnimatePresence>
           {isMobileMenuOpen && (
             <>
@@ -187,7 +194,7 @@ function Navbar() {
                       className={`menu-item-btn ${location.pathname === "/" ? "ativo" : ""}`}
                       onClick={() => navegarComEfeito("/")}
                     >
-                      <span>Início</span> 🏠
+                      <span>Início</span>
                     </button>
                   </li>
                   {categoriasFixas.map(({ nome, rota }, index) => (
@@ -221,20 +228,23 @@ function Navbar() {
             </>
           )}
         </AnimatePresence>
-        <Cart id="cart" />
-        <AnimatePresence>
-          {motinhaAtiva && (
-            <motion.div
-              initial={{ x: "-100%" }}
-              animate={{ x: "120%" }}
-              exit={{ opacity: 0 }}
-              className="motinha-entrega"
-            >
-              🛵💨
-            </motion.div>
-          )}
-        </AnimatePresence>
       </nav>
+
+      <Cart id="cart" />
+
+      <AnimatePresence>
+        {motinhaAtiva && (
+          <motion.div
+            initial={{ x: "-100%" }}
+            animate={{ x: "120%" }}
+            exit={{ opacity: 0 }}
+            className="motinha-entrega"
+          >
+            🛵💨
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       <div className="navbar-space" />
     </>
   );

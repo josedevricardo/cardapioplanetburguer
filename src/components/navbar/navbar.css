@@ -1,823 +1,132 @@
-/* -------- Navbar geral -------- */
-/* Ajuste na Navbar para permitir que os itens se aproximem */
+/* ==========================================
+   1. NAVBAR & CABEÇALHO
+   ================================---------- */
 .navbar {
-  display: flex;
-  align-items: center;
-  padding: 8px 3%;
-  background: #fff;
   position: fixed;
   top: 0;
+  left: 0;
   width: 100%;
+  height: 80px;
+  background: linear-gradient(135deg, #0d0e12 0%, #16181d 100%);
+  box-shadow: 0 4px 30px rgba(0, 0, 0, 0.6);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
   z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-  /* Removido o space-between para os itens não "fugirem" para as pontas */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 35px;
+  box-sizing: border-box;
+  flex-wrap: nowrap;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
 }
 
-.navbar.sticky {
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
-}
-/* Mantém o lado esquerdo fixo na ponta esquerda */
-
-
-/* Container da busca agora controla o espaço */
-.search-container {
-  max-width: 300px;
-  margin-right: 20px; /* Espaço entre busca e o grupo da direita */
-}
-
-/* Grupo da direita (Contato + Sacola) agora colado na busca */
+.nav-left,
 .nav-right-group {
   display: flex;
   align-items: center;
-  gap: 15px; /* Espaço entre o WhatsApp e a Sacola */
+  gap: 14px;
+  flex-wrap: nowrap;
 }
 
-.gif-background {
-  position: absolute;
-  top: 70px; 
-  left: 0;
-  right: 0;
-  height: 300px;
-  background-repeat: no-repeat;
-  background-size: contain;
-  opacity: 0.12;
-  z-index: 0;
-  pointer-events: none;
-  margin-top: 1rem;
-}
-
-/* -------- Logo com texto -------- */
+/* Logo e Texto */
 .logo-link {
   display: flex;
   align-items: center;
+  gap: 10px;
   text-decoration: none;
 }
 
-.logo-text-container {
-  gap: 10px;
-}
 .logo {
-    width: 22px;
-  }
+  width: 40px;
+  height: 40px;
+  object-fit: contain;
+}
 
-.logotipo {
-  width: 48px;
-  height: auto;
+.logo-text-group {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  line-height: 1.15;
 }
 
 .logotext {
-  font-size: 22px;
-  font-weight: 700;
-  color: #e65500;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-  transition: all 0.4s ease-in-out;
-  cursor: pointer;
-  display: inline-block;
-  position: relative;
-  opacity: 0;
-  transform: translateY(-10px);
-  animation: fadeSlideIn 0.8s ease forwards, pulse 3s ease-in-out infinite;
-  
-}
-
-.logotext:hover {
-  background: linear-gradient(90deg, #e53935, #ff7043);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  transform: scale(1.08) translateY(-2px);
-  text-shadow: 0 3px 8px rgba(0, 0, 0, 0.25);
-}
-
-.logo-text strong {
-  color: #333;
-}
-
-.logo-link:hover .logo-text {
-  transform: scale(1.05);
-}
-
-
-
-/* -------- Menu Desktop -------- */
-.desktop-menu {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1;
-  gap: 1.5rem;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s ease;
-  list-style: none;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-}
-
-/* Botões do menu limpos sem borda */
-.menu-link {
-  background: none;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  text-decoration: none;
-  color: #333;
-  font-weight: 500;
-  transition: color 0.3s, background-color 0.3s, box-shadow 0.3s;
-  padding: 6px 10px;
-  border-radius: 6px;
-  user-select: none;
-}
-
-
-.menu-link:hover,
-.menu-link:focus {
-  color: #004d00; /* verde escuro */
-  background-color: rgba(0, 77, 0, 0.12); /* fundo verde claro translúcido */
-  box-shadow: 0 0 6px rgba(0, 77, 0, 0.25); /* sombra verde ao redor */
-  outline: none;
-}
-
-/* Link ativo */
-.menu-link.ativo {
-  color: #e65500;
-  font-weight: 700;
-  
-}
-
-/* -------- Botão Sacola -------- */
-.right-buttons {
-  display: flex;
-  align-items: center;
-  margin-left: 12px;
-}
-
-
-.sacola-button {
-  background: none;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  color: rgb(2, 80, 2);
-  margin-left: -11rem;
-  margin-top: 3rem;
-  padding: 6px 12px;
-  border-radius: 8px;
-  transition: background-color 0.3s, color 0.3s;
-}
-
-.sacola-button:hover,
-.sacola-button:focus {
-  background-color: rgb(2, 80, 2);
-  color: #fff;
-  outline: none;
-}
-
-.sacola-icon {
-  font-size: 20px;
-  margin-right: 6px;
-}
-
-.sacola-text {
-  font-weight: bold;
-  font-size: 14px;
-}
-
-/* -------- Hamburger Menu -------- */
-.hamburger {
-  background: none;
-  border: none;
-  outline: none;
-  cursor: pointer;
-  padding: 6px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  height: 24px;
-  width: 30px;
-}
-
-.hamburger .line {
-  background-color: #333;
-  height: 3px;
-  width: 100%;
-  border-radius: 2px;
-  transition: 0.3s;
-}
-
-.hamburger.open .line:nth-child(1) {
-  transform: rotate(45deg) translate(5px, 5px);
-}
-
-.hamburger.open .line:nth-child(2) {
-  opacity: 0;
-}
-
-.hamburger.open .line:nth-child(3) {
-  transform: rotate(-45deg) translate(6px, -6px);
-}
-
-/* -------- Menu Mobile Lateral -------- */
-.mobile-left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-}
-
-.mobile-sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 240px;
-  height: 100%;
-  background-color: rgb(240, 242, 243);
-  box-shadow: 2px 0 10px rgba(241, 241, 241, 0.1);
-  padding: 2rem 1rem;
-  z-index: 150;
-  transition: transform 0.3s ease-in-out;
-}
-
-/* reset de estilos remover bordas */
-.mobile-menu {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.mobile-menu li {
-  width: 100%;
-}
-
-.mobile-menu button.menu-link {
-  all: unset;
-  display: block;
-  width: 100%;
-  padding: 12px 16px;
-  font-size: 1rem;
-  font-weight: 600;
-  color: #333;
-  background-color: transparent;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  text-align: left;
-  user-select: none;
-}
-
-.mobile-menu button.menu-link:hover,
-.mobile-menu button.menu-link:focus {
-  background-color: #006400;
-  color: #f9f9f9;
-  outline: none;
-}
-
-.mobile-overlay {
-  position: fixed;
-  top: 0;
-  left: 240px;
-  right: 0;
-  bottom: 0;
-  background: transparent;
-  z-index: 1000;
-}
-
-/* -------- Loader -------- */
-.loading-screen {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: #f9f9f9;
-  z-index: 9999;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  animation: fadeIn 0.1s ease-in-out;
-}
-
-.loading-logo {
-  width: 120px;
-  height: auto;
-  margin-bottom: 20px;
-  animation: spin 3s linear infinite;
-}
-
-.loading-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.burger-icon {
-  font-size: 3rem;
-  animation: bounce 1s infinite;
-  margin-bottom: 10px;
-}
-
-.loading-content p {
-  font-size: 1.4rem;
-  color: #333;
-  font-weight: bold;
-}
-
-
-/* ============================ */
-/*    WHATSAPP NO MENU MOBILE   */
-/* ============================ */
-
-.mobile-whatsapp {
-  margin-top: 25px;
-  padding: 15px 0;
-  border-top: 1px solid rgba(255,255,255,0.2);
-  display: flex;
-  justify-content: center;
-}
-
-.whatsapp-link {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-decoration: none;
-}
-
-.whatsapp-svg {
-  width: 46px;
-  height: 46px;
-  margin-bottom: 8px;
-}
-
-.whatsapp-text {
-  color:#ff6600;;
-  font-size: 15px;
-  text-align: center;
-  line-height: 1.3;
-}
-
-
-/* -------- Espaço da navbar fixa -------- */
-.navbar-space {
-  height: 40px; /* reduzido para desktop */
-}
-
-/* -------- Animações -------- */
-@keyframes spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@keyframes bounce {
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@keyframes fadeSlideIn {
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse {
-  0%,
-  100% {
-    opacity: 1;
-    transform: scale(1);
-  }
-  50% {
-    opacity: 0.6;
-    transform: scale(1.05);
-  }
-}
-
-/* -------- Responsividade -------- */
-@media (max-width: 982px) {
-  .desktop-menu {
-    display: none;
-  }
-
-  .right-buttons {
-    margin-left: auto;
-  }
-}
-
-
-    .logotext {
-    display: none;
-  }
-.search-input-wrapper {
-  position: relative;
-  width: 100%;
-}
-
-.search-bar {
-  width: 100%;
-  padding: 8px 40px 8px 12px; /* espaço para o ícone */
-  border-radius: 8px;
-  border: 1px solid #bfd30e;
-  font-size: 14px;
-}
-
-.search-icon {
-  position: absolute;
-  right: 12px;
-  top: 50%;
-  transform: translateY(-50%);
-  width: 20px;
-  height: 20px;
-  color: #777;
-  pointer-events: none;
-  transition: color 0.3s ease;
-}
-
-.search-icon.active {
-  color: #ff6600; /* cor quando há texto */
-}
-
-
-/* -------- Responsividade Melhorada -------- */
-@media (max-width: 768px) {
-  .navbar {
-    padding: 10px 16px;
-    height: 56px;
-  }
-
-  .navbar-space {
-    height: 50px;
-  }
-
-  .logo-text {
-    font-size: 18px;
-    opacity: 1;
-    transform: none;
-    animation: none;
-  }
-
-  .logo {
-    width: 42px;
-  }
-
-    .logotext {
-    display: none;
-  }
-
-  .right-buttons {
-    margin-left: auto;
-    margin-top: 0;
-  }
-
-  .sacola-button {
-    margin-left: 0;
-    margin-top: 0;
-    padding: 6px 10px;
-    font-size: 14px;
-  }
-
-  .sacola-icon {
-    font-size: 18px;
-  }
-
-  .hamburger {
-    margin-right: 8px;
-  }
-
-  .mobile-left {
-    gap: 8px;
-  }
-
-  .mobile-sidebar {
-    background-color: #ffffff;
-    padding: 1.5rem 1rem;
-    width: 220px;
-  }
-
-  .mobile-menu button.menu-link {
-    font-size: 0.95rem;
-    padding: 10px 14px;
-  }
-
-  .gif-background {
-    position: absolute;
-    top: 56px;
-    height: 220px;
-    background-size: contain;
-    background-position: center;
-    opacity: 0.15;
-    margin-top: 10px;
-  }
-
-  .loading-logo {
-    width: 90px;
-  }
-
-  .loading-content p {
-    font-size: 1.1rem;
-  }
-}
-
-/* Navbar */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 4%;
-  background: #fff;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-}
-
-.nav-left {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-/* Ícone de Home */
-.home-icon-link {
-  font-size: 1.3rem;
-  text-decoration: none;
-  background: #f3f4f6;
-  width: 38px;
-  height: 38px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 10px;
-  transition: background 0.2s;
-}
-
-.home-icon-link:hover {
-  background: #e5e7eb;
-}
-
-/* NOVO BOTÃO DE SACOLA COMPACTO E ORGANIZADO */
-.sacola-button.compact-new {
-  background: #111827;
-  border: none;
-  padding: 6px 12px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  position: relative;
-  min-height: 40px;
-}
-
-.sacola-wrapper {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.1);
-  padding: 4px 8px;
-  border-radius: 8px;
-}
-
-.sacola-icon {
-  font-size: 1.1rem;
-}
-
-/* BADGE AGORA DENTRO DO BOTÃO, SEM SAIR PRA FORA */
-.cart-badge-inner {
-  background: #ef4444;
-  color: white;
-  font-size: 10px;
-  font-weight: 800;
-  margin-left: 5px;
-  padding: 1px 5px;
-  border-radius: 5px;
-}
-
-.sacola-text-price {
-  color: #fff;
-  font-weight: 700;
-  font-size: 13px;
-}
-
-/* WhatsApp Estilo Card */
-.whatsapp-global-link {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  background: #f0fdf4;
-  padding: 5px 12px;
-  border-radius: 10px;
-}
-
-.whatsapp-icon-bg {
-  background: #25D366;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.whatsapp-icon-bg svg { width: 14px; height: 14px; }
-
-.whatsapp-info span { font-size: 9px; color: #166534; display: block; }
-.whatsapp-info strong { font-size: 11px; color: #111827; }
-
-/* Menu Lateral */
-.mobile-sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 270px;
-  height: 100vh;
-  background: #fff;
-  z-index: 1100;
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-}
-
-.menu-item-btn {
-  width: 100%;
-  text-align: left;
-  padding: 14px 10px;
-  background: none;
-  border: none;
-  border-bottom: 1px solid #f3f4f6;
   font-size: 1.05rem;
-  font-weight: 600;
-  color: #1f2937;
-  display: flex;
-  justify-content: space-between;
-}
-
-/* Tooltip Adjustments */
-.sacola-tooltip {
-  position: absolute;
-  background: white;
-  color: #111827;
-  padding: 6px 12px;
-  border-radius: 8px;
-  font-size: 11px;
-  font-weight: 800;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-  border: 1px solid #e5e7eb;
+  font-weight: 400;
+  color: #ffffff;
+  letter-spacing: -0.3px;
   white-space: nowrap;
 }
 
-@media (max-width: 768px) {
-  .logotext { display: none; } /* Esconde o texto da logo no mobile para dar espaço à Home */
-  .sacola-button.compact-new { padding: 6px 10px; }
-  .sacola-text-price { font-size: 11px; }
+.logotext strong {
+  color: #ffb703;
 }
 
+.navbar-cardapio-tag {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: #a0a5bc;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin-top: 2px;
+  white-space: nowrap;
+}
 
-/* MENU LATERAL - MOBILE SIDEBAR */
-.mobile-sidebar {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 280px;
-  height: 100vh;
-  background: #ffffff;
-  z-index: 1100;
-  padding: 30px 20px;
+/* Botão Início */
+.nav-inicio-link {
   display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #f1f1f1;
+  text-decoration: none;
+  padding: 8px 14px;
+  border-radius: 10px;
+  transition: all 0.25s ease;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  white-space: nowrap;
+}
+
+.nav-inicio-link:hover {
+  background: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.2);
+  transform: translateY(-1px);
+}
+
+.home-svg-icon {
+  width: 15px;
+  height: 15px;
+  stroke: currentColor;
+}
+
+.inicio-text-small {
+  font-size: 0.8rem;
+  font-weight: 500;
+  display: none; /* Oculto por padrão no celular, exibe via media query se necessário */
+}
+
+/* Menu Hambúrguer */
+.hamburger {
+  display: none;
   flex-direction: column;
-  box-shadow: 5px 0 25px rgba(0,0,0,0.1);
-}
-
-.sidebar-header {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #111827;
-  margin-bottom: 25px;
-  padding-left: 10px;
-  border-left: 4px solid #10b981; /* Verde do site */
-}
-
-.mobile-menu-list {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-/* EFEITO DE MOVIMENTO NO BOTÃO DO MENU */
-.menu-item-btn {
-  width: 100%;
+  justify-content: space-between;
+  width: 28px;
+  height: 20px;
   background: transparent;
   border: none;
-  padding: 16px 12px;
-  margin-bottom: 8px;
-  border-radius: 12px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: #4b5563;
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  overflow: hidden;
+  padding: 0;
 }
 
-/* Texto dentro do botão */
-.menu-item-btn span {
-  transition: transform 0.3s ease;
-}
-
-/* Ícone da flecha escondido inicialmente */
-.arrow-icon {
-  opacity: 0;
-  transform: translateX(-10px);
+.hamburger .line {
+  width: 100%;
+  height: 2.5px;
+  background-color: #f1f1f1;
+  border-radius: 2px;
   transition: all 0.3s ease;
-  color: #10b981; /* Verde padrão */
-  font-weight: bold;
-  font-size: 1.2rem;
 }
 
-/* EFEITO AO PASSAR O MOUSE OU CLICAR */
-.menu-item-btn:hover, 
-.menu-item-btn:active {
-  background-color: #f0fdf4; /* Fundo verde bem clarinho */
-  color: #10b981; /* Texto verde */
-}
-
-.menu-item-btn:hover span,
-.menu-item-btn:active span {
-  transform: translateX(10px); /* Move o texto para a direita */
-}
-
-.menu-item-btn:hover .arrow-icon,
-.menu-item-btn:active .arrow-icon {
-  opacity: 1;
-  transform: translateX(0); /* Flecha aparece e vai para posição real */
-}
-
-/* Botão de Início com destaque */
-.item-home {
-  border: 1px solid #f3f4f6;
-  margin-bottom: 20px;
-}
-
-/* Rodapé do Menu */
-.sidebar-footer {
-  margin-top: auto;
-  padding-top: 20px;
-  border-top: 1px solid #f3f4f6;
-}
-
-/* Overlay com desfoque */
-.mobile-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  backdrop-filter: blur(5px);
-  z-index: 1050;
-}
-/* Ajuste Mobile para não amontoar */
-@media (max-width: 768px) {
-  .search-container {
-    max-width: 120px;
-    margin-right: 10px;
-  }
-  
-  .nav-right-group {
-    gap: 8px;
-    margin-right: 10px;
-  }
-}
-/* Ajustes responsivos para os botões */
-@media (max-width: 768px) {
-  .menu-item-btn {
-    padding: 14px 10px;
-    font-size: 1rem;
-  }
-}
-
-/* Barra de busca Desktop */
+/* Barra de Busca Desktop */
 .searchbar-desktop input {
   border: 1px solid #e5e7eb;
   padding: 8px 15px;
@@ -832,56 +141,9 @@
   width: 250px;
 }
 
-/* Estado ativo do menu lateral */
-.menu-item-btn.ativo {
-  background-color: #f0fdf4;
-  color: #10b981;
-  border-left: 4px solid #10b981;
-}
-
-.menu-item-btn.ativo .arrow-icon {
-  opacity: 1;
-  transform: translateX(0);
-}
-
-.motinha-entrega {
-  pointer-events: none;
-}
-
-/* Navbar Base */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 8px 4%;
-  background: #ffffff;
-  position: fixed;
-  top: 0;
-  width: 100%;
-  z-index: 1000;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
-}
-
-.nav-left {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-/* Ícone de Home */
-.home-icon-link {
-  font-size: 1.2rem;
-  background: #f3f4f6;
-  width: 35px;
-  height: 35px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  text-decoration: none;
-}
-
-/* Sacola Compacta e Badge Integrada */
+/* ==========================================
+   2. SACOLA & BADGE DE ITENS
+   ================================---------- */
 .sacola-button.compact-new {
   background: #111827;
   border: none;
@@ -918,7 +180,28 @@
   font-size: 13px;
 }
 
-/* WHATSAPP ESTILIZADO */
+.sacola-tooltip {
+  position: absolute;
+  background: white;
+  color: #111827;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  border: 1px solid #e5e7eb;
+  white-space: nowrap;
+  z-index: 1200;
+
+  /* Padrão para Telas Maiores (Desktop): Fica embaixo do botão */
+  top: calc(100% + 8px);
+  left: 10%;
+  transform: translateX(-50%);
+}
+
+/* ==========================================
+   3. WHATSAPP GLOBAL
+   ================================---------- */
 .whatsapp-global-link {
   display: flex;
   align-items: center;
@@ -931,7 +214,7 @@
 }
 
 .whatsapp-icon-bg {
-  background: #25D366;
+  background: #25d366;
   width: 26px;
   height: 26px;
   border-radius: 50%;
@@ -940,45 +223,206 @@
   justify-content: center;
 }
 
-.whatsapp-icon-bg svg { width: 16px; height: 16px; }
+.whatsapp-icon-bg svg {
+  width: 16px;
+  height: 16px;
+}
 
-.whatsapp-info span { font-size: 9px; color: #166534; display: block; line-height: 1; }
-.whatsapp-info strong { font-size: 11px; color: #111827; }
+.whatsapp-info span {
+  font-size: 9px;
+  color: #166534;
+  display: block;
+  line-height: 1;
+}
 
-/* Menu Lateral e Efeitos */
+.whatsapp-info strong {
+  font-size: 11px;
+  color: #111827;
+}
+
+/* ==========================================
+   4. MENU LATERAL (MOBILE SIDEBAR)
+   ================================---------- */
+.mobile-sidebar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 280px;
+  height: 100vh;
+  background: #ffffff;
+  z-index: 1100;
+  padding: 30px 20px;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 5px 0 25px rgba(0, 0, 0, 0.1);
+}
+
+.sidebar-header {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #111827;
+  margin-bottom: 25px;
+  padding-left: 10px;
+  border-left: 4px solid #10b981;
+}
+
+.mobile-menu-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
 .menu-item-btn {
   width: 100%;
-  background: none;
+  background: transparent;
   border: none;
-  padding: 15px 12px;
+  padding: 16px 12px;
+  margin-bottom: 8px;
+  border-radius: 12px;
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 1.1rem;
   font-weight: 600;
   color: #4b5563;
-  transition: all 0.3s;
-  border-radius: 10px;
   cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
 }
 
-.menu-item-btn span { transition: transform 0.3s ease; }
-.arrow-icon { opacity: 0; transform: translateX(-10px); transition: 0.3s; color: #10b981; }
+.menu-item-btn span {
+  transition: transform 0.3s ease;
+}
 
-.menu-item-btn:hover, .menu-item-btn.ativo {
-  background: #f0fdf4;
+.arrow-icon {
+  opacity: 0;
+  transform: translateX(-10px);
+  transition: all 0.3s ease;
   color: #10b981;
+  font-weight: bold;
+  font-size: 1.2rem;
 }
 
-.menu-item-btn:hover span, .menu-item-btn.ativo span { transform: translateX(8px); }
-.menu-item-btn:hover .arrow-icon, .menu-item-btn.ativo .arrow-icon { opacity: 1; transform: translateX(0); }
+/* Hover e Estados Ativos do Menu */
+.menu-item-btn:hover,
+.menu-item-btn:active,
+.menu-item-btn.ativo {
+  background-color: #f0fdf4;
+  color: #10b981;
+  border-left: 4px solid #10b981;
+}
+
+.menu-item-btn:hover span,
+.menu-item-btn:active span,
+.menu-item-btn.ativo span {
+  transform: translateX(10px);
+}
+
+.menu-item-btn:hover .arrow-icon,
+.menu-item-btn:active .arrow-icon,
+.menu-item-btn.ativo .arrow-icon {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.item-home {
+  border: 1px solid #f3f4f6;
+  margin-bottom: 20px;
+}
 
 .sidebar-footer {
   margin-top: auto;
-  padding-top: 15px;
+  padding-top: 20px;
   border-top: 1px solid #f3f4f6;
 }
 
+.mobile-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.4);
+  backdrop-filter: blur(5px);
+  z-index: 1050;
+}
+
+/* ==========================================
+   5. LOADER / TELA DE CARREGAMENTO
+   ================================---------- */
+.loading-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: #121212;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  transition:
+    opacity 0.4s ease,
+    visibility 0.4s ease;
+}
+
+.loading-screen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.loader-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 20px;
+}
+
+.loader-icon,
+.burger-icon {
+  font-size: 64px;
+  margin-bottom: 15px;
+  animation: bounce 1.2s infinite ease-in-out;
+}
+
+.loader-content h2 {
+  color: #ffffff;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  margin: 0 0 5px 0;
+  letter-spacing: 0.5px;
+}
+
+.loader-content p {
+  color: #a0a0a0;
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  font-size: 14px;
+  margin: 0 0 25px 0;
+}
+
+.loader-bar {
+  width: 160px;
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 4px;
+  overflow: hidden;
+  position: relative;
+}
+
+.loader-progress {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #ff512f, #f09819);
+  border-radius: 4px;
+  position: absolute;
+  left: -100%;
+  animation: loadingSlide 1.5s infinite linear;
+}
+
+/* ==========================================
+   6. ELEMENTOS EXTRAS & ANIMAÇÕES
+   ================================---------- */
 .motinha-entrega {
   position: fixed;
   top: 50%;
@@ -987,174 +431,68 @@
   pointer-events: none;
 }
 
-
-
-.nav-left, .nav-right-group {
-  display: flex;
-  align-items: center;
-  align-items: flex-start;
-  gap: 12px;
-}
-
-/* BARRA DE BUSCA CENTRAL */
-.search-container {
-  flex: 1;
-  max-width: 300px;
-  margin: 0 15px;
-}
-
-.search-wrapper {
-  position: relative;
-  display: flex;
-  align-items: center;
-}
-
-.search-wrapper input {
-  width: 100%;
-  padding: 8px 35px 8px 15px;
-  border-radius: 20px;
-  border: 1px solid #e5e7eb;
-  background: #f9fafb;
-  font-size: 14px;
-  outline: none;
-  transition: all 0.3s;
-}
-
-.search-wrapper input:focus {
-  border-color: #10b981;
-  background: #fff;
-  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1);
-}
-
-.search-icon-inside {
-  position: absolute;
-  right: 12px;
-  font-size: 14px;
-  color: #9ca3af;
-}
-
-/* WHATSAPP */
-.whatsapp-global-link {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  background: #f0fdf4;
-  padding: 6px 12px;
-  border-radius: 50px;
-}
-
-.whatsapp-icon-bg {
-  background: #25D366;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.whatsapp-icon-bg svg { width: 14px; height: 14px; }
-
-.whatsapp-info span { font-size: 8px; color: #166534; display: block; line-height: 1; }
-.whatsapp-info strong { font-size: 10px; color: #111827; }
-
-/* SACOLA E BADGE */
-.sacola-button.compact-new {
-  background: #111827;
-  padding: 6px 10px;
-  border-radius: 10px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  border: none;
-  cursor: pointer;
-}
-
-.sacola-wrapper {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 2px 5px;
-  border-radius: 5px;
-}
-
-.cart-badge-inner {
-  background: #ef4444;
-  color: #fff;
-  font-size: 9px;
-  font-weight: 800;
-  margin-left: 3px;
-  padding: 0 3px;
-  border-radius: 3px;
-}
-
-.sacola-text-price {
-  color: #fff;
-  font-weight: 700;
-  font-size: 12px;
-}
-
-/* HOME */
-.home-icon-link {
-  font-size: 1.1rem;
-  background: #f3f4f6;
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  text-decoration: none;
-}
-
-.delivery-banner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex: 1; /* Faz o banner ocupar o espaço central */
-  padding: 0 15px;
-}
-
-.banner-img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 8px;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-  cursor: pointer;
-  transition: transform 0.2s;
-}
-
-.banner-img:hover {
-  transform: scale(1.02);
-}
-
-
-
-/* Esconder banner no mobile se ficar muito apertado */
-@media (max-width: 768px) {
-  .delivery-banner {
-    display: none; 
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-12px) scale(1.05);
   }
 }
 
-/* RESPONSIVIDADE MOBILE */
+@keyframes loadingSlide {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* ==========================================
+   7. RESPONSIVIDADE (MEDIA QUERIES)
+   ================================---------- */
 @media (max-width: 768px) {
+  .navbar {
+    padding: 0 15px;
+  }
+
+  .hamburger {
+    display: flex;
+  }
+
+  .nav-left {
+    gap: 10px;
+  }
+
+  .logo {
+    width: 34px;
+    height: 34px;
+  }
+
+  .logotext {
+    font-size: 0.9rem;
+  }
+
+  .navbar-cardapio-tag {
+    font-size: 0.55rem;
+    letter-spacing: 0.8px;
+    opacity: 0.85;
+  }
+
   .search-container {
-    max-width: 140px; /* Menor no mobile para caber tudo */
-    margin: 0 8px;
-  }
-  
-  .search-wrapper input {
-    padding: 6px 30px 6px 10px;
-    font-size: 12px;
+    max-width: 120px;
+    margin-right: 10px;
   }
 
-  .logotext { display: none; }
-}
+  .nav-right-group {
+    gap: 8px;
+    margin-right: 10px;
+  }
 
-@media (max-width: 768px) {
-  .logo { height: 35px; }
-  .sacola-text-price { font-size: 11px; }
+  .menu-item-btn {
+    padding: 14px 10px;
+    font-size: 1rem;
+  }
 }
-

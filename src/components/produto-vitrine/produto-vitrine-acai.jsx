@@ -180,7 +180,7 @@ const ProdutoVitrine = ({ busca }) => {
                 />
                 <p className="prod-vitrine-preco">{formatarPreco(produto.preco)}</p>
                 <button className="botao-adicionar" onClick={() => handleClick(produto)}>
-                  {qtd > 0 ? `Adicionar mais (${qtd}x)` : "Adicionar à Sacola"}
+                  {qtd > 0 ? `Adicionar (${qtd}x)` : "Adicionar"}
                 </button>
               </div>
             );
