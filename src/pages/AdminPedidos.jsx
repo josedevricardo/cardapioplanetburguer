@@ -12,9 +12,53 @@ import "./AdminPedidosFooter.css";
 const AVISO_ANTIGO_MS = 1000 * 60 * 60 * 24 * 30; 
 
 function formatarDataLocal(data) {
-  const d = new Date(data);
-  return d.toLocaleString("pt-BR");
+  try {
+    if (!data) return "Data inválida";
+    const d = new Date(data);
+    return isNaN(d.getTime()) ? "Data inválida" : d.toLocaleString("pt-BR");
+  } catch {
+    return "Data inválida";
+  }
 }
+
+// 🛡️ Carregador ultraseguro do QZ Tray (nunca quebra a página)
+const carregarQzTray = () => {
+  return new Promise((resolve) => {
+    try {
+      if (typeof window !== "undefined" && window.qz) {
+        resolve(window.qz);
+        return;
+      }
+
+      if (!document.getElementById("qz-tray-script")) {
+        const script = document.createElement("script");
+        script.id = "qz-tray-script";
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/qz-tray/2.2.4/qz-tray.js";
+        script.async = true;
+        script.onload = () => {
+          resolve(window.qz || null);
+        };
+        script.onerror = () => {
+          console.warn("QZ Tray CDN indisponível.");
+          resolve(null);
+        };
+        document.body.appendChild(script);
+      } else {
+        let tentativas = 0;
+        const intervalo = setInterval(() => {
+          tentativas++;
+          if (window.qz || tentativas > 20) {
+            clearInterval(intervalo);
+            resolve(window.qz || null);
+          }
+        }, 100);
+      }
+    } catch (e) {
+      console.warn("Erro ao carregar QZ Tray:", e);
+      resolve(null);
+    }
+  });
+};
 
 function tocarAlarmeSonoro() {
   try {
@@ -24,31 +68,35 @@ function tocarAlarmeSonoro() {
 
     [0, 0.25].forEach((delay) => {
       setTimeout(() => {
-        if (ctx.state === 'suspended') {
-          ctx.resume();
+        try {
+          if (ctx.state === 'suspended') {
+            ctx.resume();
+          }
+
+          const osc1 = ctx.createOscillator();
+          const osc2 = ctx.createOscillator();
+          const gainNode = ctx.createGain();
+
+          osc1.type = "sine";
+          osc1.frequency.setValueAtTime(1200, ctx.currentTime);
+
+          osc2.type = "triangle";
+          osc2.frequency.setValueAtTime(2400, ctx.currentTime);
+
+          gainNode.gain.setValueAtTime(1.0, ctx.currentTime);
+          gainNode.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
+
+          osc1.connect(gainNode);
+          osc2.connect(gainNode);
+          gainNode.connect(ctx.destination);
+
+          osc1.start();
+          osc2.start();
+          osc1.stop(ctx.currentTime + 0.35);
+          osc2.stop(ctx.currentTime + 0.35);
+        } catch (innerErr) {
+          console.error("Erro interno no som:", innerErr);
         }
-
-        const osc1 = ctx.createOscillator();
-        const osc2 = ctx.createOscillator();
-        const gainNode = ctx.createGain();
-
-        osc1.type = "sine";
-        osc1.frequency.setValueAtTime(1200, ctx.currentTime);
-
-        osc2.type = "triangle";
-        osc2.frequency.setValueAtTime(2400, ctx.currentTime);
-
-        gainNode.gain.setValueAtTime(1.0, ctx.currentTime);
-        gainNode.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
-
-        osc1.connect(gainNode);
-        osc2.connect(gainNode);
-        gainNode.connect(ctx.destination);
-
-        osc1.start();
-        osc2.start();
-        osc1.stop(ctx.currentTime + 0.35);
-        osc2.stop(ctx.currentTime + 0.35);
       }, delay * 1000);
     });
   } catch (e) {
@@ -58,61 +106,72 @@ function tocarAlarmeSonoro() {
 
 // Relatório Geral de Caixa
 function gerarRelatorioCaixa(pedidos, filtro, total) {
-  const janela = window.open("", "PRINT", "width=800,height=600");
-  const itensHtml = pedidos.map(p => `
-    <tr>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px;">${formatarDataLocal(p.data)}</td>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px;">${p.nome}</td>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px;">${p.pagamento}</td>
-      <td style="border-bottom: 1px solid #ddd; padding: 8px;">R$ ${Number(p.total).toFixed(2)}</td>
-    </tr>
-  `).join("");
+  try {
+    const janela = window.open("", "PRINT", "width=800,height=600");
+    if (!janela) {
+      alert("Permita pop-ups no navegador para gerar o relatório.");
+      return;
+    }
 
-  janela.document.write(`
-    <html>
-      <head>
-        <title>Fechamento de Caixa - Planet's Burguer</title>
-        <style>
-          body { font-family: sans-serif; padding: 20px; }
-          h1 { text-align: center; color: #c0392b; margin-bottom: 5px; }
-          .sub { text-align: center; color: #7f8c8d; margin-bottom: 20px; }
-          table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-          th { background: #f4f4f4; text-align: left; padding: 10px; border-bottom: 2px solid #000; }
-          .resumo { margin-top: 30px; font-size: 1.4rem; text-align: right; border-top: 2px solid #000; padding-top: 10px; color: #27ae60; }
-        </style>
-      </head>
-      <body>
-        <h1>Planet's Burguer - Relatório</h1>
-        <div class="sub">Filtro aplicado: ${filtro.toUpperCase()} | Gerado em: ${new Date().toLocaleString("pt-BR")}</div>
-        <table>
-          <thead>
-            <tr>
-              <th>Data/Hora</th>
-              <th>Cliente</th>
-              <th>Pagamento</th>
-              <th>Valor (R$)</th>
-            </tr>
-          </thead>
-          <tbody>
-            ${itensHtml}
-          </tbody>
-        </table>
-        <div class="resumo">
-          <strong>TOTAL ACUMULADO: R$ ${total.toFixed(2)}</strong>
-        </div>
-        <script>window.onload = () => { window.print(); window.close(); };</script>
-      </body>
-    </html>
-  `);
-  janela.document.close();
+    const itensHtml = (pedidos || []).map(p => `
+      <tr>
+        <td style="border-bottom: 1px solid #ddd; padding: 8px;">${formatarDataLocal(p.data)}</td>
+        <td style="border-bottom: 1px solid #ddd; padding: 8px;">${p.nome || 'Cliente'}</td>
+        <td style="border-bottom: 1px solid #ddd; padding: 8px;">${p.pagamento || '-'}</td>
+        <td style="border-bottom: 1px solid #ddd; padding: 8px;">R$ ${Number(p.total || 0).toFixed(2)}</td>
+      </tr>
+    `).join("");
+
+    janela.document.write(`
+      <html>
+        <head>
+          <title>Fechamento de Caixa - Planet's Burguer</title>
+          <style>
+            body { font-family: sans-serif; padding: 20px; }
+            h1 { text-align: center; color: #c0392b; margin-bottom: 5px; }
+            .sub { text-align: center; color: #7f8c8d; margin-bottom: 20px; }
+            table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+            th { background: #f4f4f4; text-align: left; padding: 10px; border-bottom: 2px solid #000; }
+            .resumo { margin-top: 30px; font-size: 1.4rem; text-align: right; border-top: 2px solid #000; padding-top: 10px; color: #27ae60; }
+          </style>
+        </head>
+        <body>
+          <h1>Planet's Burguer - Relatório</h1>
+          <div class="sub">Filtro aplicado: ${(filtro || 'todos').toUpperCase()} | Gerado em: ${new Date().toLocaleString("pt-BR")}</div>
+          <table>
+            <thead>
+              <tr>
+                <th>Data/Hora</th>
+                <th>Cliente</th>
+                <th>Pagamento</th>
+                <th>Valor (R$)</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itensHtml}
+            </tbody>
+          </table>
+          <div class="resumo">
+            <strong>TOTAL ACUMULADO: R$ ${Number(total || 0).toFixed(2)}</strong>
+          </div>
+          <script>window.onload = () => { window.print(); window.close(); };</script>
+        </body>
+      </html>
+    `);
+    janela.document.close();
+  } catch (err) {
+    console.error("Erro ao gerar relatório:", err);
+  }
 }
 
-// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA VIA QZ TRAY
+// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA 100% SEGURA
 async function imprimirPedido(pedido) {
   try {
-    const qzLib = window.qz;
+    if (!pedido) return;
+    const qzLib = await carregarQzTray();
+    
     if (!qzLib) {
-      alert("QZ Tray não foi carregado corretamente.");
+      console.warn("QZ Tray ignorado (biblioteca indisponível). O painel continuará funcionando normalmente.");
       return;
     }
 
@@ -121,6 +180,13 @@ async function imprimirPedido(pedido) {
     }
 
     const config = qzLib.configs.create("default");
+
+    // Separando a lista de itens em uma variável limpa para evitar erros de parser
+    const itensHtmlList = (pedido.itens || []).map(i => {
+      const quantidade = i.qtd || 1;
+      const nomeProduto = i.produto || 'Item';
+      return `<div>${quantidade}x ${nomeProduto}</div>`;
+    }).join("");
 
     const htmlContent = `
       <html>
@@ -134,19 +200,19 @@ async function imprimirPedido(pedido) {
         </head>
         <body>
           <h2 class="center">PLANET'S BURGUER</h2>
-          <p class="center">PEDIDO #${pedido.id.slice(-5).toUpperCase()}</p>
+          <p class="center">PEDIDO #${pedido.id ? pedido.id.slice(-5).toUpperCase() : '00000'}</p>
           <hr/>
           <p><strong>DATA:</strong> ${formatarDataLocal(pedido.data)}</p>
-          <p><strong>CLIENTE:</strong> ${pedido.nome}</p>
-          <p><strong>CONTATO:</strong> ${pedido.telefone}</p>
-          <p><strong>ENDEREÇO:</strong> ${pedido.rua}, ${pedido.numero} - ${pedido.bairro}</p>
-          <p><strong>PAGAMENTO:</strong> ${pedido.pagamento}</p>
+          <p><strong>CLIENTE:</strong> ${pedido.nome || 'Não informado'}</p>
+          <p><strong>CONTATO:</strong> ${pedido.telefone || 'Não informado'}</p>
+          <p><strong>ENDEREÇO:</strong> ${pedido.rua || ''}, ${pedido.numero || ''} - ${pedido.bairro || ''}</p>
+          <p><strong>PAGAMENTO:</strong> ${pedido.pagamento || 'Não informado'}</p>
           <hr/>
           <p><strong>ITENS:</strong></p>
-          ${(pedido.itens || []).map(i => `<div>${i.qtd}x${i.produto}</div>`).join("")}
+          ${itensHtmlList}
           <hr/>
           <p><strong>OBS:</strong> ${pedido.informacoes_adicionais || "Nenhuma"}</p>
-          <p class="total center">VALOR TOTAL: R$ ${Number(pedido.total).toFixed(2)}</p>
+          <p class="total center">VALOR TOTAL: R$ ${Number(pedido.total || 0).toFixed(2)}</p>
         </body>
       </html>
     `;
@@ -161,11 +227,10 @@ async function imprimirPedido(pedido) {
     ];
 
     await qzLib.print(config, data);
-    console.log("Cupom enviado diretamente para a impressora via QZ Tray!");
+    console.log("Cupom enviado com sucesso!");
 
   } catch (err) {
-    console.error("Erro ao imprimir via QZ Tray:", err);
-    alert("Erro ao imprimir. Certifique-se de que o aplicativo QZ Tray está aberto no seu computador.");
+    console.error("Aviso de impressão QZ Tray:", err);
   }
 }
 
@@ -179,18 +244,24 @@ export default function AdminPedidos() {
   const [valorOculto, setValorOculto] = useState(true);
   const navigate = useNavigate();
 
-  // Configuração segura executada após o carregamento do componente
+  // Configuração segura do QZ Tray sem risco de crash
   useEffect(() => {
-    if (window.qz) {
-      window.qz.security.setCertificatePromise(function(resolve) {
-        resolve();
-      });
-      window.qz.security.setSignaturePromise(function() {
-        return function(resolve) {
-          resolve();
-        };
-      });
-    }
+    carregarQzTray().then((qzLib) => {
+      try {
+        if (qzLib && qzLib.security) {
+          qzLib.security.setCertificatePromise(function(resolve) {
+            resolve();
+          });
+          qzLib.security.setSignaturePromise(function() {
+            return function(resolve) {
+              resolve();
+            };
+          });
+        }
+      } catch (e) {
+        console.warn("Erro na configuração de segurança:", e);
+      }
+    });
   }, []);
 
   const ativarSomAudio = () => {
@@ -199,71 +270,93 @@ export default function AdminPedidos() {
   };
 
   useEffect(() => {
-    const pedidosRef = ref(db, "pedidos");
-    const unsubscribe = onValue(pedidosRef, (snapshot) => {
-      const data = snapshot.val();
-      if (data) {
-        const agora = Date.now();
-        const lista = Object.entries(data)
-          .map(([id, p]) => ({ id, ...p, status: p.status || "pendente" }))
-          .filter((p) => {
-             const dataPedido = new Date(p.data).getTime();
-             return !isNaN(dataPedido) && (agora - dataPedido < AVISO_ANTIGO_MS);
-          })
-          .sort((a, b) => new Date(b.data) - new Date(a.data));
-        setPedidos(lista);
-      } else {
-        setPedidos([]);
-      }
+    try {
+      const pedidosRef = ref(db, "pedidos");
+      const unsubscribe = onValue(pedidosRef, (snapshot) => {
+        try {
+          const data = snapshot.val();
+          if (data) {
+            const agora = Date.now();
+            const lista = Object.entries(data)
+              .map(([id, p]) => ({ id, ...p, status: p.status || "pendente" }))
+              .filter((p) => {
+                 const dataPedido = new Date(p.data).getTime();
+                 return !isNaN(dataPedido) && (agora - dataPedido < AVISO_ANTIGO_MS);
+              })
+              .sort((a, b) => new Date(b.data) - new Date(a.data));
+            setPedidos(lista);
+          } else {
+            setPedidos([]);
+          }
+        } catch (innerErr) {
+          console.error("Erro ao processar dados dos pedidos:", innerErr);
+          setPedidos([]);
+        } finally {
+          setCarregando(false);
+        }
+      }, (error) => {
+        console.error("Erro no Firebase:", error);
+        setCarregando(false);
+      });
+      return () => unsubscribe();
+    } catch (e) {
+      console.error("Erro ao conectar ao Firebase:", e);
       setCarregando(false);
-    });
-    return () => unsubscribe();
+    }
   }, []);
 
   useEffect(() => {
-    if (pedidos.length > 0) {
-      const ultimoPedido = pedidos[0];
-      const chave = `alert-${ultimoPedido.id}`;
-      if (!localStorage.getItem(chave)) {
-        localStorage.setItem(chave, "true");
-        setNotificacao(true);
-        tocarAlarmeSonoro();
+    try {
+      if (pedidos && pedidos.length > 0) {
+        const ultimoPedido = pedidos[0];
+        if (ultimoPedido && ultimoPedido.id) {
+          const chave = `alert-${ultimoPedido.id}`;
+          if (!localStorage.getItem(chave)) {
+            localStorage.setItem(chave, "true");
+            setNotificacao(true);
+            tocarAlarmeSonoro();
 
-        if (ultimoPedido.status === "pendente") {
-          setTimeout(() => {
-            imprimirPedido(ultimoPedido);
-          }, 500);
+            if (ultimoPedido.status === "pendente") {
+              setTimeout(() => {
+                imprimirPedido(ultimoPedido);
+              }, 1200);
+            }
+
+            setTimeout(() => setNotificacao(false), 4000);
+          }
         }
-
-        setTimeout(() => setNotificacao(false), 4000);
       }
+    } catch (e) {
+      console.error("Erro na notificação do último pedido:", e);
     }
   }, [pedidos]);
 
   const atualizarStatus = async (id, novoStatus) => {
     try {
       await update(ref(db, `pedidos/${id}`), { status: novoStatus });
-    } catch (e) { alert("Erro ao atualizar!"); }
+    } catch (e) { alert("Erro ao atualizar status!"); }
   };
 
   const salvarEdicao = async () => {
     if (!pedidoEmEdicao) return;
     try {
       const { id, ...dados } = pedidoEmEdicao;
-      dados.total = parseFloat(dados.total);
+      dados.total = parseFloat(dados.total) || 0;
       await set(ref(db, `pedidos/${id}`), dados);
       setPedidoEmEdicao(null);
-    } catch (err) { alert("Erro ao salvar."); }
+    } catch (err) { alert("Erro ao salvar edição."); }
   };
 
   const handleLogout = () => {
     signOut(auth).then(() => {
       localStorage.removeItem("adminLogado");
       navigate("/login-admin");
+    }).catch(() => {
+      navigate("/login-admin");
     });
   };
 
-  const pedidosFiltrados = pedidos.filter(p => statusFiltro === "todos" || p.status === statusFiltro);
+  const pedidosFiltrados = (pedidos || []).filter(p => statusFiltro === "todos" || p.status === statusFiltro);
   const totalValor = pedidosFiltrados.reduce((acc, p) => acc + Number(p.total || 0), 0);
 
   if (carregando) return <div className="loading">Carregando Pedidos...</div>;
@@ -337,19 +430,19 @@ export default function AdminPedidos() {
           {pedidosFiltrados.map((pedido) => (
             <div key={pedido.id} className={`pedidoCard ${pedido.status}`}>
               <div className="card-topo">
-                <strong>{pedido.nome}</strong>
+                <strong>{pedido.nome || 'Cliente'}</strong>
                 <span className="data-hora">{formatarDataLocal(pedido.data)}</span>
               </div>
-              <p className="txt-endereco">{pedido.rua}, {pedido.numero} - {pedido.bairro}</p>
+              <p className="txt-endereco">{pedido.rua || ''}, {pedido.numero || ''} - {pedido.bairro || ''}</p>
               
               <div className="lista-itens">
-                {pedido.itens?.map((item, index) => (
-                  <div key={index} className="item-linha">{item.qtd}x {item.produto}</div>
+                {(pedido.itens || []).map((item, index) => (
+                  <div key={index} className="item-linha">{item.qtd || 1}x {item.produto || 'Item'}</div>
                 ))}
               </div>
 
               <div className="card-footer">
-                <span className="valor-total">R$ {Number(pedido.total).toFixed(2)}</span>
+                <span className="valor-total">R$ {Number(pedido.total || 0).toFixed(2)}</span>
                 <div className="card-actions">
                   <button onClick={() => imprimirPedido(pedido)} title="Imprimir Recibo">🖨️</button>
                   <button onClick={() => setPedidoEmEdicao(pedido)} title="Editar Pedido">✏️</button>
@@ -369,11 +462,11 @@ export default function AdminPedidos() {
             <div className="modalEditar">
               <h3>Editar Pedido</h3>
               <label>Cliente:</label>
-              <input type="text" value={pedidoEmEdicao.nome} onChange={(e) => setPedidoEmEdicao({...pedidoEmEdicao, nome: e.target.value})} />
+              <input type="text" value={pedidoEmEdicao.nome || ""} onChange={(e) => setPedidoEmEdicao({...pedidoEmEdicao, nome: e.target.value})} />
               <label>Total:</label>
-              <input type="number" value={pedidoEmEdicao.total} onChange={(e) => setPedidoEmEdicao({...pedidoEmEdicao, total: e.target.value})} />
+              <input type="number" value={pedidoEmEdicao.total || 0} onChange={(e) => setPedidoEmEdicao({...pedidoEmEdicao, total: e.target.value})} />
               <label>Status:</label>
-              <select value={pedidoEmEdicao.status} onChange={(e) => setPedidoEmEdicao({...pedidoEmEdicao, status: e.target.value})}>
+              <select value={pedidoEmEdicao.status || "pendente"} onChange={(e) => setPedidoEmEdicao({...pedidoEmEdicao, status: e.target.value})}>
                 <option value="pendente">Pendente</option>
                 <option value="entregue">Entregue</option>
               </select>
