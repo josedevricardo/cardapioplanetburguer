@@ -137,7 +137,7 @@ function gerarRelatorioCaixa(pedidos, filtro, total) {
   }
 }
 
-// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA LOCAL
+// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA LOCAL (Com tratamento de erro otimizado)
 async function imprimirPedido(pedido) {
   try {
     if (!pedido) return;
@@ -148,15 +148,23 @@ async function imprimirPedido(pedido) {
       return;
     }
 
+    // Verifica se já está conectado, senão tenta conectar uma única vez
     if (!qz.websocket.isActive()) {
-      await qz.websocket.connect({
-        host: ['localhost', '127.0.0.1'],
-        usingSecure: true,
-        port: {
-          secure: 8182,
-          insecure: 8181
-        }
-      });
+      try {
+        await qz.websocket.connect({
+          host: ['localhost', '127.0.0.1'],
+          usingSecure: true,
+          port: {
+            secure: 8181,
+            insecure: 8181
+          },
+          retries: 0,
+          delay: 1
+        });
+      } catch (connErr) {
+        console.warn("QZ Tray não está rodando ou certificado não foi aceito em https://localhost:8182");
+        return; // Sai silenciosamente para não travar a aplicação caso o lojista não use impressora ligada no momento
+      }
     }
 
     const config = qz.configs.create("default");
