@@ -6,7 +6,6 @@ import { ref, onValue, update, set } from "firebase/database";
 import { AnimatePresence, motion } from "framer-motion";
 import { signOut } from "firebase/auth";
 
-
 // Importando seus estilos
 import "./stiloPedido.css";
 import "./AdminPedidosFooter.css";
@@ -58,17 +57,7 @@ function tocarAlarmeSonoro() {
   }
 }
 
-// Configuração de segurança do QZ Tray para ambiente de desenvolvimento local
-qz.security.setCertificatePromise(function(resolve, reject) {
-  resolve(); // Ignora certificado em ambiente local de testes
-});
-qz.security.setSignaturePromise(function(toSign) {
-  return function(resolve, reject) {
-    resolve(); // Ignora assinatura em ambiente local de testes
-  };
-});
-
-// Relatório Geral de Caixa (Continua abrindo janela limpa com window.print pois é relatório PDF/A4)
+// Relatório Geral de Caixa
 function gerarRelatorioCaixa(pedidos, filtro, total) {
   const janela = window.open("", "PRINT", "width=800,height=600");
   const itensHtml = pedidos.map(p => `
@@ -119,19 +108,21 @@ function gerarRelatorioCaixa(pedidos, filtro, total) {
   janela.document.close();
 }
 
-// 🚀 NOVA FUNÇÃO DE IMPRESSÃO TÉRMICA VIA QZ TRAY (DIRETO, SEM NAVEGADOR)
+// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA VIA QZ TRAY
 async function imprimirPedido(pedido) {
   try {
-    // 1. Conecta ao QZ Tray rodando no PC (se já não estiver conectado)
-    if (!qz.websocket.isActive()) {
-      await qz.websocket.connect();
+    const qzLib = window.qz;
+    if (!qzLib) {
+      alert("QZ Tray não foi carregado corretamente.");
+      return;
     }
 
-    // 2. Configura para usar a impressora padrão do Windows ("default")
-    // Dica: Se quiser uma específica, troque "default" pelo nome exato dela (ex: "Elgin i9")
-    const config = qz.configs.create("default");
+    if (!qzLib.websocket.isActive()) {
+      await qzLib.websocket.connect();
+    }
 
-    // 3. Monta o layout HTML do cupom térmico
+    const config = qzLib.configs.create("default");
+
     const htmlContent = `
       <html>
         <head>
@@ -170,8 +161,7 @@ async function imprimirPedido(pedido) {
       }
     ];
 
-    // 4. Envia o comando para imprimir diretamente na impressora térmica!
-    await qz.print(config, data);
+    await qzLib.print(config, data);
     console.log("Cupom enviado diretamente para a impressora via QZ Tray!");
 
   } catch (err) {
@@ -189,6 +179,20 @@ export default function AdminPedidos() {
   const [somAtivo, setSomAtivo] = useState(false);
   const [valorOculto, setValorOculto] = useState(true);
   const navigate = useNavigate();
+
+  // Configuração segura executada após o carregamento do componente
+  useEffect(() => {
+    if (window.qz) {
+      window.qz.security.setCertificatePromise(function(resolve) {
+        resolve();
+      });
+      window.qz.security.setSignaturePromise(function() {
+        return function(resolve) {
+          resolve();
+        };
+      });
+    }
+  }, []);
 
   const ativarSomAudio = () => {
     tocarAlarmeSonoro();
@@ -228,7 +232,7 @@ export default function AdminPedidos() {
 
         if (ultimoPedido.status === "pendente") {
           setTimeout(() => {
-            imprimirPedido(ultimoPedido); // Já dispara direto na impressora térmica silenciosamente
+            imprimirPedido(ultimoPedido);
           }, 500);
         }
 
@@ -351,7 +355,7 @@ export default function AdminPedidos() {
                   <button onClick={() => imprimirPedido(pedido)} title="Imprimir Recibo">🖨️</button>
                   <button onClick={() => setPedidoEmEdicao(pedido)} title="Editar Pedido">✏️</button>
                   {pedido.status === "pendente" && (
-                    <button className="btn-finalizar" onClick={() => atualizarStatus(pedido.id, "entregue")  }>✅ Entregue</button>
+                    <button className="btn-finalizar" onClick={() => atualizarStatus(pedido.id, "entregue")}>✅ Entregue</button>
                   )}
                 </div>
               </div>
