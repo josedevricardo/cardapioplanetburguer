@@ -164,7 +164,7 @@ function gerarRelatorioCaixa(pedidos, filtro, total) {
   }
 }
 
-// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA 100% SEGURA
+// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA 100% SEGURA (COMPATÍVEL COM NETLIFY HTTPS)
 async function imprimirPedido(pedido) {
   try {
     if (!pedido) return;
@@ -176,12 +176,18 @@ async function imprimirPedido(pedido) {
     }
 
     if (!qzLib.websocket.isActive()) {
-      await qzLib.websocket.connect();
+      await qzLib.websocket.connect({
+        host: ['localhost', '127.0.0.1'],
+        usingSecure: true,
+        port: {
+          secure: 8182,
+          insecure: 8181
+        }
+      });
     }
 
     const config = qzLib.configs.create("default");
 
-    // Separando a lista de itens em uma variável limpa para evitar erros de parser
     const itensHtmlList = (pedido.itens || []).map(i => {
       const quantidade = i.qtd || 1;
       const nomeProduto = i.produto || 'Item';
@@ -244,7 +250,6 @@ export default function AdminPedidos() {
   const [valorOculto, setValorOculto] = useState(true);
   const navigate = useNavigate();
 
-  // Configuração segura do QZ Tray sem risco de crash
   useEffect(() => {
     carregarQzTray().then((qzLib) => {
       try {
