@@ -4,7 +4,7 @@ import { signInWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../firebaseConfig";
 import ResetPasswordModal from "../components/ResetPasswordModal/ResetPasswordModal";
 import "./LoginAdmin.css";
-import logo from "../assets/mascote.png";
+import logo from "../assets/burguer+A4.png";
 
 export default function LoginAdmin() {
   const [usuario, setUsuario] = useState("");

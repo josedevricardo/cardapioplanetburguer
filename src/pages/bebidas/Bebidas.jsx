@@ -14,7 +14,7 @@ function Bebidas() {
     <BebidasVitrine/>
 
       <footer className="footer text-center">
-        <p>@Todos Direitos - Planet Burger 38-99801-7215   R. das Bromélias, 280 - Residencial Vitória 1</p>
+        @Todos Direitos <br /> Delivery BURGUE+A  | 38-00000-0000 <br />
       </footer>
     </>
   );

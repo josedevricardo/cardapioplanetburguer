@@ -1,3 +1,4 @@
+/* global qz */
 import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { db, auth } from "../firebaseConfig";
@@ -5,11 +6,11 @@ import { ref, onValue, update, set } from "firebase/database";
 import { AnimatePresence, motion } from "framer-motion";
 import { signOut } from "firebase/auth";
 
+
 // Importando seus estilos
 import "./stiloPedido.css";
 import "./AdminPedidosFooter.css";
 
-// 1. Configurado para 30 dias (em milissegundos)
 const AVISO_ANTIGO_MS = 1000 * 60 * 60 * 24 * 30; 
 
 function formatarDataLocal(data) {
@@ -17,33 +18,28 @@ function formatarDataLocal(data) {
   return d.toLocaleString("pt-BR");
 }
 
-// Função para gerar o som de campainha de balcão (timbre metálico estridente)
 function tocarAlarmeSonoro() {
   try {
     const AudioContext = window.AudioContext || window.webkitAudioContext;
     if (!AudioContext) return;
     const ctx = new AudioContext();
 
-    // Toca duas badaladas secas de campainha de balcão
     [0, 0.25].forEach((delay) => {
       setTimeout(() => {
         if (ctx.state === 'suspended') {
           ctx.resume();
         }
 
-        // Frequências duplas para criar o som metálico do sino de balcão
         const osc1 = ctx.createOscillator();
         const osc2 = ctx.createOscillator();
         const gainNode = ctx.createGain();
 
-        // Frequências agudas típicas de sininho de metal
         osc1.type = "sine";
         osc1.frequency.setValueAtTime(1200, ctx.currentTime);
 
         osc2.type = "triangle";
         osc2.frequency.setValueAtTime(2400, ctx.currentTime);
 
-        // Volume no máximo com queda rápida (efeito batida seca)
         gainNode.gain.setValueAtTime(1.0, ctx.currentTime);
         gainNode.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.35);
 
@@ -62,10 +58,19 @@ function tocarAlarmeSonoro() {
   }
 }
 
-// 2. Função para Gerar PDF de Fechamento de Caixa (Relatório Geral)
+// Configuração de segurança do QZ Tray para ambiente de desenvolvimento local
+qz.security.setCertificatePromise(function(resolve, reject) {
+  resolve(); // Ignora certificado em ambiente local de testes
+});
+qz.security.setSignaturePromise(function(toSign) {
+  return function(resolve, reject) {
+    resolve(); // Ignora assinatura em ambiente local de testes
+  };
+});
+
+// Relatório Geral de Caixa (Continua abrindo janela limpa com window.print pois é relatório PDF/A4)
 function gerarRelatorioCaixa(pedidos, filtro, total) {
   const janela = window.open("", "PRINT", "width=800,height=600");
-  
   const itensHtml = pedidos.map(p => `
     <tr>
       <td style="border-bottom: 1px solid #ddd; padding: 8px;">${formatarDataLocal(p.data)}</td>
@@ -114,60 +119,75 @@ function gerarRelatorioCaixa(pedidos, filtro, total) {
   janela.document.close();
 }
 
-// 3. Função de Impressão Térmica (Recibo Individual)
-function imprimirPedido(pedido) {
-  const janela = window.open("", "_blank", "width=300,height=400");
-  if (!janela) return alert("Permita os pop-ups no navegador!");
+// 🚀 NOVA FUNÇÃO DE IMPRESSÃO TÉRMICA VIA QZ TRAY (DIRETO, SEM NAVEGADOR)
+async function imprimirPedido(pedido) {
+  try {
+    // 1. Conecta ao QZ Tray rodando no PC (se já não estiver conectado)
+    if (!qz.websocket.isActive()) {
+      await qz.websocket.connect();
+    }
 
-  janela.document.write(`
-    <html>
-      <head>
-        <title>Recibo - Planet's Burguer</title>
-        <style>
-          @page { size: 80mm auto; margin: 0; }
-          body { font-family: 'Courier New', Courier, monospace; font-size: 12px; width: 80mm; padding: 5px; }
-          .center { text-align: center; }
-          .total { font-weight: bold; font-size: 14px; border-top: 1px dashed #000; margin-top: 10px; padding-top: 5px; }
-          hr { border: 0; border-top: 1px solid #000; margin: 8px 0; }
-        </style>
-      </head>
-      <body>
-        <h2 class="center">PLANET'S BURGUER</h2>
-        <p class="center">PEDIDO #${pedido.id.slice(-5).toUpperCase()}</p>
-        <hr/>
-        <p><strong>DATA:</strong> ${formatarDataLocal(pedido.data)}</p>
-        <p><strong>CLIENTE:</strong> ${pedido.nome}</p>
-        <p><strong>CONTATO:</strong> ${pedido.telefone}</p>
-        <p><strong>ENDEREÇO:</strong> ${pedido.rua}, ${pedido.numero} - ${pedido.bairro}</p>
-        <p><strong>PAGAMENTO:</strong> ${pedido.pagamento}</p>
-        <hr/>
-        <p><strong>ITENS:</strong></p>
-        ${(pedido.itens || []).map(i => `<div>${i.qtd}x${i.produto}</div>`).join("")}
-        <hr/>
-        <p><strong>OBS:</strong> ${pedido.informacoes_adicionais || "Nenhuma"}</p>
-        <p class="total center">VALOR TOTAL: R$ ${Number(pedido.total).toFixed(2)}</p>
-        <script>
-          window.onload = () => {
-            setTimeout(() => {
-              window.print();
-              setTimeout(() => { window.close(); }, 500);
-            }, 300);
-          };
-        </script>
-      </body>
-    </html>
-  `);
-  janela.document.close();
+    // 2. Configura para usar a impressora padrão do Windows ("default")
+    // Dica: Se quiser uma específica, troque "default" pelo nome exato dela (ex: "Elgin i9")
+    const config = qz.configs.create("default");
+
+    // 3. Monta o layout HTML do cupom térmico
+    const htmlContent = `
+      <html>
+        <head>
+          <style>
+            body { font-family: 'Courier New', Courier, monospace; font-size: 12px; width: 80mm; padding: 5px; }
+            .center { text-align: center; }
+            .total { font-weight: bold; font-size: 14px; border-top: 1px dashed #000; margin-top: 10px; padding-top: 5px; }
+            hr { border: 0; border-top: 1px solid #000; margin: 8px 0; }
+          </style>
+        </head>
+        <body>
+          <h2 class="center">PLANET'S BURGUER</h2>
+          <p class="center">PEDIDO #${pedido.id.slice(-5).toUpperCase()}</p>
+          <hr/>
+          <p><strong>DATA:</strong> ${formatarDataLocal(pedido.data)}</p>
+          <p><strong>CLIENTE:</strong> ${pedido.nome}</p>
+          <p><strong>CONTATO:</strong> ${pedido.telefone}</p>
+          <p><strong>ENDEREÇO:</strong> ${pedido.rua}, ${pedido.numero} - ${pedido.bairro}</p>
+          <p><strong>PAGAMENTO:</strong> ${pedido.pagamento}</p>
+          <hr/>
+          <p><strong>ITENS:</strong></p>
+          ${(pedido.itens || []).map(i => `<div>${i.qtd}x${i.produto}</div>`).join("")}
+          <hr/>
+          <p><strong>OBS:</strong> ${pedido.informacoes_adicionais || "Nenhuma"}</p>
+          <p class="total center">VALOR TOTAL: R$ ${Number(pedido.total).toFixed(2)}</p>
+        </body>
+      </html>
+    `;
+
+    const data = [
+      {
+        type: 'pixel',
+        format: 'html',
+        flavor: 'plain',
+        data: htmlContent
+      }
+    ];
+
+    // 4. Envia o comando para imprimir diretamente na impressora térmica!
+    await qz.print(config, data);
+    console.log("Cupom enviado diretamente para a impressora via QZ Tray!");
+
+  } catch (err) {
+    console.error("Erro ao imprimir via QZ Tray:", err);
+    alert("Erro ao imprimir. Certifique-se de que o aplicativo QZ Tray está aberto no seu computador.");
+  }
 }
 
 export default function AdminPedidos() {
   const [pedidos, setPedidos] = useState([]);
   const [carregando, setCarregando] = useState(true);
   const [pedidoEmEdicao, setPedidoEmEdicao] = useState(null);
-  const [statusFiltro, setStatusFiltro] = useState("pendente"); // Começa filtrando pendentes para refletir dinamicamente no total
+  const [statusFiltro, setStatusFiltro] = useState("pendente");
   const [notificacao, setNotificacao] = useState(false);
   const [somAtivo, setSomAtivo] = useState(false);
-  const [valorOculto, setValorOculto] = useState(true); // Inicia oculto por padrão (privacidade fixa)
+  const [valorOculto, setValorOculto] = useState(true);
   const navigate = useNavigate();
 
   const ativarSomAudio = () => {
@@ -208,7 +228,7 @@ export default function AdminPedidos() {
 
         if (ultimoPedido.status === "pendente") {
           setTimeout(() => {
-            imprimirPedido(ultimoPedido);
+            imprimirPedido(ultimoPedido); // Já dispara direto na impressora térmica silenciosamente
           }, 500);
         }
 
@@ -247,10 +267,9 @@ export default function AdminPedidos() {
 
   return (
     <div className="stiloPedido">
-      {/* Cabeçalho Fixo */}
       <nav className="navbar2" style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 1000, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', boxSizing: 'border-box' }}>
         <div className="logoTitulo">
-          <span className="tituloPainel">🍔 Planet's Burguer</span>
+          <span className="tituloPainel">🍔 Delivery BURGUE+A</span>
         </div>
         <div className="navRight">
           <Link to="/admin-estatisticas" className="menu-btn" style={{ background: '#8e44ad' }}>
@@ -261,10 +280,8 @@ export default function AdminPedidos() {
         </div>
       </nav>
 
-      {/* Espaçamento superior seguro */}
       <div className="container" style={{ paddingTop: '110px', paddingBottom: '40px' }}>
         
-        {/* Botão de Ativar Som */}
         {!somAtivo && (
           <div style={{ background: '#fff3cd', border: '1px solid #ffeeba', color: '#856404', padding: '12px 15px', borderRadius: '8px', textAlign: 'center', marginBottom: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: '10px', flexWrap: 'wrap', fontSize: '0.9rem' }}>
             <span style={{ flex: '1 1 200px', textAlign: 'left', fontWeight: '500' }}>🔔 Alerta sonoro desativado.</span>
@@ -301,7 +318,6 @@ export default function AdminPedidos() {
             </button>
           </div>
 
-          {/* Badge de Total em Tela perfeitamente alinhado lado a lado */}
           <div className="total-badge" style={{ display: 'flex', alignItems: 'center', gap: '8px', whiteSpace: 'nowrap' }}>
             <span>Total em Tela: <strong>{valorOculto ? "R$ *****" : `R$ ${totalValor.toFixed(2)}`}</strong></span>
             <button 
@@ -335,7 +351,7 @@ export default function AdminPedidos() {
                   <button onClick={() => imprimirPedido(pedido)} title="Imprimir Recibo">🖨️</button>
                   <button onClick={() => setPedidoEmEdicao(pedido)} title="Editar Pedido">✏️</button>
                   {pedido.status === "pendente" && (
-                    <button className="btn-finalizar" onClick={() => atualizarStatus(pedido.id, "entregue")}>✅ Entregue</button>
+                    <button className="btn-finalizar" onClick={() => atualizarStatus(pedido.id, "entregue")  }>✅ Entregue</button>
                   )}
                 </div>
               </div>
@@ -344,7 +360,6 @@ export default function AdminPedidos() {
         </div>
       </div>
 
-      {/* Modal de Edição */}
       <AnimatePresence>
         {pedidoEmEdicao && (
           <div className="modal-overlay">

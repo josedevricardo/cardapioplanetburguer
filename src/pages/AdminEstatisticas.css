@@ -1,135 +1,149 @@
-.navpai { 
-    margin-top: 5rem;}
+/* ==========================================================================
+   Estilos Gerais (Desktop & Padrão)
+   ========================================================================== */
+.navpai {
+  background-color: #f8fafc;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.navbar2 {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #ffffff;
+  padding: 12px 20px;
+  border-bottom: 1px solid #e2e8f0;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
 
 .estatisticas-container {
-  padding: 20px;
   max-width: 1200px;
   margin: 0 auto;
-  margin-top: 10rem;
+  padding: 16px;
 }
 
 .estatisticas-header {
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 24px;
 }
 
 .estatisticas-header h2 {
-  font-size: 28px;
-  color: #2c3e50;
-  margin-bottom: 8px;
+  font-size: 1.5rem;
+  color: #1e293b;
+  margin-bottom: 6px;
 }
 
 .estatisticas-header p {
-  font-size: 16px;
-  color: #7f8c8d;
+  font-size: 0.9rem;
+  color: #64748b;
 }
 
 .chart-box {
   background: #ffffff;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-  padding: 20px;
-  margin-bottom: 30px;
-  transition: all 0.3s ease;
-}
-
-.chart-box:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-.recharts-wrapper {
-  width: 100%;
-  overflow-x: auto;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
 }
 
 .text-center {
   text-align: center;
 }
 
-.btn-voltar {
-  display: inline-block;
-  padding: 10px 20px;
-  background-color: #3498db;
-  color: white;
-  text-decoration: none;
+/* Botões Padrão */
+.btn2, .logoutBtn2, .btn-voltar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 14px;
+  font-size: 0.85rem;
+  font-weight: 500;
   border-radius: 6px;
-  transition: background-color 0.3s;
-  margin-top: 20px;
+  border: 1px solid #cbd5e1;
+  background-color: #ffffff;
+  color: #334155;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  text-decoration: none;
 }
 
-.btn-voltar:hover {
-  background-color: #2980b9;
+.btn2:hover, .logoutBtn2:hover, .btn-voltar:hover {
+  background-color: #f1f5f9;
 }
 
-@media (max-width: 768px) {
-  .estatisticas-container {
-    padding: 10px;
-  }
-}
 
-/* -------- Mobile (até 480px) -------- */
+/* ==========================================================================
+   Otimizações Exclusivas para Celular / Android (Telas Pequenas)
+   ========================================================================== */
 @media (max-width: 480px) {
-/* Container principal */
-.navpai {
-padding: 6px;
-font-family: 'Arial', sans-serif;
-font-size: 0.85rem;
-background-color: #f5f5f5;
-}
+  /* Anula os estilos inline do JSX para permitir o design mobile */
+  .navpai {
+    padding: 8px !important;
+  }
 
-/* Header */
-.navbar2 {
-flex-direction: column;
-align-items: flex-start;
-gap: 4px;
-margin-bottom: 8px;
-}
+  .navbar2 {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 8px !important;
+    padding: 10px 8px !important;
+    text-align: center;
+  }
 
-.navbar2 h2 {
-font-size: 1.1rem;
-}
+  .navbar2 h2 {
+    font-size: 1.05rem !important;
+    margin: 0 !important;
+  }
 
-.navbar2 .btn,
-.navbar2 .logoutBtn2 {
-font-size: 0.75rem;
-padding: 4px 6px;
-border-radius: 6px;
-border: 1px solid #ccc;
-background-color: #fff;
-cursor: pointer;
-margin-top: 4px;
-}
+  /* Força os botões do cabeçalho a ficarem UM AO LADO DO OUTRO */
+  .navbar2 > div {
+    display: flex !important;
+    flex-direction: row !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+    flex-wrap: nowrap !important;
+  }
 
-/* Main sections */
-main {
-flex-direction: column;
-gap: 12px;
-}
+  /* Cores "Lite" (suaves, tons pastéis claros, sem cores berrantes) */
+  .btn2 {
+    background-color: #e0f2fe !important; /* Azul claro pastel */
+    color: #0369a1 !important;
+    border: 1px solid #bae6fd !important;
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+    border-radius: 6px !important;
+    white-space: nowrap !important;
+  }
 
-main section {
-flex: 1 1 100%;
-max-width: 100%;
-background-color: #fff;
-border-radius: 8px;
-padding: 8px;
-box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
+  .logoutBtn2 {
+    background-color: #fee2e2 !important; /* Vermelho/Rosa claro pastel */
+    color: #991b1b !important;
+    border: 1px solid #fecaca !important;
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+    border-radius: 6px !important;
+    white-space: nowrap !important;
+    margin-left: 0 !important; /* Remove qualquer margem antiga */
+  }
 
-main h4 {
-font-size: 0.9rem;
-margin-bottom: 4px;
-text-align: center;
-}
+  .estatisticas-container {
+    padding: 4px !important;
+    margin-top: 10px !important;
+  }
 
-/* Gráficos responsivos */
-.recharts-wrapper {
-height: 200px !important;
-}
+  .chart-box {
+    padding: 10px !important;
+    margin-bottom: 12px !important;
+    border-radius: 6px !important;
+  }
 
-/* Tooltip e Legend */
-.recharts-tooltip-wrapper,
-.recharts-legend-wrapper {
-font-size: 0.7rem;
-}
+  .recharts-wrapper {
+    height: 210px !important;
+  }
 }

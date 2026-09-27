@@ -23,8 +23,7 @@ function Produto2() {
    <Produto2Vitrine/>
       <footer className="footer text-center">
         <p>
-          @Todos Direitos - Planet Burger 38-99801-7215 R. das Bromélias, 280 -
-          Residencial Vitória 1
+          @Todos Direitos - Delivery BURGUE+A 38-00000-0000
         </p>
       </footer>
     </>

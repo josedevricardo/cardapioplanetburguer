@@ -91,7 +91,7 @@ function Cart() {
       const listaWhats = cartItems.map((i) => `- ${i.qtd}x ${i.nome}`).join("\n");
       const msg = `*Pedido: ${numeroPedido}*\n\n👤 *Cliente:* ${nome}\n📞 *Tel:* ${telefone}\n📍 *Endereço:* Rua ${rua}, ${numero}\n🏘️ *Bairro:* ${bairro}\n🙋 *Recebedor:* ${quemRecebe}\n💳 *Pagamento:* ${pagamento}\n📝 *Obs:* ${informacoes}\n\n🛒 *Itens:*\n${listaWhats}\n\n💰 *Total: R$ ${totalComFrete.replace(".", ",")}*`;
 
-      window.open(`https://api.whatsapp.com/send?phone=5538998017215&text=${encodeURIComponent(msg)}`, "_blank");
+      window.open(`https://api.whatsapp.com/send?phone=5538991322574&text=${encodeURIComponent(msg)}`, "_blank");
 
       clearCart();
       setShowModal(false);

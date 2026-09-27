@@ -4,7 +4,7 @@ import { ref, onValue, update, push, remove } from "firebase/database";
 import { Trash2, Search, ImageIcon, Plus, X, Eye, EyeOff, Edit, DollarSign, ArrowLeft } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate, Link } from "react-router-dom";
-import logo from "../assets/mascote.png";
+import logo from "../assets/burguer+A4.png";
 
 const styles = `
   body, html { overflow-x: hidden; width: 100%; margin: 0; padding: 0; }
@@ -293,7 +293,7 @@ export default function AdminProdutosCompleto() {
           <Link to="/" className="logo-area">
             <img src={logo} alt="Logo" className="logo" />
             <div className="titulo-wrapper">
-              <p className="subtitle-admin">Gerenciamento / Planet´s Burguer</p>
+              <p className="subtitle-admin">Gerenciamento / Delivery BURGUE+A</p>
             </div>
           </Link>
           <Link to="/" className="home-icon-link" title="Voltar ao Cardápio">🏠</Link>

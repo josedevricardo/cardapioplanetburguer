@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import './footer.css'; 
 import Navbar from "../../components/navbar/navbar.jsx";
 import AcaiVitrine from "../../components/produto-vitrine/produto-vitrine-acai.jsx";
+import { CartContext } from "../../contexts/cart-context";
 
 const adicionais = [
   "PAÇOCA", "LEITE EM PÓ", "GRANOLA", "MOUSSE MORANGO", "MOUSSE MARACUJÁ", 
@@ -10,7 +11,6 @@ const adicionais = [
   "MORANGO", "KIWI", "ABACAXI", "CREME NINHO", "CREME BEIJINHO", "GOTAS CHOCOLATE"
 ];
 
-// Ícones automáticos
 const iconesAdicionais = {
   "PAÇOCA": "🥜",
   "LEITE EM PÓ": "🥛",
@@ -37,7 +37,11 @@ const iconesAdicionais = {
 };
 
 function AcaiPage() {
+  const { addToCart } = useContext(CartContext);
+
   const [selectedAdicionais, setSelectedAdicionais] = useState([]);
+  const [showMessage, setShowMessage] = useState(false);
+  const [message, setMessage] = useState("");
 
   const handleSelectAdicional = (adicional) => {
     setSelectedAdicionais((prev) => {
@@ -51,16 +55,28 @@ function AcaiPage() {
     });
   };
 
-  const handleEnviarWhatsApp = () => {
+  const handleAdicionarAoCarrinho = () => {
     if (selectedAdicionais.length === 0) {
-      alert("Selecione ao menos um adicional antes de enviar.");
+      alert("Selecione ao menos um adicional antes de adicionar ao carrinho.");
       return;
     }
 
-    const numeroWhatsApp = "38998017215";
-    const mensagem = `Olá! Vou querer Açaí com: ${selectedAdicionais.join(", ")}`;
-    const url = `https://api.whatsapp.com/send?phone=${numeroWhatsApp}&text=${encodeURIComponent(mensagem)}`;
-    window.location.href = url;
+    // Coloca os nomes dos adicionais direto no nome do item e define o preço como 0.00
+    const itemAcai = {
+      id: `acai-${Date.now()}`,
+      nome: `Açaí + Adicionais: ${selectedAdicionais.join(", ")}`,
+      preco: 0.00,
+      adicionais: selectedAdicionais,
+      qtd: 1,
+    };
+
+    addToCart(itemAcai);
+
+    setMessage(`🟣 "Açaí + Adicionais" adicionado à sacola!`);
+    setShowMessage(true);
+    setTimeout(() => setShowMessage(false), 3000);
+
+    setSelectedAdicionais([]);
   };
 
   return (
@@ -90,10 +106,10 @@ function AcaiPage() {
 
           <button 
             className="botao-sacola"
-            onClick={handleEnviarWhatsApp}
+            onClick={handleAdicionarAoCarrinho}
             disabled={selectedAdicionais.length === 0}
           >
-            Enviar para WhatsApp
+            Adicionar ao Carrinho
           </button>
         </div>
       </div>
@@ -101,8 +117,16 @@ function AcaiPage() {
       <AcaiVitrine />
 
       <footer className="footer text-center">
-        <p>@Todos Direitos - Planet Burger 38-99801-7215 - R. das Bromélias, 280</p>
+        @Todos Direitos <br /> Delivery BURGUE+A  | 38-00000-0000 <br />
       </footer>
+
+      {/* Mensagem flutuante */}
+      {showMessage && (
+        <div className="message-fixed">
+          <span role="img" aria-label="ícone">🟣</span>{" "}
+          <span className="message-texto">{message.replace("🟣", "").trim()}</span>
+        </div>
+      )}
     </>
   );
 }

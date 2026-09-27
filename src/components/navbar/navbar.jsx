@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { CartContext } from "../../contexts/cart-context";
 import { categoriasFixas } from "../../rotas2";
 import Cart from "../Cart/cart";
-import logo from "../../assets/burgue+A2.png";
+import logo from "../../assets/burguer+A4.png";
 
 import "./navbar.css";
 

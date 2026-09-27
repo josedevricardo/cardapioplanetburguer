@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import logo from "../../assets/burgue+A.png";
+import logo from "../../assets/burguer+A4.png";
 import Navbar from "../../components/navbar/navbar.jsx";
 import ScrollToTopButton from "../../components/ScrollToTopButton/ScrollToTopButton.js";
 import CategoriaSlider from "../../components/CategoriaSlider/CategoriaSlider.jsx";
@@ -99,7 +99,7 @@ function Home() {
           <a className="direitos" href="https://portfoliojosericardo.netlify.app/" target="_blank" rel="noopener noreferrer">
             @Desenvolvedor Ricardo
           </a>
-          <strong> Planet´s Burguer</strong> R. das Bromélias, 280 Residencial Vitória
+          @Todos Direitos <br /> Delivery BURGUE+A  | 38-00000-0000 <br />
         </p>
       </footer>
     </>
