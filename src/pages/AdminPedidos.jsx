@@ -167,7 +167,7 @@ async function imprimirPedido(pedido) {
       }
     }
 
-    const config = qz.configs.create("default");
+    const config = qz.configs.create(); //  o QZ Tray usar a impressora padrão do sistema operacional automaticamente
 
     const itensHtmlList = (pedido.itens || []).map(i => {
       const quantidade = i.qtd || 1;
