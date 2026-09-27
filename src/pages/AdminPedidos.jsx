@@ -21,43 +21,16 @@ function formatarDataLocal(data) {
   }
 }
 
-// 🛡️ Carregador ultraseguro do QZ Tray (nunca quebra a página)
-const carregarQzTray = () => {
-  return new Promise((resolve) => {
-    try {
-      if (typeof window !== "undefined" && window.qz) {
-        resolve(window.qz);
-        return;
-      }
-
-      if (!document.getElementById("qz-tray-script")) {
-        const script = document.createElement("script");
-        script.id = "qz-tray-script";
-        script.src = "https://cdnjs.cloudflare.com/ajax/libs/qz-tray/2.2.4/qz-tray.js";
-        script.async = true;
-        script.onload = () => {
-          resolve(window.qz || null);
-        };
-        script.onerror = () => {
-          console.warn("QZ Tray CDN indisponível.");
-          resolve(null);
-        };
-        document.body.appendChild(script);
-      } else {
-        let tentativas = 0;
-        const intervalo = setInterval(() => {
-          tentativas++;
-          if (window.qz || tentativas > 20) {
-            clearInterval(intervalo);
-            resolve(window.qz || null);
-          }
-        }, 100);
-      }
-    } catch (e) {
-      console.warn("Erro ao carregar QZ Tray:", e);
-      resolve(null);
+// 🛡️ Obtém o QZ Tray carregado globalmente de forma segura
+const obterQzTray = () => {
+  try {
+    if (typeof window !== "undefined" && window.qz) {
+      return window.qz;
     }
-  });
+  } catch (e) {
+    console.warn("QZ Tray não disponível:", e);
+  }
+  return null;
 };
 
 function tocarAlarmeSonoro() {
@@ -164,19 +137,19 @@ function gerarRelatorioCaixa(pedidos, filtro, total) {
   }
 }
 
-// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA 100% SEGURA (COMPATÍVEL COM NETLIFY HTTPS)
+// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA LOCAL
 async function imprimirPedido(pedido) {
   try {
     if (!pedido) return;
-    const qzLib = await carregarQzTray();
     
-    if (!qzLib) {
-      console.warn("QZ Tray ignorado (biblioteca indisponível). O painel continuará funcionando normalmente.");
+    const qz = obterQzTray();
+    if (!qz) {
+      console.warn("QZ Tray indisponível no momento.");
       return;
     }
 
-    if (!qzLib.websocket.isActive()) {
-      await qzLib.websocket.connect({
+    if (!qz.websocket.isActive()) {
+      await qz.websocket.connect({
         host: ['localhost', '127.0.0.1'],
         usingSecure: true,
         port: {
@@ -186,7 +159,7 @@ async function imprimirPedido(pedido) {
       });
     }
 
-    const config = qzLib.configs.create("default");
+    const config = qz.configs.create("default");
 
     const itensHtmlList = (pedido.itens || []).map(i => {
       const quantidade = i.qtd || 1;
@@ -232,11 +205,11 @@ async function imprimirPedido(pedido) {
       }
     ];
 
-    await qzLib.print(config, data);
+    await qz.print(config, data);
     console.log("Cupom enviado com sucesso!");
 
   } catch (err) {
-    console.error("Aviso de impressão QZ Tray:", err);
+    console.error("Erro na impressão QZ Tray:", err);
   }
 }
 
@@ -251,22 +224,21 @@ export default function AdminPedidos() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    carregarQzTray().then((qzLib) => {
-      try {
-        if (qzLib && qzLib.security) {
-          qzLib.security.setCertificatePromise(function(resolve) {
+    try {
+      const qz = obterQzTray();
+      if (qz && qz.security) {
+        qz.security.setCertificatePromise(function(resolve) {
+          resolve();
+        });
+        qz.security.setSignaturePromise(function() {
+          return function(resolve) {
             resolve();
-          });
-          qzLib.security.setSignaturePromise(function() {
-            return function(resolve) {
-              resolve();
-            };
-          });
-        }
-      } catch (e) {
-        console.warn("Erro na configuração de segurança:", e);
+          };
+        });
       }
-    });
+    } catch (e) {
+      console.warn("Erro na configuração de segurança:", e);
+    }
   }, []);
 
   const ativarSomAudio = () => {
