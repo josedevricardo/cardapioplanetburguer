@@ -137,7 +137,7 @@ function gerarRelatorioCaixa(pedidos, filtro, total) {
   }
 }
 
-// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA LOCAL (Com tratamento de erro otimizado)
+// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA LOCAL (Com detecção automática de porta e impressora)
 async function imprimirPedido(pedido) {
   try {
     if (!pedido) return;
@@ -148,7 +148,7 @@ async function imprimirPedido(pedido) {
       return;
     }
 
-    // Verifica se já está conectado, senão tenta conectar uma única vez
+    // Conecta na porta segura 8181 do QZ Tray
     if (!qz.websocket.isActive()) {
       try {
         await qz.websocket.connect({
@@ -162,12 +162,25 @@ async function imprimirPedido(pedido) {
           delay: 1
         });
       } catch (connErr) {
-        console.warn("QZ Tray não está rodando ou certificado não foi aceito em https://localhost:8182");
-        return; // Sai silenciosamente para não travar a aplicação caso o lojista não use impressora ligada no momento
+        console.warn("QZ Tray não está rodando ou certificado não foi aceito em https://localhost:8181");
+        return; 
       }
     }
 
-    const config = qz.configs.create(); //  o QZ Tray usar a impressora padrão do sistema operacional automaticamente
+    // 1. Descobre a impressora padrão ou pega a primeira disponível no Windows
+    let printerName = await qz.printers.getDefault().catch(() => null);
+    if (!printerName) {
+      const printers = await qz.printers.find();
+      printerName = printers[0]; // Pega a primeira impressora térmica instalada
+    }
+
+    if (!printerName) {
+      console.warn("Nenhuma impressora foi encontrada pelo QZ Tray.");
+      return;
+    }
+
+    console.log("Usando a impressora:", printerName);
+    const config = qz.configs.create(printerName);
 
     const itensHtmlList = (pedido.itens || []).map(i => {
       const quantidade = i.qtd || 1;
