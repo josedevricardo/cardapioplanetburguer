@@ -137,7 +137,7 @@ function gerarRelatorioCaixa(pedidos, filtro, total) {
   }
 }
 
-// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA LOCAL (Com porta 8181 e busca de impressoras)
+// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA LOCAL (Usando impressora padrão via `null`)
 async function imprimirPedido(pedido) {
   try {
     if (!pedido) return;
@@ -167,17 +167,8 @@ async function imprimirPedido(pedido) {
       }
     }
 
-    // Pega a primeira impressora disponível no Windows
-    const printers = await qz.printers.find();
-    const printerName = printers && printers.length > 0 ? printers[0] : null;
-
-    if (!printerName) {
-      console.warn("Nenhuma impressora foi encontrada pelo QZ Tray.");
-      return;
-    }
-
-    console.log("Usando a impressora:", printerName);
-    const config = qz.configs.create(printerName);
+    // Passar null diz ao QZ Tray para usar a impressora padrão configurada no Windows
+    const config = qz.configs.create(null);
 
     const itensHtmlList = (pedido.itens || []).map(i => {
       const quantidade = i.qtd || 1;
