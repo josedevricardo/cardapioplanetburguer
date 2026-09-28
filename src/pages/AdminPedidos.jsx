@@ -137,7 +137,7 @@ function gerarRelatorioCaixa(pedidos, filtro, total) {
   }
 }
 
-// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA LOCAL (Com detecção automática de porta e impressora)
+// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA LOCAL (Com porta 8181 e busca de impressoras)
 async function imprimirPedido(pedido) {
   try {
     if (!pedido) return;
@@ -167,12 +167,9 @@ async function imprimirPedido(pedido) {
       }
     }
 
-    // 1. Descobre a impressora padrão ou pega a primeira disponível no Windows
-    let printerName = await qz.printers.getDefault().catch(() => null);
-    if (!printerName) {
-      const printers = await qz.printers.find();
-      printerName = printers[0]; // Pega a primeira impressora térmica instalada
-    }
+    // Pega a primeira impressora disponível no Windows
+    const printers = await qz.printers.find();
+    const printerName = printers && printers.length > 0 ? printers[0] : null;
 
     if (!printerName) {
       console.warn("Nenhuma impressora foi encontrada pelo QZ Tray.");
