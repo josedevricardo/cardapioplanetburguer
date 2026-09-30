@@ -21,17 +21,11 @@ function formatarDataLocal(data) {
   }
 }
 
-// 🛡️ Obtém o QZ Tray carregado globalmente de forma segura
-const obterQzTray = () => {
-  try {
-    if (typeof window !== "undefined" && window.qz) {
-      return window.qz;
-    }
-  } catch (e) {
-    console.warn("QZ Tray não disponível:", e);
-  }
-  return null;
-};
+// 🔍 Função para garantir que o número do pedido seja o mesmo do WhatsApp
+function obterNumeroPedido(pedido) {
+  if (!pedido) return '00000';
+  return pedido.numeroPedido || pedido.codigo || (pedido.id ? pedido.id.slice(-5).toUpperCase() : '00000');
+}
 
 function tocarAlarmeSonoro() {
   try {
@@ -77,28 +71,166 @@ function tocarAlarmeSonoro() {
   }
 }
 
-// Relatório Geral de Caixa
-function gerarRelatorioCaixa(pedidos, filtro, total) {
+// 🚀 FUNÇÃO DE IMPRESSÃO OTIMIZADA (SEM ABOUT:BLANK - VIA BLOB URL)
+function imprimirPedido(pedido) {
   try {
-    const janela = window.open("", "PRINT", "width=800,height=600");
+    if (!pedido) return;
+    
+    const numeroCurto = obterNumeroPedido(pedido);
+
+    // 🛠️ Função para remover acentos e evitar que a impressora térmica corte palavras
+    const removerAcentos = (str) => {
+      if (!str) return '';
+      return String(str).normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    };
+
+    const nomeCliente = removerAcentos(pedido.nome || 'Nao informado');
+    const ruaCliente = removerAcentos(pedido.rua || '');
+    const numeroCliente = removerAcentos(pedido.numero || '');
+    const bairroCliente = removerAcentos(pedido.bairro || '');
+    const pagamentoCliente = removerAcentos(pedido.pagamento || 'Nao informado');
+    const obsCliente = removerAcentos(pedido.informacoes_adicionais || '');
+
+    const itensHtmlList = (pedido.itens || []).map(i => {
+      const quantidade = i.qtd || 1;
+      const nomeProduto = removerAcentos(i.produto || 'Item');
+      return `
+        <tr>
+          <td style="width: 15%; text-align: left; padding: 1px 0; font-weight: bold; vertical-align: top;">${quantidade}x</td>
+          <td style="width: 85%; text-align: left; padding: 1px 0; vertical-align: top; word-break: break-word; overflow-wrap: break-word;">${nomeProduto}</td>
+        </tr>
+      `;
+    }).join("");
+
+    const conteudoHtml = `
+      <!DOCTYPE html>
+      <html>
+        <head>
+          <meta charset="utf-8">
+          <title>Pedido #${numeroCurto}</title>
+          <style>
+            @page { 
+              size: 58mm 500mm; 
+              margin: 0mm; 
+            }
+            * {
+              box-sizing: border-box;
+              -webkit-print-color-adjust: exact;
+            }
+            body { 
+              font-family: 'Courier New', Courier, monospace; 
+              font-size: 9px; 
+              line-height: 1.1;
+              width: 54mm; 
+              max-width: 54mm;
+              margin: 0 auto; 
+              padding: 2mm 1mm; 
+              color: #000;
+              background: #fff;
+              word-break: break-word;
+              overflow-wrap: break-word;
+            }
+            .titulo { font-size: 11px; font-weight: bold; text-align: center; margin-bottom: 2px; width: 100%; }
+            .subtitulo { font-size: 10px; font-weight: bold; text-align: center; margin-bottom: 3px; width: 100%; }
+            hr { border: 0; border-top: 1px dashed #000; margin: 2px 0; width: 100%; }
+            table { width: 100%; border-collapse: collapse; }
+            td { font-size: 9px; vertical-align: top; }
+            .linha {
+              margin-bottom: 2px;
+              width: 100%;
+              word-break: break-word;
+              overflow-wrap: break-word;
+            }
+            .bold { font-weight: bold; }
+            .obs-box {
+              margin: 2px 0;
+              word-break: break-word;
+              overflow-wrap: break-word;
+            }
+            .total-box { 
+              margin-top: 4px;
+              margin-bottom: 0px;
+              font-weight: bold; 
+              font-size: 10.5px; 
+              border-top: 1px dashed #000; 
+              border-bottom: 1px dashed #000;
+              padding: 3px 0; 
+              text-align: center;
+              width: 100%;
+              page-break-inside: avoid;
+              break-inside: avoid;
+              page-break-before: avoid;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="titulo">Burgue+a Delivery</div>
+          <div class="subtitulo">Pedido #${numeroCurto}</div>
+          <hr/>
+          <div class="linha"><b>Data:</b> ${formatarDataLocal(pedido.data)}</div>
+          <div class="linha"><b>Cliente:</b> ${nomeCliente}</div>
+          <div class="linha"><b>Contato:</b> ${pedido.telefone || 'Nao informado'}</div>
+          <div class="linha"><b>Endereco:</b> ${ruaCliente}, ${numeroCliente} - ${bairroCliente}</div>
+          <div class="linha"><b>Pagamento:</b> ${pagamentoCliente}</div>
+          <hr/>
+          <div class="linha bold">Itens:</div>
+          <table>
+            ${itensHtmlList}
+          </table>
+          ${obsCliente ? `<hr/><div class="obs-box"><b>Obs:</b> ${obsCliente}</div>` : ''}
+          <hr/>
+          <div class="total-box">
+            TOTAL: R$ ${Number(pedido.total || 0).toFixed(2)}
+          </div>
+
+          <script>
+            window.onload = () => {
+              setTimeout(() => {
+                window.focus();
+                window.print();
+                setTimeout(() => window.close(), 500);
+              }, 300);
+            };
+          </script>
+        </body>
+      </html>
+    `;
+
+    const blob = new Blob([conteudoHtml], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const janela = window.open(url, "_blank", "width=400,height=600");
+    
     if (!janela) {
-      alert("Permita pop-ups no navegador para gerar o relatório.");
+      alert("Permita pop-ups no navegador para realizar a impressão automática.");
       return;
     }
 
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 5000);
+
+  } catch (err) {
+    console.error("Erro ao imprimir:", err);
+  }
+}
+
+// Relatório Geral de Caixa (Também otimizado sem about:blank)
+function gerarRelatorioCaixa(pedidos, filtro, total) {
+  try {
     const itensHtml = (pedidos || []).map(p => `
       <tr>
         <td style="border-bottom: 1px solid #ddd; padding: 8px;">${formatarDataLocal(p.data)}</td>
-        <td style="border-bottom: 1px solid #ddd; padding: 8px;">${p.nome || 'Cliente'}</td>
+        <td style="border-bottom: 1px solid #ddd; padding: 8px;">#${obterNumeroPedido(p)} - ${p.nome || 'Cliente'}</td>
         <td style="border-bottom: 1px solid #ddd; padding: 8px;">${p.pagamento || '-'}</td>
         <td style="border-bottom: 1px solid #ddd; padding: 8px;">R$ ${Number(p.total || 0).toFixed(2)}</td>
       </tr>
     `).join("");
 
-    janela.document.write(`
+    const conteudoHtml = `
       <html>
         <head>
-          <title>Fechamento de Caixa - Planet's Burguer</title>
+          <meta charset="utf-8">
+          <title>Fechamento de Caixa - Burgue+a Delivery</title>
           <style>
             body { font-family: sans-serif; padding: 20px; }
             h1 { text-align: center; color: #c0392b; margin-bottom: 5px; }
@@ -109,13 +241,13 @@ function gerarRelatorioCaixa(pedidos, filtro, total) {
           </style>
         </head>
         <body>
-          <h1>Planet's Burguer - Relatório</h1>
+          <h1>Burgue+a Delivery - Relatório de Caixa</h1>
           <div class="sub">Filtro aplicado: ${(filtro || 'todos').toUpperCase()} | Gerado em: ${new Date().toLocaleString("pt-BR")}</div>
           <table>
             <thead>
               <tr>
                 <th>Data/Hora</th>
-                <th>Cliente</th>
+                <th>Pedido / Cliente</th>
                 <th>Pagamento</th>
                 <th>Valor (R$)</th>
               </tr>
@@ -130,95 +262,22 @@ function gerarRelatorioCaixa(pedidos, filtro, total) {
           <script>window.onload = () => { window.print(); window.close(); };</script>
         </body>
       </html>
-    `);
-    janela.document.close();
-  } catch (err) {
-    console.error("Erro ao gerar relatório:", err);
-  }
-}
+    `;
 
-// 🚀 FUNÇÃO DE IMPRESSÃO TÉRMICA LOCAL (Usando impressora padrão via `null`)
-async function imprimirPedido(pedido) {
-  try {
-    if (!pedido) return;
-    
-    const qz = obterQzTray();
-    if (!qz) {
-      console.warn("QZ Tray indisponível no momento.");
+    const blob = new Blob([conteudoHtml], { type: 'text/html;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const janela = window.open(url, "_blank", "width=800,height=600");
+
+    if (!janela) {
+      alert("Permita pop-ups no navegador para gerar o relatório.");
       return;
     }
 
-    // Conecta na porta segura 8181 do QZ Tray
-    if (!qz.websocket.isActive()) {
-      try {
-        await qz.websocket.connect({
-          host: ['localhost', '127.0.0.1'],
-          usingSecure: true,
-          port: {
-            secure: 8181,
-            insecure: 8181
-          },
-          retries: 0,
-          delay: 1
-        });
-      } catch (connErr) {
-        console.warn("QZ Tray não está rodando ou certificado não foi aceito em https://localhost:8181");
-        return; 
-      }
-    }
-
-    // Passar null diz ao QZ Tray para usar a impressora padrão configurada no Windows
-    const config = qz.configs.create(null);
-
-    const itensHtmlList = (pedido.itens || []).map(i => {
-      const quantidade = i.qtd || 1;
-      const nomeProduto = i.produto || 'Item';
-      return `<div>${quantidade}x ${nomeProduto}</div>`;
-    }).join("");
-
-    const htmlContent = `
-      <html>
-        <head>
-          <style>
-            body { font-family: 'Courier New', Courier, monospace; font-size: 12px; width: 80mm; padding: 5px; }
-            .center { text-align: center; }
-            .total { font-weight: bold; font-size: 14px; border-top: 1px dashed #000; margin-top: 10px; padding-top: 5px; }
-            hr { border: 0; border-top: 1px solid #000; margin: 8px 0; }
-          </style>
-        </head>
-        <body>
-          <h2 class="center">PLANET'S BURGUER</h2>
-          <p class="center">PEDIDO #${pedido.id ? pedido.id.slice(-5).toUpperCase() : '00000'}</p>
-          <hr/>
-          <p><strong>DATA:</strong> ${formatarDataLocal(pedido.data)}</p>
-          <p><strong>CLIENTE:</strong> ${pedido.nome || 'Não informado'}</p>
-          <p><strong>CONTATO:</strong> ${pedido.telefone || 'Não informado'}</p>
-          <p><strong>ENDEREÇO:</strong> ${pedido.rua || ''}, ${pedido.numero || ''} - ${pedido.bairro || ''}</p>
-          <p><strong>PAGAMENTO:</strong> ${pedido.pagamento || 'Não informado'}</p>
-          <hr/>
-          <p><strong>ITENS:</strong></p>
-          ${itensHtmlList}
-          <hr/>
-          <p><strong>OBS:</strong> ${pedido.informacoes_adicionais || "Nenhuma"}</p>
-          <p class="total center">VALOR TOTAL: R$ ${Number(pedido.total || 0).toFixed(2)}</p>
-        </body>
-      </html>
-    `;
-
-    const data = [
-      {
-        type: 'pixel',
-        format: 'html',
-        flavor: 'plain',
-        data: htmlContent
-      }
-    ];
-
-    await qz.print(config, data);
-    console.log("Cupom enviado com sucesso!");
-
+    setTimeout(() => {
+      URL.revokeObjectURL(url);
+    }, 5000);
   } catch (err) {
-    console.error("Erro na impressão QZ Tray:", err);
+    console.error("Erro ao gerar relatório:", err);
   }
 }
 
@@ -230,25 +289,8 @@ export default function AdminPedidos() {
   const [notificacao, setNotificacao] = useState(false);
   const [somAtivo, setSomAtivo] = useState(false);
   const [valorOculto, setValorOculto] = useState(true);
-  const navigate = useNavigate();
 
-  useEffect(() => {
-    try {
-      const qz = obterQzTray();
-      if (qz && qz.security) {
-        qz.security.setCertificatePromise(function(resolve) {
-          resolve();
-        });
-        qz.security.setSignaturePromise(function() {
-          return function(resolve) {
-            resolve();
-          };
-        });
-      }
-    } catch (e) {
-      console.warn("Erro na configuração de segurança:", e);
-    }
-  }, []);
+  const navigate = useNavigate();
 
   const ativarSomAudio = () => {
     tocarAlarmeSonoro();
@@ -305,7 +347,7 @@ export default function AdminPedidos() {
             if (ultimoPedido.status === "pendente") {
               setTimeout(() => {
                 imprimirPedido(ultimoPedido);
-              }, 1200);
+              }, 1000);
             }
 
             setTimeout(() => setNotificacao(false), 4000);
@@ -351,7 +393,7 @@ export default function AdminPedidos() {
     <div className="stiloPedido">
       <nav className="navbar2" style={{ position: 'fixed', top: 0, left: 0, width: '100%', zIndex: 1000, boxShadow: '0 2px 8px rgba(0,0,0,0.15)', boxSizing: 'border-box' }}>
         <div className="logoTitulo">
-          <span className="tituloPainel">🍔 Delivery BURGUE+A</span>
+          <span className="tituloPainel">🍔 Burgue+a Delivery</span>
         </div>
         <div className="navRight">
           <Link to="/admin-estatisticas" className="menu-btn" style={{ background: '#8e44ad' }}>
@@ -364,6 +406,32 @@ export default function AdminPedidos() {
 
       <div className="container" style={{ paddingTop: '110px', paddingBottom: '40px' }}>
         
+        {/* Banner para download do configurador automático do Kiosk */}
+        <div style={{ background: '#e8f4fd', padding: '15px', borderRadius: '8px', marginBottom: '20px', border: '1px solid #bbe1fa', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '15px' }}>
+          <div>
+            <h4 style={{ margin: '0 0 5px 0', color: '#2c3e50' }}>🖨 Configurar Impressão 100% Automática</h4>
+            <p style={{ fontSize: '0.85rem', color: '#555', margin: 0 }}>
+              Baixe o configurador para criar o atalho do Chrome com impressão automática no PC do caixa.
+            </p>
+          </div>
+          <a 
+            href="/configurar-chrome.bat" 
+            download="configurar-chrome.bat"
+            style={{ 
+              background: '#27ae60', 
+              color: 'white', 
+              padding: '8px 16px', 
+              borderRadius: '5px', 
+              textDecoration: 'none', 
+              fontWeight: 'bold', 
+              fontSize: '0.85rem',
+              whiteSpace: 'nowrap'
+            }}
+          >
+            ⚙️ Baixar Configurador Automático
+          </a>
+        </div>
+
         {!somAtivo && (
           <div style={{ background: '#fff3cd', border: '1px solid #ffeeba', color: '#856404', padding: '12px 15px', borderRadius: '8px', textAlign: 'center', marginBottom: '20px', display: 'flex', flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', gap: '10px', flexWrap: 'wrap', fontSize: '0.9rem' }}>
             <span style={{ flex: '1 1 200px', textAlign: 'left', fontWeight: '500' }}>🔔 Alerta sonoro desativado.</span>
@@ -379,13 +447,13 @@ export default function AdminPedidos() {
         <AnimatePresence>
           {notificacao && (
             <motion.div className="notificacao-topo" initial={{ opacity: 0, y: -50 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -50 }}>
-              🔔 Novo pedido recebido! Imprimindo cupom...
+              🔔 Novo pedido recebido! Imprimindo cupom automaticamente...
             </motion.div>
           )}
         </AnimatePresence>
 
         <div className="filtros-estatisticas">
-          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+          <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap', alignItems: 'center' }}>
             <select value={statusFiltro} onChange={(e) => setStatusFiltro(e.target.value)} className="selectFiltro">
               <option value="pendente">Pendentes</option>
               <option value="entregue">Entregues</option>
@@ -407,46 +475,56 @@ export default function AdminPedidos() {
               title={valorOculto ? "Mostrar Valor" : "Ocultar Valor (Privacidade)"}
               style={{ background: 'transparent', border: 'none', cursor: 'pointer', fontSize: '1.1rem', padding: '0', display: 'flex', alignItems: 'center' }}
             >
-              {valorOculto ? "👁️‍🗨️" : "👁️"}
+              {valorOculto ? "👁️‍🗨" : "👁️"}
             </button>
           </div>
         </div>
 
         <div className="pedidosGrid">
-          {pedidosFiltrados.map((pedido) => (
-            <div key={pedido.id} className={`pedidoCard ${pedido.status}`}>
-              <div className="card-topo">
-                <strong>{pedido.nome || 'Cliente'}</strong>
-                <span className="data-hora">{formatarDataLocal(pedido.data)}</span>
-              </div>
-              <p className="txt-endereco">{pedido.rua || ''}, {pedido.numero || ''} - {pedido.bairro || ''}</p>
-              
-              <div className="lista-itens">
-                {(pedido.itens || []).map((item, index) => (
-                  <div key={index} className="item-linha">{item.qtd || 1}x {item.produto || 'Item'}</div>
-                ))}
-              </div>
+          {pedidosFiltrados.map((pedido) => {
+            const numeroPedidoCurto = obterNumeroPedido(pedido);
+            return (
+              <div key={pedido.id} className={`pedidoCard ${pedido.status}`}>
+                <div className="card-topo" style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <span style={{ background: '#2c3e50', color: '#fff', padding: '2px 8px', borderRadius: '4px', fontSize: '0.85rem', fontWeight: 'bold', letterSpacing: '0.5px' }}>
+                      #{numeroPedidoCurto}
+                    </span>
+                    <span className="data-hora">{formatarDataLocal(pedido.data)}</span>
+                  </div>
+                  <strong style={{ fontSize: '1.1rem', color: '#333', marginTop: '2px' }}>{pedido.nome || 'Cliente'}</strong>
+                </div>
 
-              <div className="card-footer">
-                <span className="valor-total">R$ {Number(pedido.total || 0).toFixed(2)}</span>
-                <div className="card-actions">
-                  <button onClick={() => imprimirPedido(pedido)} title="Imprimir Recibo">🖨️</button>
-                  <button onClick={() => setPedidoEmEdicao(pedido)} title="Editar Pedido">✏️</button>
-                  {pedido.status === "pendente" && (
-                    <button className="btn-finalizar" onClick={() => atualizarStatus(pedido.id, "entregue")}>✅ Entregue</button>
-                  )}
+                <p className="txt-endereco">{pedido.rua || ''}, {pedido.numero || ''} - {pedido.bairro || ''}</p>
+                
+                <div className="lista-itens">
+                  {(pedido.itens || []).map((item, index) => (
+                    <div key={index} className="item-linha">{item.qtd || 1}x {item.produto || 'Item'}</div>
+                  ))}
+                </div>
+
+                <div className="card-footer">
+                  <span className="valor-total">R$ {Number(pedido.total || 0).toFixed(2)}</span>
+                  <div className="card-actions">
+                    <button onClick={() => imprimirPedido(pedido)} title="Imprimir Recibo">🖨️</button>
+                    <button onClick={() => setPedidoEmEdicao(pedido)} title="Editar Pedido">✏️</button>
+                    {pedido.status === "pendente" && (
+                      <button className="btn-finalizar" onClick={() => atualizarStatus(pedido.id, "entregue")}>✅ Entregue</button>
+                    )}
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
       </div>
 
+      {/* Modal de Edição de Pedido */}
       <AnimatePresence>
         {pedidoEmEdicao && (
           <div className="modal-overlay">
             <div className="modalEditar">
-              <h3>Editar Pedido</h3>
+              <h3>Editar Pedido #{obterNumeroPedido(pedidoEmEdicao)}</h3>
               <label>Cliente:</label>
               <input type="text" value={pedidoEmEdicao.nome || ""} onChange={(e) => setPedidoEmEdicao({...pedidoEmEdicao, nome: e.target.value})} />
               <label>Total:</label>

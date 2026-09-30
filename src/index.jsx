@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import "./style/global.css"; // ✅ garante modo claro fixo e Tailwind
+import "./style/global.css"; 
 import Rotas from "./rotas";
 
 import { BrowserRouter } from "react-router-dom";
