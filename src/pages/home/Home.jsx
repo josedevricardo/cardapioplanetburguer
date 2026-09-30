@@ -29,7 +29,7 @@ function Home() {
           <div className="hero-centralizado">
             <div>
               <Link to="/">
-                <img src={logo} alt="Planets Burguer Logo" className="logotipo2" />
+                <img src={logo} alt="Burgue+a Logo" className="logotipo2" />
               </Link>
             </div>
 
@@ -100,6 +100,13 @@ function Home() {
             @Desenvolvedor Ricardo
           </a>
           @Todos Direitos <br /> Delivery BURGUE+A  | 38-00000-0000 <br />
+          
+          {/* Link para o Painel Admin já logado */}
+          <span className="block mt-2">
+            <Link to="/admin" className="text-xs text-zinc-400 hover:text-orange-600 underline">
+              ⚙️ Acessar Painel Administrativo
+            </Link>
+          </span>
         </p>
       </footer>
     </>

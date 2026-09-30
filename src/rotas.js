@@ -1,7 +1,7 @@
 import React from "react";
 import { Routes, Route } from "react-router-dom";
 
-// páginas
+// páginas da loja (PÚBLICAS - Qualquer cliente pode ver)
 import Home from "./pages/home/Home.jsx";
 import Lanches from "./pages/lanches/Lanches.jsx";
 import Omeletes from "./pages/omeletes/Omeletes.jsx";
@@ -9,21 +9,19 @@ import Bebidas from "./pages/bebidas/Bebidas.jsx";
 import Sucos from "./pages/sucos/Sucos.jsx";
 import Acrescimo from "./pages/acrescimo/Acrescimo.jsx";
 import Acai from "./pages/acai/Acai.jsx";
+import ProdutoSlider from "./components/produto-slider/produto-slider";
 
-// admin
+// admin (RESTRITAS - Apenas com login e senha do Firebase)
+import LoginAdmin from "./pages/LoginAdmin.jsx";
 import AdminEstatisticas from "./pages/AdminEstatisticas.jsx";
 import AdminPedidos from "./pages/AdminPedidos.jsx";
-import LoginAdmin from "./pages/LoginAdmin.jsx";
-import PrivateRoute from "./PrivateRoute.jsx";
 import AdminProdutosCompleto from "./pages/AdminProdutosCompleto.jsx";
-
-// componente de produtos
-import ProdutoSlider from "./components/produto-slider/produto-slider";
+import PrivateRoute from "./PrivateRoute.jsx";
 
 function Rotas() {
   return (
     <Routes>
-      {/* Rotas públicas */}
+      {/* --- ÁREA PÚBLICA (Clientes do Lojista acessam livremente) --- */}
       <Route path="/" element={<Home />} />
       <Route path="/lanches" element={<Lanches />} />
       <Route path="/bebidas" element={<Bebidas />} />
@@ -34,10 +32,10 @@ function Rotas() {
       <Route path="/categorias" element={<ProdutoSlider />} />
       <Route path="/categoria/:nome" element={<ProdutoSlider />} />
 
-      {/* Login admin */}
+      {/* --- ÁREA DE LOGIN DO LOJISTA --- */}
       <Route path="/login-admin" element={<LoginAdmin />} />
 
-      {/* Rotas protegidas admin */}
+      {/* --- ÁREA RESTRITA / SEGURANÇA MÁXIMA (Painel Admin) --- */}
       <Route
         path="/admin"
         element={

@@ -25,7 +25,7 @@ export default function LoginAdmin() {
       localStorage.setItem("adminLogado", "true");
       setSucesso(true);
       setErro("");
-      setTimeout(() => navigate("/admin"), 800);
+      setTimeout(() => navigate("/"), 800);
     } catch (error) {
       if (
         error.code === "auth/user-not-found" ||

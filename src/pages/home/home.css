@@ -215,7 +215,7 @@ h1 {
   }
 }
 
-/* Animação Pulse corrigida para usar cor mais próxima do tema */
+/* Animação Pulse para usar cor mais próxima do tema */
 @keyframes pulse {
   0%, 100% {
     /* Cor Chocolate */
@@ -259,7 +259,7 @@ h1 {
 /* --- AJUSTE PARA TELAS PEQUENAS --- */
 @media (max-width: 480px) {
   .hero-centralizado {
-    margin-top: -10px !important; /* sobe todo o bloco */
+    margin-top: -1px !important; /* sobe todo o bloco */
   }
 
   .logotipo2 {

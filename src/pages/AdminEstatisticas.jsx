@@ -34,6 +34,23 @@ function AdminEstatisticas() {
     return () => unsubscribe();
   }, []);
 
+  // Função auxiliar para somar valores monetários sem erros de ponto flutuante do JS
+  function somarValores(atual, novo) {
+    const centavosAtual = Math.round(Number(atual) * 100);
+    const centavosNovo = Math.round(parseFloat(novo || 0) * 100);
+    return (centavosAtual + centavosNovo) / 100;
+  }
+
+  // Formatação padrão para moeda (R$)
+  const formatarMoeda = (valor) => {
+    return Number(valor || 0).toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    });
+  };
+
   // 1. Agrupamento por Hora (Hoje)
   function agruparPorHora(pedidos) {
     const hoje = new Date().toDateString();
@@ -49,7 +66,7 @@ function AdminEstatisticas() {
         agrupado[hora] = { hora, pedidos: 0, total: 0 };
       }
       agrupado[hora].pedidos += 1;
-      agrupado[hora].total += parseFloat(p.total || 0);
+      agrupado[hora].total = somarValores(agrupado[hora].total, p.total);
     });
 
     return Object.values(agrupado).sort((a, b) =>
@@ -71,10 +88,10 @@ function AdminEstatisticas() {
         agrupado[dia] = { dia, pedidos: 0, total: 0 };
       }
       agrupado[dia].pedidos += 1;
-      agrupado[dia].total += parseFloat(p.total || 0);
+      agrupado[dia].total = somarValores(agrupado[dia].total, p.total);
     });
 
-    return Object.values(agrupado).slice(-15); // Exibe os últimos 15 dias para manter o gráfico limpo
+    return Object.values(agrupado).slice(-15);
   }
 
   // 3. Agrupamento Mensal
@@ -91,7 +108,7 @@ function AdminEstatisticas() {
         agrupado[mesAno] = { mes: mesAno, pedidos: 0, total: 0 };
       }
       agrupado[mesAno].pedidos += 1;
-      agrupado[mesAno].total += parseFloat(p.total || 0);
+      agrupado[mesAno].total = somarValores(agrupado[mesAno].total, p.total);
     });
 
     return Object.values(agrupado);
@@ -100,6 +117,15 @@ function AdminEstatisticas() {
   const dadosHora = agruparPorHora(pedidos);
   const dadosDia = agruparPorDia(pedidos);
   const dadosMes = agruparPorMes(pedidos);
+
+  // Totais Gerais para os Cards de Resumo
+  const faturamentoTotalGeral = pedidos.reduce(
+    (acc, p) => somarValores(acc, p.total),
+    0
+  );
+  const totalPedidosGeral = pedidos.length;
+  const ticketMedioGeral =
+    totalPedidosGeral > 0 ? faturamentoTotalGeral / totalPedidosGeral : 0;
 
   const handleLogout = () => {
     signOut(auth)
@@ -141,6 +167,22 @@ function AdminEstatisticas() {
           <p>Acompanhe os pedidos e o faturamento detalhado por hora, dia e mês.</p>
         </div>
 
+        {/* CARDS DE RESUMO EM NÚMEROS (Visíveis na tela e na impressão) */}
+        <div className="summary-cards-grid">
+          <div className="summary-card">
+            <span>Faturamento Total</span>
+            <h3>{formatarMoeda(faturamentoTotalGeral)}</h3>
+          </div>
+          <div className="summary-card">
+            <span>Total de Pedidos</span>
+            <h3>{totalPedidosGeral.toLocaleString("pt-BR")}</h3>
+          </div>
+          <div className="summary-card">
+            <span>Ticket Médio</span>
+            <h3>{formatarMoeda(ticketMedioGeral)}</h3>
+          </div>
+        </div>
+
         <main style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
           
           {/* Gráfico 1: Por Hora (Hoje) */}
@@ -152,8 +194,17 @@ function AdminEstatisticas() {
               <LineChart data={dadosHora}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="hora" stroke="#64748b" fontSize={12} />
-                <YAxis allowDecimals={false} stroke="#64748b" fontSize={12} />
-                <Tooltip formatter={(value, name) => [name === 'total' ? `R$ ${value.toFixed(2)}` : value, name === 'total' ? 'Faturamento' : 'Pedidos']} />
+                <YAxis 
+                  stroke="#64748b" 
+                  fontSize={12} 
+                  tickFormatter={(value) => value.toLocaleString("pt-BR")} 
+                />
+                <Tooltip 
+                  formatter={(value, name) => [
+                    name === 'total' ? formatarMoeda(value) : Number(value).toLocaleString('pt-BR'), 
+                    name === 'total' ? 'Faturamento' : 'Pedidos'
+                  ]} 
+                />
                 <Legend />
                 <Line type="monotone" dataKey="pedidos" name="Qtd Pedidos" stroke="#3b82f6" strokeWidth={2} />
                 <Line type="monotone" dataKey="total" name="Faturamento (R$)" stroke="#10b981" strokeWidth={2} />
@@ -170,8 +221,17 @@ function AdminEstatisticas() {
               <BarChart data={dadosDia}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="dia" stroke="#64748b" fontSize={12} />
-                <YAxis stroke="#64748b" fontSize={12} />
-                <Tooltip formatter={(value, name) => [name === 'total' ? `R$ ${value.toFixed(2)}` : value, name === 'total' ? 'Faturamento' : 'Pedidos']} />
+                <YAxis 
+                  stroke="#64748b" 
+                  fontSize={12} 
+                  tickFormatter={(value) => value.toLocaleString("pt-BR")} 
+                />
+                <Tooltip 
+                  formatter={(value, name) => [
+                    name === 'total' ? formatarMoeda(value) : Number(value).toLocaleString('pt-BR'), 
+                    name === 'total' ? 'Faturamento' : 'Pedidos'
+                  ]} 
+                />
                 <Legend />
                 <Bar dataKey="pedidos" name="Qtd Pedidos" fill="#3b82f6" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="total" name="Faturamento (R$)" fill="#10b981" radius={[4, 4, 0, 0]} />
@@ -188,8 +248,17 @@ function AdminEstatisticas() {
               <BarChart data={dadosMes}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
                 <XAxis dataKey="mes" stroke="#64748b" fontSize={12} />
-                <YAxis stroke="#64748b" fontSize={12} />
-                <Tooltip formatter={(value, name) => [name === 'total' ? `R$ ${value.toFixed(2)}` : value, name === 'total' ? 'Faturamento' : 'Pedidos']} />
+                <YAxis 
+                  stroke="#64748b" 
+                  fontSize={12} 
+                  tickFormatter={(value) => value.toLocaleString("pt-BR")} 
+                />
+                <Tooltip 
+                  formatter={(value, name) => [
+                    name === 'total' ? formatarMoeda(value) : Number(value).toLocaleString('pt-BR'), 
+                    name === 'total' ? 'Faturamento' : 'Pedidos'
+                  ]} 
+                />
                 <Legend />
                 <Bar dataKey="pedidos" name="Qtd Pedidos" fill="#6366f1" radius={[4, 4, 0, 0]} />
                 <Bar dataKey="total" name="Faturamento (R$)" fill="#f59e0b" radius={[4, 4, 0, 0]} />
