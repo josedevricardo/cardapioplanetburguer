@@ -1,4 +1,4 @@
-# 🍔 Planet Burger – Cardápio Online
+# 🍔 Cardápio Burgue+A – Cardápio Online
 
 **Aplicação React moderna com TailwindCSS, Firebase, Netlify e painel Admin completo**
 
@@ -109,17 +109,19 @@ src/
 * Busca inteligente
 * Slider por categorias
 * Botões flutuantes
-* Modo escuro automático
+* Envio do pedido para whatsapp e para um painel de pedidos
+
 
 ### 🔐 Área Admin
 
 * Login seguro (Firebase)
 * Gerenciamento de produtos e categorias
 * Pedidos em tempo real (Postgres + Netlify Functions)
-* Impressão automática via QZ Tray
-* Exportações: PDF / CSV / XLSX
+* Impressão automática via navegador usando um "C:\Program Files\Google\Chrome\Application\chrome.exe" --kiosk-printing
+* Painel Admin e produtos com telas login
 * Filtros de pedidos (pendente / entregue)
-* Backup automático
+* Login na home para acessar direto o painel admin
+* * painel de produtos onde podemos alterar descrisão preços e nomes enviar imagem do produto adicionar categorias e produtos
 * Estatísticas
 
 ---
@@ -140,7 +142,7 @@ src/
 * Firebase: [https://firebase.google.com/docs](https://firebase.google.com/docs)
 * Netlify Functions: [https://docs.netlify.com/functions/overview/](https://docs.netlify.com/functions/overview/)
 * Postgres Neon: [https://neon.tech/docs](https://neon.tech/docs)
-* QZ Tray: [https://qz.io/docs](https://qz.io/docs)
+
 
 ---
 
@@ -154,4 +156,4 @@ src/
 
 ## 🧑‍💻 Autor
 
-Planet Burger • Painel e cardápio desenvolvidos por RICARDO.
+Cardápio Burgue+A • Painel e cardápio desenvolvidos por RICARDO.
