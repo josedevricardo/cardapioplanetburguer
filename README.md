@@ -2,7 +2,7 @@
 
 **Aplicação React moderna com TailwindCSS, Firebase, Netlify e painel Admin completo**
 
-Deploy: **[https://cardapioplanetburger.netlify.app/](ps://cardapioburgue.netlify.app)**
+Deploy: **[https://cardapioburgue+A](ps://cardapioburgue.netlify.app)**
 Status Netlify: ![Netlify Status](https://api.netlify.com/api/v1/badges/f361336b-89fd-4865-8a36-ceb1d6eb8422/deploy-status)
 
 ---
